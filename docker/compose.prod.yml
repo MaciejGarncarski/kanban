@@ -1,0 +1,34 @@
+services:
+  kanban-web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.web
+    ports:
+      - "3000:3000"
+
+  kanban-api:
+    build:
+      target: production
+      context: ..
+      dockerfile: docker/Dockerfile.api
+    ports:
+      - "3001:3000"
+
+  kanban-db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: kanban
+    ports:
+      - "5432:5432"
+    volumes:
+      - kanban-db-data:/var/lib/postgresql/data
+    networks:
+      - kanban-network
+
+volumes:
+  kanban-db-data:
+networks:
+  kanban-network:
+    driver: bridge

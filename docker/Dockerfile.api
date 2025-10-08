@@ -1,0 +1,51 @@
+# ------------------------------------------------------
+# Stage 1 — Base setup
+# ------------------------------------------------------
+FROM node:24-alpine AS base
+ENV CI=true
+RUN corepack enable pnpm
+WORKDIR /app
+
+# ------------------------------------------------------
+# Stage 2 — Dependencies
+# ------------------------------------------------------
+FROM base AS deps
+WORKDIR /app
+COPY package.json ./
+COPY pnpm-lock.yaml ./
+COPY api/package.json ./api/package.json
+RUN pnpm install --no-frozen-lockfile
+
+# ------------------------------------------------------
+# Stage 3 — Build
+# ------------------------------------------------------
+FROM deps AS build
+WORKDIR /app
+COPY . .
+RUN pnpm --filter=api build
+RUN pnpm deploy --filter=api --prod /app/api-deploy
+
+# ------------------------------------------------------
+# Stage 4 — Production
+# ------------------------------------------------------
+FROM base AS production
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=build /app/api/dist ./dist
+COPY --from=build /app/api-deploy ./
+COPY api/package.json ./
+EXPOSE 3000
+CMD ["node", "dist/main.js"]
+
+# ------------------------------------------------------
+# Stage 5 — Development (optional)
+# ------------------------------------------------------
+FROM base AS dev
+ENV NODE_ENV=development
+COPY pnpm-lock.yaml ./
+COPY api/package.json ./
+RUN pnpm install --no-frozen-lockfile
+COPY . .
+EXPOSE 3000
+CMD ["pnpm", "--filter=api", "run", "start:dev"]
