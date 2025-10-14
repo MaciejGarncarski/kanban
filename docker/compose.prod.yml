@@ -1,5 +1,6 @@
 services:
   kanban-web:
+    container_name: kanban-web-prod
     build:
       context: ..
       dockerfile: docker/Dockerfile.web
@@ -7,14 +8,16 @@ services:
       - "3000:3000"
 
   kanban-api:
+    container_name: kanban-api-prod
     build:
-      target: production
       context: ..
       dockerfile: docker/Dockerfile.api
+      target: production
     ports:
       - "3001:3000"
 
   kanban-db:
+    container_name: kanban-db-prod
     image: postgres:18
     environment:
       POSTGRES_USER: postgres

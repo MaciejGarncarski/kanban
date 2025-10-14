@@ -1,21 +1,4 @@
 services:
-  kanban-api:
-    container_name: kanban-api-dev
-    environment:
-      NODE_ENV: development
-      DATABASE_URL: postgres://postgres:postgres@kanban-db:5432/kanban
-    depends_on:
-      - kanban-db
-    volumes:
-      - ../api/:/app
-      - /app/node_modules
-    build:
-      target: dev
-      context: ..
-      dockerfile: docker/Dockerfile.api
-    ports:
-      - "3001:3000"
-
   kanban-db:
     container_name: kanban-db-dev
     image: postgres:18

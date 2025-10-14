@@ -2,26 +2,20 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DbModule } from 'src/db/db.module';
-import { ClsModule } from 'nestjs-cls';
-import { ClsPluginTransactional } from '@nestjs-cls/transactional';
-import { TransactionalAdapterDrizzleOrm } from '@nestjs-cls/transactional-adapter-drizzle-orm';
-import { DB_PROVIDER } from 'src/db/db.provider';
 import { UserRepository } from 'src/user/user.repository';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from 'src/user/user.module';
+import { ConfigModule } from '@nestjs/config';
+import { CqrsModule } from '@nestjs/cqrs';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     DbModule,
-    ClsModule.forRoot({
-      global: true,
-      plugins: [
-        new ClsPluginTransactional({
-          imports: [DbModule],
-          adapter: new TransactionalAdapterDrizzleOrm({
-            drizzleInstanceToken: DB_PROVIDER,
-          }),
-        }),
-      ],
-    }),
+    UserModule,
+    AuthModule,
+    ConfigModule.forRoot(),
+    CqrsModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService, UserRepository],

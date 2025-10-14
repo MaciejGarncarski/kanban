@@ -13,22 +13,26 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest",
+    "test": "jest --detectOpenHandles",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db:reset": "pnpm tsx ./src/db/reset.ts"
+    "db:reset": "pnpm tsx --env-file=.env ./src/db/reset.ts",
+    "db:seed": "pnpm tsx --env-file=.env ./src/db/seed.ts"
   },
   "dependencies": {
-    "@nestjs-cls/transactional": "^3.1.0",
-    "@nestjs-cls/transactional-adapter-drizzle-orm": "^1.2.0",
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
+    "@nestjs/cqrs": "^11.0.3",
+    "@nestjs/jwt": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.2.0",
+    "@node-rs/argon2": "^2.0.2",
     "dotenv": "^17.2.3",
-    "drizzle-seed": "^0.3.1",
     "drizzle-orm": "^0.44.6",
+    "drizzle-seed": "^0.3.1",
     "nestjs-cls": "^6.0.1",
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
@@ -70,6 +74,9 @@
     ],
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
+    },
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },

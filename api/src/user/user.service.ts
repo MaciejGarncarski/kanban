@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { UserRepository } from 'src/user/user.repository';
 
 @Injectable()
-export class AppService {
+export class UserService {
   constructor(private readonly userRepo: UserRepository) {}
-  async getHello(): Promise<string> {
-    const allTheUsers = await this.userRepo.all();
 
-    return allTheUsers[0]?.name;
+  async getLastUsers() {
+    const lastUsers = await this.userRepo.lastTen();
+    return lastUsers;
   }
 }
