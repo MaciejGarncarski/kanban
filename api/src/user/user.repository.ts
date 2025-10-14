@@ -15,7 +15,15 @@ export class UserRepository {
    * @throws 404 if a user with the given id is not found
    */
   async find(id: string) {
-    const [user] = await this.db.select().from(users).where(eq(users.id, id));
+    const [user] = await this.db
+      .select({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        created_at: users.created_at,
+      })
+      .from(users)
+      .where(eq(users.id, id));
 
     if (!user) {
       throw new NotFoundException('User not found');

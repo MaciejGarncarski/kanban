@@ -1,6 +1,6 @@
-import { IsString, IsEmail } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
 
-export class SignInBody {
+export class RegisterBody {
   @IsEmail({}, { message: 'Invalid email address' })
   email: string;
 

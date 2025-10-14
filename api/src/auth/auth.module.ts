@@ -3,6 +3,7 @@ import { AuthController } from './infrastructure/controllers.ts/auth.controller'
 import { UserRepository } from 'src/user/user.repository';
 import { SignInUserHandler } from 'src/auth/application/commands/handlers/sign-in-user.handler';
 import { JwtModule } from '@nestjs/jwt';
+import { GetSessionHandler } from 'src/auth/application/queries/handlers/get-session.handler';
 
 @Module({
   imports: [
@@ -12,6 +13,6 @@ import { JwtModule } from '@nestjs/jwt';
     }),
   ],
   controllers: [AuthController],
-  providers: [SignInUserHandler, UserRepository],
+  providers: [SignInUserHandler, GetSessionHandler, UserRepository],
 })
 export class AuthModule {}

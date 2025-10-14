@@ -1,3 +1,3 @@
 export class GetSessionQuery {
-  constructor(public readonly id: string) {}
+  constructor(public readonly token: string) {}
 }
