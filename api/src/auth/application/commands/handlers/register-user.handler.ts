@@ -1,10 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { UserRepository } from 'src/user/user.repository';
+import { BadRequestException } from '@nestjs/common';
+import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterUserCommand } from 'src/auth/application/commands/register-user.command';
 
-@Injectable()
 @CommandHandler(RegisterUserCommand)
 export class RegisterUserHandler
   implements ICommandHandler<RegisterUserCommand>

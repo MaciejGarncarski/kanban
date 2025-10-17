@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { AuthRepository } from 'src/auth/application/ports/auth.repository';
+import { AuthRepositoryPort } from 'src/auth/application/ports/auth.repository.port';
 import { type DB } from 'src/db/client';
 import { InjectDb } from 'src/db/db.provider';
 import { users } from 'src/db/schema';
 
 @Injectable()
-export class AuthRepositoryImpl implements AuthRepository {
+export class AuthRepository implements AuthRepositoryPort {
   constructor(@InjectDb() private readonly db: DB) {}
 
   async register() {

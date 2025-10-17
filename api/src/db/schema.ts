@@ -1,5 +1,6 @@
 import { relations } from 'drizzle-orm';
 import { sql } from 'drizzle-orm';
+import { boolean } from 'drizzle-orm/pg-core';
 import { integer } from 'drizzle-orm/pg-core';
 import { text, timestamp, uuid, varchar, pgTable } from 'drizzle-orm/pg-core';
 
@@ -130,3 +131,15 @@ export const commentsRelations = relations(comments, ({ one }) => ({
   card: one(cards, { fields: [comments.card_id], references: [cards.id] }),
   author: one(users, { fields: [comments.author_id], references: [users.id] }),
 }));
+
+export const refreshTokens = pgTable('refresh_tokens', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  tokenHash: text('token_hash').notNull(),
+  revoked: boolean('revoked').notNull().default(false),
+  replacedBy: uuid('replaced_by'), // ID nowego tokena po rotacji
+  createdAt: timestamp('created_at').defaultNow(),
+  expiresAt: timestamp('expires_at').notNull(),
+});

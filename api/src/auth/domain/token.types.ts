@@ -1,4 +1,5 @@
 export type JWTPayload = {
   id: string;
-  lat: number;
+  iat: number;
+  exp: number;
 };

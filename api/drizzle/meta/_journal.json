@@ -15,6 +15,13 @@
       "when": 1760473845382,
       "tag": "0001_melted_brood",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1760561490733,
+      "tag": "0002_young_grim_reaper",
+      "breakpoints": true
     }
   ]
 }
