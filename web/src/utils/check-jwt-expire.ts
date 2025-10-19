@@ -1,0 +1,23 @@
+export function checkJWTExpiration({
+  token,
+  thresholdSeconds = 300,
+}: {
+  token: string;
+  thresholdSeconds?: number;
+}): boolean {
+  try {
+    const [, payload] = token.split(".");
+
+    if (!payload) {
+      return true;
+    }
+
+    const decoded = JSON.parse(atob(payload));
+    const exp = decoded.exp;
+    const now = Math.floor(Date.now() / 1000);
+
+    return exp - now < thresholdSeconds;
+  } catch {
+    return true;
+  }
+}

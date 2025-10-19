@@ -1,30 +1,32 @@
 import { Injectable } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { randomUUID } from 'crypto';
 import { RefreshTokenRepositoryPort } from 'src/auth/application/ports/refresh-token.repository.port';
 import { RefreshToken } from 'src/auth/domain/refresh-token.entity';
 import { REFRESH_TOKEN_MAX_AGE } from 'src/shared/constants/cookie.const';
-import { type DB } from 'src/db/client';
-import { InjectDb } from 'src/db/db.provider';
-import { refreshTokens } from 'src/db/schema';
 import { sha256 } from 'src/shared/utils/sha256.utils';
 
+interface StoredToken {
+  record: RefreshToken;
+  tokenHash: string;
+  replacedBy?: string;
+}
+
 @Injectable()
-export class RefreshTokenRepository implements RefreshTokenRepositoryPort {
-  constructor(@InjectDb() private readonly db: DB) {}
+export class InMemoryRefreshTokenRepository
+  implements RefreshTokenRepositoryPort
+{
+  private tokens: StoredToken[] = [];
 
   async create(
     userId: string,
     plainToken: string,
     expiresAt: Date,
   ): Promise<RefreshToken> {
+    const token = new RefreshToken(randomUUID(), userId, expiresAt, false);
     const tokenHash = sha256(plainToken);
 
-    const [row] = await this.db
-      .insert(refreshTokens)
-      .values({ userId, tokenHash, expiresAt })
-      .returning();
-
-    return new RefreshToken(row.id, row.userId, row.expiresAt, row.revoked);
+    this.tokens.push({ record: token, tokenHash });
+    return token;
   }
 
   async findActiveByToken(
@@ -32,26 +34,20 @@ export class RefreshTokenRepository implements RefreshTokenRepositoryPort {
   ): Promise<RefreshToken | null> {
     const tokenHash = sha256(refreshTokenPlain);
 
-    const [row] = await this.db
-      .select()
-      .from(refreshTokens)
-      .where(
-        and(
-          eq(refreshTokens.revoked, false),
-          eq(refreshTokens.tokenHash, tokenHash),
-        ),
-      );
+    const stored = this.tokens.find(
+      (t) => !t.record.revoked && t.tokenHash === tokenHash,
+    );
 
-    if (!row) return null;
-
-    return new RefreshToken(row.id, row.userId, row.expiresAt, row.revoked);
+    if (!stored) return null;
+    return stored.record;
   }
 
   async revoke(tokenId: string, replacedBy?: string): Promise<void> {
-    await this.db
-      .update(refreshTokens)
-      .set({ revoked: true, replacedBy: replacedBy })
-      .where(eq(refreshTokens.id, tokenId));
+    const stored = this.tokens.find((t) => t.record.id === tokenId);
+    if (stored) {
+      stored.record.revoke();
+      if (replacedBy) stored.replacedBy = replacedBy;
+    }
   }
 
   async rotate(
@@ -68,5 +64,13 @@ export class RefreshTokenRepository implements RefreshTokenRepositoryPort {
 
     await this.revoke(tokenRecord.id, created.id);
     return created;
+  }
+
+  getAll(): RefreshToken[] {
+    return this.tokens.map((t) => t.record);
+  }
+
+  clear(): void {
+    this.tokens = [];
   }
 }

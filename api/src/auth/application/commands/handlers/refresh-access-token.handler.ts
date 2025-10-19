@@ -27,7 +27,7 @@ export class RefreshAccessTokenHandler
     );
 
     if (!tokenRecord) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Token not found or inactive');
     }
 
     const newRefreshTokenPlain = randomBytes(32).toString('hex');
@@ -36,7 +36,9 @@ export class RefreshAccessTokenHandler
       newRefreshTokenPlain,
     );
 
-    const accessToken = this.jwtService.sign({ sub: newToken.userId });
+    const accessToken = this.jwtService.sign({
+      id: newToken.userId,
+    });
 
     return { accessToken, refreshToken: newRefreshTokenPlain };
   }

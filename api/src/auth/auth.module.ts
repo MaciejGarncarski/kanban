@@ -13,7 +13,7 @@ import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refr
   imports: [
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '12h' },
+      signOptions: { expiresIn: '10m' },
     }),
     CqrsModule,
   ],

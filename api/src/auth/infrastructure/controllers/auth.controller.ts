@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Inject,
+  Logger,
   Post,
   Req,
   Res,
@@ -25,6 +26,7 @@ import { SignInUserCommandReturn } from 'src/auth/application/commands/handlers/
 import { LogoutCommand } from 'src/auth/application/commands/logout.command';
 import { RefreshAccessTokenCommand } from 'src/auth/application/commands/refresh-access-token.command';
 import { SignInUserCommand } from 'src/auth/application/commands/sign-in-user.command';
+import { RefreshTokenResponseDto } from 'src/auth/application/dtos/refresh-token-response.dto';
 import { SignInBodyDto } from 'src/auth/application/dtos/sign-in-body.dto';
 import { SignInResponseDto } from 'src/auth/application/dtos/sign-in-response.dto';
 import { GetSessionQuery } from 'src/auth/application/queries/get-session.query';
@@ -102,17 +104,19 @@ export class AuthController {
     return data;
   }
 
-  @Auth()
   @HttpCode(HttpStatus.OK)
   @Post(routesV1.auth.refresh)
   @ApiResponse({
     status: 200,
+    type: RefreshTokenResponseDto,
     description: 'Refresh access token',
   })
   async refreshAccessToken(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
+    Logger.debug(req.headers);
+
     const refreshToken = req.signedCookies[this.cookieConf.name] as string;
 
     if (!refreshToken) {
@@ -147,8 +151,6 @@ export class AuthController {
     if (!refreshToken) {
       throw new UnauthorizedException('No refresh token');
     }
-
-    console.log('Logging out with token:', refreshToken);
 
     await this.commandBus.execute<LogoutCommand>(
       new LogoutCommand(refreshToken),
