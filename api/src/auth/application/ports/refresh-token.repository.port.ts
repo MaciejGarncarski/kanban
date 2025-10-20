@@ -5,12 +5,18 @@ export interface RefreshTokenRepositoryPort {
     userId: string,
     refreshTokenPlain: string,
     expiresAt: Date,
-  ): Promise<RefreshToken>;
+  ): Promise<CreateRefreshTokenReturn>;
   findActiveByToken(refreshTokenPlain: string): Promise<RefreshToken | null>;
   revoke(tokenId: string): Promise<void>;
   rotate(
-    tokenRecord: RefreshToken,
+    refreshToken: RefreshToken,
     newRefreshTokenPlain: string,
     expiresAt: Date,
   ): Promise<RefreshToken>;
 }
+
+type CreateRefreshTokenReturn = {
+  tokenPlain: string;
+  tokenHash: string;
+  entity: RefreshToken;
+};

@@ -18,6 +18,7 @@ export class RefreshToken {
 
   static createNew(userId: string): RefreshToken {
     const id = crypto.randomUUID();
+
     return new RefreshToken(
       id,
       userId,

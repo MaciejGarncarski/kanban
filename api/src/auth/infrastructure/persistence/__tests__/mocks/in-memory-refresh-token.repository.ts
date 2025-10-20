@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { randomUUID } from 'crypto';
+import { randomBytes } from 'crypto';
+import { sha256 } from 'src/shared/utils/sha256.utils';
 import { RefreshTokenRepositoryPort } from 'src/auth/application/ports/refresh-token.repository.port';
 import { RefreshToken } from 'src/auth/domain/refresh-token.entity';
-import { REFRESH_TOKEN_MAX_AGE } from 'src/shared/constants/cookie.const';
-import { sha256 } from 'src/shared/utils/sha256.utils';
+import {
+  RefreshTokenMapper,
+  RefreshTokenRecord,
+} from 'src/auth/infrastructure/persistence/mappers/refresh-token.mapper';
 
 interface StoredToken {
-  record: RefreshToken;
+  entity: RefreshToken;
   tokenHash: string;
   replacedBy?: string;
 }
@@ -17,57 +20,52 @@ export class InMemoryRefreshTokenRepository
 {
   private tokens: StoredToken[] = [];
 
-  async create(
-    userId: string,
-    plainToken: string,
-    expiresAt: Date,
-  ): Promise<RefreshToken> {
-    const token = new RefreshToken(randomUUID(), userId, expiresAt, false);
-    const tokenHash = sha256(plainToken);
+  async create(userId: string, customToken?: string) {
+    const tokenPlain = customToken ?? randomBytes(32).toString('hex');
+    const tokenHash = sha256(tokenPlain);
 
-    this.tokens.push({ record: token, tokenHash });
-    return token;
+    const tokenEntity = RefreshToken.createNew(userId);
+    const tokenPersistence = RefreshTokenMapper.toPersistence(
+      tokenEntity,
+      tokenHash,
+    ) as RefreshTokenRecord;
+    const tokenDomain = RefreshTokenMapper.toDomain(tokenPersistence);
+
+    this.tokens.push({ entity: tokenDomain, tokenHash });
+
+    return {
+      tokenPlain,
+      tokenHash,
+      entity: tokenDomain,
+    };
   }
 
-  async findActiveByToken(
-    refreshTokenPlain: string,
-  ): Promise<RefreshToken | null> {
-    const tokenHash = sha256(refreshTokenPlain);
+  async findActiveByToken(tokenPlain: string): Promise<RefreshToken | null> {
+    const tokenHash = sha256(tokenPlain);
 
     const stored = this.tokens.find(
-      (t) => !t.record.revoked && t.tokenHash === tokenHash,
+      (t) => !t.entity.revoked && t.tokenHash === tokenHash,
     );
 
-    if (!stored) return null;
-    return stored.record;
+    return stored ? stored.entity : null;
   }
 
   async revoke(tokenId: string, replacedBy?: string): Promise<void> {
-    const stored = this.tokens.find((t) => t.record.id === tokenId);
+    const stored = this.tokens.find((t) => t.entity.id === tokenId);
     if (stored) {
-      stored.record.revoke();
-      if (replacedBy) stored.replacedBy = replacedBy;
+      stored.entity.revoke();
+      stored.replacedBy = replacedBy;
     }
   }
 
-  async rotate(
-    tokenRecord: RefreshToken,
-    newRefreshTokenPlain: string,
-  ): Promise<RefreshToken> {
-    const expiresAt = new Date(Date.now() + REFRESH_TOKEN_MAX_AGE);
-
-    const created = await this.create(
-      tokenRecord.userId,
-      newRefreshTokenPlain,
-      expiresAt,
-    );
-
-    await this.revoke(tokenRecord.id, created.id);
-    return created;
+  async rotate(refreshToken: RefreshToken): Promise<RefreshToken> {
+    const created = await this.create(refreshToken.userId);
+    await this.revoke(refreshToken.id, created.entity.id);
+    return created.entity;
   }
 
   getAll(): RefreshToken[] {
-    return this.tokens.map((t) => t.record);
+    return this.tokens.map((t) => t.entity);
   }
 
   clear(): void {

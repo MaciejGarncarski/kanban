@@ -31,10 +31,7 @@ export class RefreshAccessTokenHandler
     }
 
     const newRefreshTokenPlain = randomBytes(32).toString('hex');
-    const newToken = await this.refreshTokenRepo.rotate(
-      tokenRecord,
-      newRefreshTokenPlain,
-    );
+    const newToken = await this.refreshTokenRepo.rotate(tokenRecord);
 
     const accessToken = this.jwtService.sign({
       id: newToken.userId,

@@ -2,29 +2,36 @@ import { Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import { RefreshTokenRepositoryPort } from 'src/auth/application/ports/refresh-token.repository.port';
 import { RefreshToken } from 'src/auth/domain/refresh-token.entity';
-import { REFRESH_TOKEN_MAX_AGE } from 'src/shared/constants/cookie.const';
 import { type DB } from 'src/db/client';
 import { InjectDb } from 'src/db/db.provider';
 import { refreshTokens } from 'src/db/schema';
 import { sha256 } from 'src/shared/utils/sha256.utils';
+import { RefreshTokenMapper } from 'src/auth/infrastructure/persistence/mappers/refresh-token.mapper';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class RefreshTokenRepository implements RefreshTokenRepositoryPort {
   constructor(@InjectDb() private readonly db: DB) {}
 
-  async create(
-    userId: string,
-    plainToken: string,
-    expiresAt: Date,
-  ): Promise<RefreshToken> {
-    const tokenHash = sha256(plainToken);
+  async create(userId: string) {
+    const newRefreshTokenPlain = randomBytes(32).toString('hex');
+    const tokenHash = sha256(newRefreshTokenPlain);
+    const tokenEntity = RefreshToken.createNew(userId);
+    const tokenPersistence = RefreshTokenMapper.toPersistence(
+      tokenEntity,
+      tokenHash,
+    );
 
     const [row] = await this.db
       .insert(refreshTokens)
-      .values({ userId, tokenHash, expiresAt })
+      .values(tokenPersistence)
       .returning();
 
-    return new RefreshToken(row.id, row.userId, row.expiresAt, row.revoked);
+    return {
+      tokenPlain: newRefreshTokenPlain,
+      tokenHash: tokenHash,
+      entity: RefreshTokenMapper.toDomain(row),
+    };
   }
 
   async findActiveByToken(
@@ -44,7 +51,7 @@ export class RefreshTokenRepository implements RefreshTokenRepositoryPort {
 
     if (!row) return null;
 
-    return new RefreshToken(row.id, row.userId, row.expiresAt, row.revoked);
+    return RefreshTokenMapper.toDomain(row);
   }
 
   async revoke(tokenId: string, replacedBy?: string): Promise<void> {
@@ -54,19 +61,10 @@ export class RefreshTokenRepository implements RefreshTokenRepositoryPort {
       .where(eq(refreshTokens.id, tokenId));
   }
 
-  async rotate(
-    tokenRecord: RefreshToken,
-    newRefreshTokenPlain: string,
-  ): Promise<RefreshToken> {
-    const expiresAt = new Date(Date.now() + REFRESH_TOKEN_MAX_AGE);
+  async rotate(refreshToken: RefreshToken): Promise<RefreshToken> {
+    const created = await this.create(refreshToken.userId);
 
-    const created = await this.create(
-      tokenRecord.userId,
-      newRefreshTokenPlain,
-      expiresAt,
-    );
-
-    await this.revoke(tokenRecord.id, created.id);
-    return created;
+    await this.revoke(refreshToken.id, created.entity.id);
+    return created.entity;
   }
 }

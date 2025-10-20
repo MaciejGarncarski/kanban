@@ -4,6 +4,7 @@ import { type DB } from 'src/db/client';
 import { InjectDb } from 'src/db/db.provider';
 import { users } from 'src/db/schema';
 import { UserRepositoryPort } from 'src/user/application/ports/user.repository.port';
+import { UserMapper } from 'src/user/infrastructure/persistence/mappers/user.mapper';
 
 @Injectable()
 export class UserRepository implements UserRepositoryPort {
@@ -16,6 +17,7 @@ export class UserRepository implements UserRepositoryPort {
         name: users.name,
         email: users.email,
         created_at: users.created_at,
+        password_hash: users.password_hash,
       })
       .from(users)
       .where(eq(users.id, id));
@@ -24,7 +26,7 @@ export class UserRepository implements UserRepositoryPort {
       throw new NotFoundException('User not found');
     }
 
-    return user;
+    return UserMapper.toDomain(user);
   }
 
   async findByEmail(email: string) {
@@ -37,20 +39,22 @@ export class UserRepository implements UserRepositoryPort {
       throw new NotFoundException('User not found');
     }
 
-    return user;
+    return UserMapper.toDomain(user);
   }
 
   async all() {
-    return this.db.select().from(users);
+    const allUsers = await this.db.select().from(users);
+    return allUsers.map((user) => UserMapper.toDomain(user));
   }
 
   async lastTen() {
-    return this.db.select().from(users).limit(10);
+    const lastTenUsers = await this.db.select().from(users).limit(10);
+    return lastTenUsers.map((user) => UserMapper.toDomain(user));
   }
 
   async create(data: typeof users.$inferInsert) {
     const [createdUser] = await this.db.insert(users).values(data).returning();
 
-    return createdUser;
+    return UserMapper.toDomain(createdUser);
   }
 }
