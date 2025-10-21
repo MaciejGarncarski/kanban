@@ -5,7 +5,7 @@ import {
   mantineHtmlProps,
   MantineProvider,
 } from "@mantine/core";
-import Providers from "@/app/providers";
+import Providers from "@/components/providers";
 
 export const metadata: Metadata = {
   title: "Create Next App",

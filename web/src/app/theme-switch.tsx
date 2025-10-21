@@ -1,6 +1,6 @@
 "use client";
 
-import ClientOnly from "@/app/client-only";
+import ClientOnly from "@/components/client-only";
 import { useMantineColorScheme } from "@mantine/core";
 
 export const ThemeSwitch = () => {

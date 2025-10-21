@@ -1,15 +1,15 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  output: 'standalone',
   reactCompiler: true,
   experimental: {
     turbopackFileSystemCacheForDev: true,
     routerBFCache: true,
     cssChunking: true,
     cacheComponents: true,
-    optimizePackageImports: ["@mantine/core", "@mantine/hooks"],
+    optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
   },
-};
+}
 
-export default nextConfig;
+export default nextConfig

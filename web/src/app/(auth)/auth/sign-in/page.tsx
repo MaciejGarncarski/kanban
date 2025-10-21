@@ -1,4 +1,4 @@
-import { SignInButton } from "@/app/sign-in-button";
+import { SignInButton } from '@/app/sign-in-button'
 
 export default async function SignInPage() {
   return (
@@ -6,5 +6,5 @@ export default async function SignInPage() {
       Sign In Page
       <SignInButton />
     </div>
-  );
+  )
 }
