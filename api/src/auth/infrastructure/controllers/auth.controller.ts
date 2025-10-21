@@ -6,7 +6,6 @@ import {
   HttpCode,
   HttpStatus,
   Inject,
-  Logger,
   Post,
   Req,
   Res,
@@ -115,8 +114,6 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    Logger.debug(req.headers);
-
     const refreshToken = req.signedCookies[this.cookieConf.name] as string;
 
     if (!refreshToken) {
@@ -149,7 +146,13 @@ export class AuthController {
     const refreshToken = req.signedCookies[this.cookieConf.name] as string;
 
     if (!refreshToken) {
-      throw new UnauthorizedException('No refresh token');
+      res.clearCookie(this.cookieConf.name, {
+        secure: this.cookieConf.secure,
+        httpOnly: this.cookieConf.httpOnly,
+        signed: this.cookieConf.signed,
+      });
+
+      return { message: 'Logged out' };
     }
 
     await this.commandBus.execute<LogoutCommand>(

@@ -3,7 +3,6 @@ import { AuthController } from 'src/auth/infrastructure/controllers/auth.control
 import { CqrsModule, QueryBus } from '@nestjs/cqrs';
 import { AuthGuard } from 'src/auth/common/guards/auth.guard';
 import { JwtService } from '@nestjs/jwt';
-import { JWTPayload } from 'src/auth/domain/token.types';
 
 describe('AuthController', () => {
   let controller: AuthController;

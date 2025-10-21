@@ -1,9 +1,48 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { Client } from 'pg';
+import { Client, Pool } from 'pg';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
-import { seed } from 'src/db/seed.js';
+import { seed } from 'src/db/seed';
 
-export async function resetDB() {
+export async function resetDB(pgPool?: Pool) {
+  if (pgPool) {
+    const dbName = pgPool.options.database;
+
+    const rootClient = new Client({
+      host: pgPool.options.host,
+      port: pgPool.options.port,
+      user: pgPool.options.user,
+      password: pgPool.options.password,
+      database: 'postgres',
+    });
+    await rootClient.connect();
+
+    try {
+      console.log(`🧨 Dropping database ${dbName}...`);
+      await rootClient.query(
+        `DROP DATABASE IF EXISTS "${dbName}" WITH (FORCE);`,
+      );
+
+      console.log(`📦 Creating database ${dbName}...`);
+      await rootClient.query(`CREATE DATABASE "${dbName}";`);
+    } finally {
+      await rootClient.end();
+    }
+
+    console.log('🚀 Running migrations...');
+
+    const db = drizzle(pgPool);
+
+    await migrate(db, { migrationsFolder: 'drizzle' });
+
+    console.log('✅ Database reset complete!');
+
+    console.log('🌱 Seeding data...');
+    await seed(pgPool);
+    console.log('✅ Database reset & seeded successfully!');
+
+    return;
+  }
+
   const connectionString = process.env.DATABASE_URL;
 
   if (!connectionString) {
@@ -27,6 +66,7 @@ export async function resetDB() {
   }
 
   console.log('🚀 Running migrations...');
+
   const dbClient = new Client({ connectionString });
   await dbClient.connect();
 
@@ -34,8 +74,6 @@ export async function resetDB() {
   await migrate(db, { migrationsFolder: 'drizzle' });
 
   console.log('✅ Database reset complete!');
-
-  await dbClient.end();
 
   console.log('🌱 Seeding data...');
   await seed();

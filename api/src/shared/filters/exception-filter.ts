@@ -33,11 +33,7 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
     let stack: string | undefined;
 
     if (exception instanceof HttpException) {
-      const res = exception.getResponse() as {
-        message: string;
-        validationErrors?: Record<string, unknown>[];
-        subErrors?: string[];
-      };
+      const res = exception.getResponse() as ApiErrorResponse;
 
       if (typeof res === 'object') {
         message = res.message || exception.message;
@@ -57,11 +53,11 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
 
     if (status >= 400 && status < 500) {
       this.logger.warn(
-        `[${correlationId}] [Client] [User: ${request.userId ? request.userId : 'Not authenticated'}] error (${status}): ${message}`,
+        `[${correlationId}] [Client ${request.path}] [User: ${request.userId ? request.userId : 'Not authenticated'}] error (${status}): ${message}`,
       );
     } else {
       this.logger.error(
-        `[${correlationId}] [Server] [User: ${request.userId ? request.userId : 'Not authenticated'}] error (${status}): ${message}`,
+        `[${correlationId}] [Server ${request.path}] [User: ${request.userId ? request.userId : 'Not authenticated'}] error (${status}): ${message}`,
         stack,
       );
     }

@@ -49,7 +49,6 @@ describe('sign-in-user-handler', () => {
     };
 
     const newUser = new User({
-      id: 'user-1',
       name: 'Test User',
       email: mockData.email,
       passwordHash: mockData.password,
@@ -75,7 +74,6 @@ describe('sign-in-user-handler', () => {
     };
 
     const newUser = new User({
-      id: 'user-1',
       name: 'Test User',
       email: mockData.email,
       passwordHash: 'correctpasswordhash',

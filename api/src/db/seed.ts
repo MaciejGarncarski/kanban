@@ -1,13 +1,24 @@
-import { Client } from 'pg';
+import { Client, Pool } from 'pg';
 import * as schema from './schema';
 import { drizzle } from 'drizzle-orm/node-postgres';
 
 const connectionString = process.env.DATABASE_URL!;
 
-export async function seed() {
-  const client = new Client({ connectionString });
+export async function seed(pool?: Pool) {
+  const client = pool
+    ? new Client({
+        host: pool.options.host,
+        port: pool.options.port,
+        user: pool.options.user,
+        password: pool.options.password,
+        database: 'kanban',
+      })
+    : new Client({ connectionString });
+
   await client.connect();
   const db = drizzle(client, { schema });
+
+  console.log('🌱 Inserting seed data...');
 
   // pass is Abcd123
   await db.insert(schema.users).values([
@@ -26,5 +37,6 @@ export async function seed() {
   ]);
 
   console.log('✅ Seed data inserted!');
+
   await client.end();
 }
