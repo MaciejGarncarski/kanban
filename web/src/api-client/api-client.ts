@@ -3,7 +3,7 @@ import { rotateToken } from '@/api/rotate-token'
 import createFetchClient, { Middleware } from 'openapi-fetch'
 
 export const fetchClient = createFetchClient<paths>({
-  baseUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
+  baseUrl: process.env.NEXT_PUBLIC_API_URL,
   credentials: 'include',
   headers: {
     'Content-Type': 'application/json',
@@ -37,3 +37,13 @@ const jwtMiddleware: Middleware = {
 }
 
 fetchClient.use(jwtMiddleware)
+
+export const fetchSSR = createFetchClient<paths>({
+  baseUrl: process.env.SSR_API_URL,
+  credentials: 'include',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
+
+fetchSSR.use(jwtMiddleware)

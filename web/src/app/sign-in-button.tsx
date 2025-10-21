@@ -9,6 +9,7 @@ export function SignInButton() {
     mutationFn: async () => {
       const email = 'alice@example.com'
       const password = 'Abcd123'
+
       await signIn(email, password)
     },
   })

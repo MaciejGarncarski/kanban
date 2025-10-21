@@ -1,12 +1,12 @@
 'use server'
 
-import { fetchClient } from '@/api-client/api-client'
+import { fetchSSR } from '@/api-client/api-client'
 import { setAuthCookies } from '@/utils/set-auth-cookie'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 export const signOut = async () => {
-  await fetchClient.DELETE('/auth/logout')
+  await fetchSSR.DELETE('/auth/logout')
 
   const cookieStore = await cookies()
   cookieStore.delete('refreshToken')
@@ -16,7 +16,7 @@ export const signOut = async () => {
 }
 
 export const signIn = async (email: string, password: string) => {
-  const request = fetchClient.POST('/auth/sign-in', {
+  const request = fetchSSR.POST('/auth/sign-in', {
     body: { email, password },
   })
 

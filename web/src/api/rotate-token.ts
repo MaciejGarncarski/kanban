@@ -1,14 +1,14 @@
 'use server'
 
+import { getApiUrl } from '@/utils/get-api-url'
 import { getCookieValue } from '@/utils/get-cookie-value'
 import { setAuthCookies } from '@/utils/set-auth-cookie'
 import { cookies } from 'next/headers'
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
-
 export async function rotateToken() {
   const cookieStore = await cookies()
   const refreshToken = cookieStore.get('refreshToken')?.value
+  const BACKEND_URL = getApiUrl()
 
   const refreshRes = await fetch(`${BACKEND_URL}/auth/refresh-token`, {
     method: 'POST',

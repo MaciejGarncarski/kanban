@@ -54,14 +54,14 @@ async function bootstrap() {
 
   app.useGlobalFilters(new GlobalHttpExceptionFilter());
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.API_PORT ?? 3000);
 
   console.log(
-    `Application is running on: http://localhost:${process.env.PORT ?? 3000}`,
+    `Application is running on: http://localhost:${process.env.API_PORT ?? 3000}`,
   );
 
   console.log(
-    `Swagger is running on: http://localhost:${process.env.PORT ?? 3000}/api`,
+    `Swagger is running on: http://localhost:${process.env.API_PORT ?? 3000}/api`,
   );
 
   console.log(`CORS allowed origin: ${process.env.CORS_ORIGIN}`);

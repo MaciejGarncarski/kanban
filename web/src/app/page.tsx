@@ -1,4 +1,4 @@
-import { fetchClient } from '@/api-client/api-client'
+import { fetchSSR } from '@/api-client/api-client'
 import { ThemeSwitch } from '@/app/theme-switch'
 import { Button } from '@mantine/core'
 import { cookies } from 'next/headers'
@@ -17,7 +17,7 @@ export default async function Home() {
 
 const signOut = async () => {
   'use server'
-  await fetchClient.DELETE('/auth/logout')
+  await fetchSSR.DELETE('/auth/logout')
 
   const cookieStore = await cookies()
   cookieStore.delete('refreshToken')

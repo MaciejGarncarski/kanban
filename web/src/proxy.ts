@@ -7,11 +7,10 @@ import {
   cookieConfigRefreshToken,
 } from '@/config/cookie.config'
 import { checkJWTExpiration } from '@/utils/check-jwt-expire'
+import { getApiUrl } from '@/utils/get-api-url'
 import { getCookieValue } from '@/utils/get-cookie-value'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 
 const signInPath = '/auth/sign-in'
 
@@ -20,6 +19,7 @@ export async function proxy(req: NextRequest) {
   const refreshToken = req.cookies.get('refreshToken')?.value
   const url = req.nextUrl.clone()
   const pathname = url.pathname
+  const BACKEND_URL = getApiUrl()
 
   const skipPaths = [
     '/_next',
