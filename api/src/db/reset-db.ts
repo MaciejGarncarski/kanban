@@ -3,6 +3,12 @@ import { Client, Pool } from 'pg';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { seed } from 'src/db/seed';
 
+function log(message: string) {
+  if (process.env.NODE_ENV !== 'test') {
+    console.log(message);
+  }
+}
+
 export async function resetDB(pgPool?: Pool) {
   if (pgPool) {
     const dbName = pgPool.options.database;
@@ -17,28 +23,28 @@ export async function resetDB(pgPool?: Pool) {
     await rootClient.connect();
 
     try {
-      console.log(`🧨 Dropping database ${dbName}...`);
+      log(`🧨 Dropping database ${dbName}...`);
       await rootClient.query(
         `DROP DATABASE IF EXISTS "${dbName}" WITH (FORCE);`,
       );
 
-      console.log(`📦 Creating database ${dbName}...`);
+      log(`📦 Creating database ${dbName}...`);
       await rootClient.query(`CREATE DATABASE "${dbName}";`);
     } finally {
       await rootClient.end();
     }
 
-    console.log('🚀 Running migrations...');
+    log('🚀 Running migrations...');
 
     const db = drizzle(pgPool);
 
     await migrate(db, { migrationsFolder: 'drizzle' });
 
-    console.log('✅ Database reset complete!');
+    log('✅ Database reset complete!');
 
-    console.log('🌱 Seeding data...');
+    log('🌱 Seeding data...');
     await seed(pgPool);
-    console.log('✅ Database reset & seeded successfully!');
+    log('✅ Database reset & seeded successfully!');
 
     return;
   }
@@ -56,16 +62,16 @@ export async function resetDB(pgPool?: Pool) {
 
   try {
     await rootClient.connect();
-    console.log(`🧨 Dropping database ${dbName}...`);
+    log(`🧨 Dropping database ${dbName}...`);
     await rootClient.query(`DROP DATABASE IF EXISTS "${dbName}" WITH (FORCE);`);
 
-    console.log(`📦 Creating database ${dbName}...`);
+    log(`📦 Creating database ${dbName}...`);
     await rootClient.query(`CREATE DATABASE "${dbName}";`);
   } finally {
     await rootClient.end();
   }
 
-  console.log('🚀 Running migrations...');
+  log('🚀 Running migrations...');
 
   const dbClient = new Client({ connectionString });
   await dbClient.connect();
@@ -73,11 +79,11 @@ export async function resetDB(pgPool?: Pool) {
   const db = drizzle(dbClient);
   await migrate(db, { migrationsFolder: 'drizzle' });
 
-  console.log('✅ Database reset complete!');
+  log('✅ Database reset complete!');
 
-  console.log('🌱 Seeding data...');
+  log('🌱 Seeding data...');
   await seed();
 
-  console.log('✅ Database reset & seeded successfully!');
+  log('✅ Database reset & seeded successfully!');
   await dbClient.end();
 }

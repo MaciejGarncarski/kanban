@@ -6,21 +6,25 @@ export type UserRecord = InferSelectModel<typeof users>;
 export type NewUserRecord = InferInsertModel<typeof users>;
 
 export class UserMapper {
-  static toDomain(user: UserRecord): User {
-    return new User({
-      name: user.name,
-      email: user.email,
-      passwordHash: user.password_hash,
-      id: user.id,
+  static toDomain(record: UserRecord): User {
+    const user = new User({
+      id: record.id,
+      name: record.name,
+      email: record.email,
+      passwordHash: record.password_hash,
+      createdAt: new Date(record.created_at),
     });
+
+    return user;
   }
 
   static toPersistence(user: User): NewUserRecord {
     return {
       id: user.id,
-      email: user.email,
       name: user.name,
-      password_hash: user.getHashedPassword(),
+      email: user.email,
+      password_hash: user.getPasswordHash(),
+      created_at: user.createdAt.toISOString(),
     };
   }
 }

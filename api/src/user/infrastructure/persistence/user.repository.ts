@@ -3,11 +3,11 @@ import { eq } from 'drizzle-orm';
 import { type DB } from 'src/db/client';
 import { InjectDb } from 'src/db/db.provider';
 import { users } from 'src/db/schema';
-import { UserRepositoryPort } from 'src/user/application/ports/user.repository.port';
+import { UserRepositoryInterface } from 'src/user/domain/repository/user.interface';
 import { UserMapper } from 'src/user/infrastructure/persistence/mappers/user.mapper';
 
 @Injectable()
-export class UserRepository implements UserRepositoryPort {
+export class UserRepository implements UserRepositoryInterface {
   constructor(@InjectDb() private readonly db: DB) {}
 
   async find(id: string) {
@@ -33,7 +33,7 @@ export class UserRepository implements UserRepositoryPort {
     const [user] = await this.db
       .select()
       .from(users)
-      .where(eq(users.email, email));
+      .where(eq(users.email, email.toLowerCase()));
 
     if (!user) {
       throw new NotFoundException('User not found');

@@ -4,19 +4,32 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 import { GlobalHttpExceptionFilter } from 'src/shared/filters/exception-filter';
+import { ConfigService } from '@nestjs/config';
+import { getEnvConfig } from 'src/shared/configs/env.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {});
+  const configService = app.get(ConfigService);
+  const env = getEnvConfig(configService);
+
+  if (!env) {
+    throw new Error('Environment configuration is missing');
+  }
 
   const config = new DocumentBuilder()
     .setTitle('Kanban app')
     .setDescription('The cats API description')
     .setVersion('1.0')
+    .addCookieAuth('accessToken', {
+      type: 'apiKey',
+      name: 'accessToken',
+      in: 'cookie',
+    })
     .addBearerAuth({
       type: 'http',
       scheme: 'bearer',
       bearerFormat: 'JWT',
-      name: 'Authorization',
+      name: 'access-token',
       description: 'Enter JWT access token',
       in: 'header',
     })
@@ -26,9 +39,9 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
 
-  app.use(cookieParser(process.env.COOKIE_SECRET));
+  app.use(cookieParser(env.COOKIE_SECRET));
   app.enableCors({
-    origin: process.env.CORS_ORIGIN,
+    origin: env.CORS_ORIGIN,
     credentials: true,
   });
 
@@ -54,18 +67,15 @@ async function bootstrap() {
 
   app.useGlobalFilters(new GlobalHttpExceptionFilter());
 
-  await app.listen(process.env.API_PORT ?? 3000);
+  await app.listen(env.API_PORT ?? 3000);
 
   console.log(
-    `Application is running on: http://localhost:${process.env.API_PORT ?? 3000}`,
+    `Application is running on: http://localhost:${env.API_PORT ?? 3000}`,
   );
-
   console.log(
-    `Swagger is running on: http://localhost:${process.env.API_PORT ?? 3000}/api`,
+    `Swagger is running on: http://localhost:${env.API_PORT ?? 3000}/api`,
   );
-
-  console.log(`CORS allowed origin: ${process.env.CORS_ORIGIN}`);
-
+  console.log(`CORS allowed origin: ${env.CORS_ORIGIN}`);
   console.log('-------------------------------------------------');
 }
 

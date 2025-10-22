@@ -8,12 +8,26 @@ import { RefreshAccessTokenHandler } from 'src/auth/application/commands/handler
 import { LogoutHandler } from 'src/auth/application/commands/handlers/logout.handler';
 import { AuthController } from 'src/auth/infrastructure/controllers/auth.controller';
 import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { getEnvConfig } from 'src/shared/configs/env.config';
 
 @Module({
   imports: [
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '10m' },
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => {
+        const env = getEnvConfig(configService);
+
+        if (!env || !env.JWT_SECRET) {
+          throw new Error('JWT_SECRET is not defined in environment variables');
+        }
+
+        return {
+          secret: env.JWT_SECRET,
+          signOptions: { expiresIn: '10m' },
+        };
+      },
+      inject: [ConfigService],
     }),
     CqrsModule,
   ],

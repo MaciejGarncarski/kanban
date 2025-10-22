@@ -1,12 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { sha256 } from 'src/shared/utils/sha256.utils';
-import { RefreshTokenRepositoryPort } from 'src/auth/application/ports/refresh-token.repository.port';
+import { RefreshTokenRepositoryInterface } from 'src/auth/domain/repository/refresh-token.interface';
 import { RefreshToken } from 'src/auth/domain/refresh-token.entity';
-import {
-  RefreshTokenMapper,
-  RefreshTokenRecord,
-} from 'src/auth/infrastructure/persistence/mappers/refresh-token.mapper';
 
 interface StoredToken {
   entity: RefreshToken;
@@ -16,7 +12,7 @@ interface StoredToken {
 
 @Injectable()
 export class InMemoryRefreshTokenRepository
-  implements RefreshTokenRepositoryPort
+  implements RefreshTokenRepositoryInterface
 {
   private tokens: StoredToken[] = [];
 
@@ -25,18 +21,12 @@ export class InMemoryRefreshTokenRepository
     const tokenHash = sha256(tokenPlain);
 
     const tokenEntity = RefreshToken.createNew(userId);
-    const tokenPersistence = RefreshTokenMapper.toPersistence(
-      tokenEntity,
-      tokenHash,
-    ) as RefreshTokenRecord;
-    const tokenDomain = RefreshTokenMapper.toDomain(tokenPersistence);
-
-    this.tokens.push({ entity: tokenDomain, tokenHash });
+    this.tokens.push({ entity: tokenEntity, tokenHash });
 
     return {
       tokenPlain,
       tokenHash,
-      entity: tokenDomain,
+      entity: tokenEntity,
     };
   }
 

@@ -1,6 +1,6 @@
 import { RefreshToken } from 'src/auth/domain/refresh-token.entity';
 
-export interface RefreshTokenRepositoryPort {
+export interface RefreshTokenRepositoryInterface {
   create(
     userId: string,
     refreshTokenPlain: string,

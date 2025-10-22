@@ -2,6 +2,7 @@ import {
   PostgreSqlContainer,
   StartedPostgreSqlContainer,
 } from '@testcontainers/postgresql';
+import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import { resetDB } from 'src/db/reset-db';
 
@@ -20,9 +21,10 @@ export async function getTestDb() {
   });
 
   await resetDB(pgPool);
-  console.log(`Container started on port ${pgContainer.getMappedPort(5432)}`);
 
-  return { pgContainer, pgPool };
+  const testDb = drizzle(pgPool);
+
+  return { pgContainer, pgPool, testDb };
 }
 
 export async function stopTestDb(
@@ -31,5 +33,4 @@ export async function stopTestDb(
 ) {
   await pool.end();
   await pgContainer.stop();
-  console.log('Container stopped');
 }

@@ -1,4 +1,13 @@
 import { hash, verify } from '@node-rs/argon2';
+import { randomUUID } from 'crypto';
+
+export interface UserProps {
+  id?: string;
+  name: string;
+  email: string;
+  passwordHash: string;
+  createdAt?: Date;
+}
 
 export class User {
   readonly id: string;
@@ -7,38 +16,28 @@ export class User {
   private readonly passwordHash: string;
   readonly createdAt: Date;
 
-  constructor(_props: {
-    id?: string;
-    name: string;
-    email: string;
-    passwordHash: string;
-    createdAt?: Date;
-  }) {
-    this.id = _props.id ?? '';
-    this.name = _props.name;
-    this.email = _props.email;
-    this.passwordHash = _props.passwordHash;
-    this.createdAt = _props.createdAt ?? new Date();
+  constructor(props: UserProps) {
+    this.id = props.id ?? randomUUID();
+    this.name = props.name;
+    this.email = props.email.toLowerCase();
+    this.passwordHash = props.passwordHash;
+    this.createdAt = props.createdAt ?? new Date();
   }
 
-  async checkPassword(password: string): Promise<boolean> {
-    return verify(this.passwordHash, password);
+  static async createNew(
+    name: string,
+    email: string,
+    plainPassword: string,
+  ): Promise<User> {
+    const passwordHash = await hash(plainPassword);
+    return new User({ name, email, passwordHash });
   }
 
-  get createdAtForDb() {
-    return this.createdAt.toISOString();
+  async checkPassword(plainPassword: string): Promise<boolean> {
+    return verify(this.passwordHash, plainPassword);
   }
 
-  async createNew(password: string): Promise<User> {
-    const passwordHash = await hash(password);
-    return new User({
-      name: this.name,
-      email: this.email,
-      passwordHash,
-    });
-  }
-
-  getHashedPassword() {
+  getPasswordHash(): string {
     return this.passwordHash;
   }
 }

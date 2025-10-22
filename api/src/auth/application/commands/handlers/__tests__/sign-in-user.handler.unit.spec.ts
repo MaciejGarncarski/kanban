@@ -5,7 +5,7 @@ import { SignInUserHandler } from 'src/auth/application/commands/handlers/sign-i
 import { SignInUserCommand } from 'src/auth/application/commands/sign-in-user.command';
 import { InMemoryRefreshTokenRepository } from 'src/auth/infrastructure/persistence/__tests__/mocks/in-memory-refresh-token.repository';
 import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
-import { UserRepositoryPort } from 'src/user/application/ports/user.repository.port';
+import { UserRepositoryInterface } from 'src/user/domain/repository/user.interface';
 import { User } from 'src/user/domain/user.entity';
 import { InMemoryUserRepository } from 'src/user/infrastructure/persistence/__tests__/mocks/in-memory-user.repository';
 import { UserMapper } from 'src/user/infrastructure/persistence/mappers/user.mapper';
@@ -16,9 +16,9 @@ jest.mock('@node-rs/argon2', () => ({
   verify: jest.fn(),
 }));
 
-describe('sign-in-user-handler', () => {
+describe('sign-in-user-handler unit', () => {
   let handler: SignInUserHandler;
-  let userRepo: UserRepositoryPort;
+  let userRepo: UserRepositoryInterface;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -37,7 +37,7 @@ describe('sign-in-user-handler', () => {
     }).compile();
 
     handler = module.get<SignInUserHandler>(SignInUserHandler);
-    userRepo = module.get<UserRepositoryPort>(UserRepository);
+    userRepo = module.get<UserRepositoryInterface>(UserRepository);
   });
 
   it('should return signed in user tokens', async () => {

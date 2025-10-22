@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
-import { RefreshTokenRepositoryPort } from 'src/auth/application/ports/refresh-token.repository.port';
+import { RefreshTokenRepositoryInterface } from 'src/auth/domain/repository/refresh-token.interface';
 import { RefreshToken } from 'src/auth/domain/refresh-token.entity';
 import { type DB } from 'src/db/client';
 import { InjectDb } from 'src/db/db.provider';
@@ -10,7 +10,7 @@ import { RefreshTokenMapper } from 'src/auth/infrastructure/persistence/mappers/
 import { randomBytes } from 'crypto';
 
 @Injectable()
-export class RefreshTokenRepository implements RefreshTokenRepositoryPort {
+export class RefreshTokenRepository implements RefreshTokenRepositoryInterface {
   constructor(@InjectDb() private readonly db: DB) {}
 
   async create(userId: string) {

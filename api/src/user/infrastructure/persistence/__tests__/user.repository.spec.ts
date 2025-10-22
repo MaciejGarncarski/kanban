@@ -1,4 +1,3 @@
-import { UserRepositoryPort } from 'src/user/application/ports/user.repository.port';
 import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { DB } from 'src/db/client';
@@ -6,18 +5,17 @@ import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
 import { Pool } from 'pg';
 import { faker } from '@faker-js/faker';
+import { UserRepositoryInterface } from 'src/user/domain/repository/user.interface';
 
 jest.setTimeout(60_000);
 
 describe('UserRepository', () => {
-  let repo: UserRepositoryPort;
+  let repo: UserRepositoryInterface;
   let db: DB;
   let container: StartedPostgreSqlContainer;
   let pool: Pool;
 
   beforeAll(async () => {
-    console.log('Starting Postgres container...');
-
     const { pgContainer, pgPool } = await getTestDb();
     container = pgContainer;
     pool = pgPool;
@@ -27,7 +25,6 @@ describe('UserRepository', () => {
   });
 
   afterAll(async () => {
-    console.log('Stopping Postgres container...');
     await stopTestDb(container, pool);
   });
 

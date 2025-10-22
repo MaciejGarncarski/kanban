@@ -18,8 +18,6 @@ export async function seed(pool?: Pool) {
   await client.connect();
   const db = drizzle(client, { schema });
 
-  console.log('🌱 Inserting seed data...');
-
   // pass is Abcd123
   await db.insert(schema.users).values([
     {
@@ -35,8 +33,6 @@ export async function seed(pool?: Pool) {
         '$argon2id$v=19$m=16,t=2,p=1$MTIzNDU2Nzg$v88qiYnV1bYFz0DzEJDxjA',
     },
   ]);
-
-  console.log('✅ Seed data inserted!');
 
   await client.end();
 }

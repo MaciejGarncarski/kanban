@@ -6,6 +6,8 @@ import { ConfigModule } from '@nestjs/config';
 import { CqrsModule } from '@nestjs/cqrs';
 import refreshTokenConfig from 'src/shared/configs/refresh-token-cookie.config';
 import { CorrelationIdMiddleware } from 'src/shared/middlewares/correlation-id.middleware';
+import { validate } from 'src/shared/configs/env.schema';
+import { registerEnv } from 'src/shared/configs/env.config';
 
 @Module({
   imports: [
@@ -14,8 +16,9 @@ import { CorrelationIdMiddleware } from 'src/shared/middlewares/correlation-id.m
     AuthModule,
     ConfigModule.forRoot({
       isGlobal: true,
+      validate: validate,
       envFilePath: ['.env'],
-      load: [refreshTokenConfig],
+      load: [refreshTokenConfig, registerEnv],
     }),
     CqrsModule.forRoot(),
   ],

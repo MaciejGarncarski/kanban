@@ -1,20 +1,30 @@
-import { relations } from 'drizzle-orm';
+import { relations, SQL } from 'drizzle-orm';
 import { sql } from 'drizzle-orm';
+import { AnyPgColumn } from 'drizzle-orm/pg-core';
+import { uniqueIndex } from 'drizzle-orm/pg-core';
 import { boolean } from 'drizzle-orm/pg-core';
 import { integer } from 'drizzle-orm/pg-core';
 import { text, timestamp, uuid, varchar, pgTable } from 'drizzle-orm/pg-core';
 
-export const users = pgTable('users', {
-  id: uuid()
-    .default(sql`uuidv7()`)
-    .primaryKey(),
-  name: varchar({ length: 255 }).notNull(),
-  email: varchar({ length: 255 }).notNull().unique(),
-  password_hash: text().notNull(),
-  created_at: timestamp('created_at', { mode: 'string' })
-    .notNull()
-    .default(sql`now()`),
-});
+export function lower(email: AnyPgColumn): SQL {
+  return sql`lower(${email})`;
+}
+
+export const users = pgTable(
+  'users',
+  {
+    id: uuid()
+      .default(sql`uuidv7()`)
+      .primaryKey(),
+    name: varchar({ length: 255 }).notNull(),
+    email: varchar({ length: 255 }).notNull().unique(),
+    password_hash: text().notNull(),
+    created_at: timestamp('created_at', { mode: 'string' })
+      .notNull()
+      .default(sql`now()`),
+  },
+  (table) => [uniqueIndex('emailUniqueIndex').on(lower(table.email))],
+);
 
 export const usersRelations = relations(users, ({ many }) => ({
   memberships: many(team_members),
