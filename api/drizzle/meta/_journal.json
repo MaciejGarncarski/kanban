@@ -22,6 +22,13 @@
       "when": 1760561490733,
       "tag": "0002_young_grim_reaper",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1761150023417,
+      "tag": "0003_heavy_sharon_ventura",
+      "breakpoints": true
     }
   ]
 }

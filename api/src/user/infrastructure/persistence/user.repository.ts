@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { type DB } from 'src/db/client';
 import { InjectDb } from 'src/db/db.provider';
-import { users } from 'src/db/schema';
+import { lower, users } from 'src/db/schema';
 import { UserRepositoryInterface } from 'src/user/domain/repository/user.interface';
 import { UserMapper } from 'src/user/infrastructure/persistence/mappers/user.mapper';
 
@@ -33,7 +33,7 @@ export class UserRepository implements UserRepositoryInterface {
     const [user] = await this.db
       .select()
       .from(users)
-      .where(eq(users.email, email.toLowerCase()));
+      .where(eq(lower(users.email), email.toLowerCase()));
 
     if (!user) {
       throw new NotFoundException('User not found');

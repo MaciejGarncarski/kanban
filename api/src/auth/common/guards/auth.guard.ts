@@ -30,7 +30,7 @@ export class AuthGuard implements CanActivate {
   }
 
   private extractToken(request: Request): string | null {
-    const accessTokenCookie = request.cookies['accessToken'] as
+    const accessTokenCookie = request.cookies?.['accessToken'] as
       | string
       | undefined;
 
@@ -38,7 +38,7 @@ export class AuthGuard implements CanActivate {
       return accessTokenCookie;
     }
 
-    const authHeader = request.headers['authorization'];
+    const authHeader = request.headers?.['authorization'];
     if (!authHeader) return null;
 
     const [type, token] = authHeader.split(' ');

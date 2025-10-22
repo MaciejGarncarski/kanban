@@ -46,7 +46,7 @@ describe('UserRepository', () => {
 
     expect(user).toHaveProperty('id');
     expect(user.name).toBe(fullName);
-    expect(user.email).toBe(email);
+    expect(user.email).toBe(email.toLowerCase());
   });
 
   it('should create and find a user', async () => {
@@ -60,11 +60,11 @@ describe('UserRepository', () => {
       password_hash: passwordHash,
     });
 
-    expect(user.email).toBe(email);
+    expect(user.email).toBe(email.toLowerCase());
 
     const found = await repo.find(user.id);
     expect(found.name).toBe(fullName);
-    expect(found.email).toBe(email);
+    expect(found.email).toBe(email.toLowerCase());
   });
 
   it('should create and find user by email', async () => {
@@ -78,9 +78,9 @@ describe('UserRepository', () => {
       password_hash: passwordHash,
     });
 
-    expect(user.email).toBe(email);
+    expect(user.email).toBe(email.toLowerCase());
     const found = await repo.findByEmail(user.email);
     expect(found.name).toBe(fullName);
-    expect(found.email).toBe(email);
+    expect(found.email).toBe(email.toLowerCase());
   });
 });
