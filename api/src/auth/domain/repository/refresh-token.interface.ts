@@ -1,4 +1,4 @@
-import { RefreshToken } from 'src/auth/domain/refresh-token.entity';
+import { RefreshTokenEntity } from 'src/auth/domain/refresh-token.entity';
 
 export interface RefreshTokenRepositoryInterface {
   create(
@@ -6,17 +6,19 @@ export interface RefreshTokenRepositoryInterface {
     refreshTokenPlain: string,
     expiresAt: Date,
   ): Promise<CreateRefreshTokenReturn>;
-  findActiveByToken(refreshTokenPlain: string): Promise<RefreshToken | null>;
+  findActiveByToken(
+    refreshTokenPlain: string,
+  ): Promise<RefreshTokenEntity | null>;
   revoke(tokenId: string): Promise<void>;
   rotate(
-    refreshToken: RefreshToken,
+    refreshToken: RefreshTokenEntity,
     newRefreshTokenPlain: string,
     expiresAt: Date,
-  ): Promise<RefreshToken>;
+  ): Promise<RefreshTokenEntity>;
 }
 
 type CreateRefreshTokenReturn = {
   tokenPlain: string;
   tokenHash: string;
-  entity: RefreshToken;
+  entity: RefreshTokenEntity;
 };

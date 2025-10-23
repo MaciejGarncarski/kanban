@@ -7,18 +7,28 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
-import { GlobalHttpExceptionFilter } from 'src/shared/filters/exception-filter';
+import { GlobalHttpExceptionFilter } from 'src/shared/filters/exception.filter';
 import { ConfigService } from '@nestjs/config';
 import { getEnvConfig } from 'src/shared/configs/env.config';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {});
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    rawBody: true,
+  });
   const configService = app.get(ConfigService);
   const env = getEnvConfig(configService);
 
   if (!env) {
     throw new Error('Environment configuration is missing');
   }
+
+  app.set('trust proxy', 'loopback');
+  app.use(cookieParser(env.COOKIE_SECRET));
+  app.enableCors({
+    origin: env.CORS_ORIGIN,
+    credentials: true,
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Kanban app')
@@ -42,12 +52,6 @@ async function bootstrap() {
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
-
-  app.use(cookieParser(env.COOKIE_SECRET));
-  app.enableCors({
-    origin: env.CORS_ORIGIN,
-    credentials: true,
-  });
 
   app.useGlobalPipes(
     new ValidationPipe({

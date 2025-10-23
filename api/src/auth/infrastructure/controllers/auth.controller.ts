@@ -37,7 +37,7 @@ import { JWTPayload } from 'src/auth/domain/token.types';
 import accessTokenCookieConfig from 'src/shared/configs/access-token-cookie.config';
 import { routesV1 } from 'src/shared/configs/app.routes';
 import refreshTokenCookieConfig from 'src/shared/configs/refresh-token-cookie.config';
-import { ApiErrorResponse } from 'src/shared/dtos/api-error.response';
+import { ApiErrorResponse } from 'src/shared/dtos/api-error.response.dto';
 import { UserResponseDto } from 'src/user/application/dtos/user.response.dto';
 
 @Controller()

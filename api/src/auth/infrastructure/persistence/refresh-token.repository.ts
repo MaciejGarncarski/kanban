@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import { RefreshTokenRepositoryInterface } from 'src/auth/domain/repository/refresh-token.interface';
-import { RefreshToken } from 'src/auth/domain/refresh-token.entity';
+import { RefreshTokenEntity } from 'src/auth/domain/refresh-token.entity';
 import { type DB } from 'src/db/client';
 import { InjectDb } from 'src/db/db.provider';
 import { refreshTokens } from 'src/db/schema';
@@ -16,7 +16,7 @@ export class RefreshTokenRepository implements RefreshTokenRepositoryInterface {
   async create(userId: string) {
     const newRefreshTokenPlain = randomBytes(32).toString('hex');
     const tokenHash = sha256(newRefreshTokenPlain);
-    const tokenEntity = RefreshToken.createNew(userId);
+    const tokenEntity = RefreshTokenEntity.createNew(userId);
     const tokenPersistence = RefreshTokenMapper.toPersistence(
       tokenEntity,
       tokenHash,
@@ -36,7 +36,7 @@ export class RefreshTokenRepository implements RefreshTokenRepositoryInterface {
 
   async findActiveByToken(
     refreshTokenPlain: string,
-  ): Promise<RefreshToken | null> {
+  ): Promise<RefreshTokenEntity | null> {
     const tokenHash = sha256(refreshTokenPlain);
 
     const [row] = await this.db
@@ -61,7 +61,7 @@ export class RefreshTokenRepository implements RefreshTokenRepositoryInterface {
       .where(eq(refreshTokens.id, tokenId));
   }
 
-  async rotate(refreshToken: RefreshToken): Promise<RefreshToken> {
+  async rotate(refreshToken: RefreshTokenEntity): Promise<RefreshTokenEntity> {
     const created = await this.create(refreshToken.userId);
 
     await this.revoke(refreshToken.id, created.entity.id);

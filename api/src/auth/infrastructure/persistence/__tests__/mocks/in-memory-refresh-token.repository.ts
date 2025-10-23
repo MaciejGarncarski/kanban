@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { sha256 } from 'src/shared/utils/sha256.utils';
 import { RefreshTokenRepositoryInterface } from 'src/auth/domain/repository/refresh-token.interface';
-import { RefreshToken } from 'src/auth/domain/refresh-token.entity';
+import { RefreshTokenEntity } from 'src/auth/domain/refresh-token.entity';
 
 interface StoredToken {
-  entity: RefreshToken;
+  entity: RefreshTokenEntity;
   tokenHash: string;
   replacedBy?: string;
 }
@@ -20,7 +20,7 @@ export class InMemoryRefreshTokenRepository
     const tokenPlain = customToken ?? randomBytes(32).toString('hex');
     const tokenHash = sha256(tokenPlain);
 
-    const tokenEntity = RefreshToken.createNew(userId);
+    const tokenEntity = RefreshTokenEntity.createNew(userId);
     this.tokens.push({ entity: tokenEntity, tokenHash });
 
     return {
@@ -30,7 +30,9 @@ export class InMemoryRefreshTokenRepository
     };
   }
 
-  async findActiveByToken(tokenPlain: string): Promise<RefreshToken | null> {
+  async findActiveByToken(
+    tokenPlain: string,
+  ): Promise<RefreshTokenEntity | null> {
     const tokenHash = sha256(tokenPlain);
 
     const stored = this.tokens.find(
@@ -48,13 +50,13 @@ export class InMemoryRefreshTokenRepository
     }
   }
 
-  async rotate(refreshToken: RefreshToken): Promise<RefreshToken> {
+  async rotate(refreshToken: RefreshTokenEntity): Promise<RefreshTokenEntity> {
     const created = await this.create(refreshToken.userId);
     await this.revoke(refreshToken.id, created.entity.id);
     return created.entity;
   }
 
-  getAll(): RefreshToken[] {
+  getAll(): RefreshTokenEntity[] {
     return this.tokens.map((t) => t.entity);
   }
 

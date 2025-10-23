@@ -31,6 +31,7 @@
     "@nestjs/jwt": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/swagger": "^11.2.1",
+    "@nestjs/throttler": "^6.4.0",
     "@node-rs/argon2": "^2.0.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
@@ -92,7 +93,19 @@
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "**/*.(t|j)s"
+      "**/*.(t|j)s",
+      "!**/node_modules/**",
+      "!**/vendor/**",
+      "!**/*.module.(t|j)s",
+      "!**/*.dto.(t|j)s",
+      "!**/*.command.(t|j)s",
+      "!**/*.query.(t|j)s",
+      "!**/*.decorator.(t|j)s",
+      "!**/*.config.(t|j)s",
+      "!**/*.schema.(t|j)s",
+      "!**/*.routes.(t|j)s",
+      "!db/**/*",
+      "!**/__tests__/**"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
