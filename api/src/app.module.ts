@@ -8,6 +8,7 @@ import refreshTokenConfig from 'src/shared/configs/refresh-token-cookie.config';
 import { CorrelationIdMiddleware } from 'src/shared/middlewares/correlation-id.middleware';
 import { validate } from 'src/shared/configs/env.schema';
 import { registerEnv } from 'src/shared/configs/env.config';
+import accessTokenCookieConfig from 'src/shared/configs/access-token-cookie.config';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { registerEnv } from 'src/shared/configs/env.config';
       isGlobal: true,
       validate: validate,
       envFilePath: ['.env'],
-      load: [refreshTokenConfig, registerEnv],
+      load: [refreshTokenConfig, accessTokenCookieConfig, registerEnv],
     }),
     CqrsModule.forRoot(),
   ],

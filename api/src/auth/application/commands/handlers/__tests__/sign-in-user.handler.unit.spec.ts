@@ -6,7 +6,7 @@ import { SignInUserCommand } from 'src/auth/application/commands/sign-in-user.co
 import { InMemoryRefreshTokenRepository } from 'src/auth/infrastructure/persistence/__tests__/mocks/in-memory-refresh-token.repository';
 import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
 import { UserRepositoryInterface } from 'src/user/domain/repository/user.interface';
-import { User } from 'src/user/domain/user.entity';
+import { UserEntity } from 'src/user/domain/user.entity';
 import { InMemoryUserRepository } from 'src/user/infrastructure/persistence/__tests__/mocks/in-memory-user.repository';
 import { UserMapper } from 'src/user/infrastructure/persistence/mappers/user.mapper';
 import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
@@ -48,7 +48,7 @@ describe('sign-in-user-handler unit', () => {
       password: 'password123',
     };
 
-    const newUser = new User({
+    const newUser = new UserEntity({
       name: 'Test User',
       email: mockData.email,
       passwordHash: mockData.password,
@@ -73,7 +73,7 @@ describe('sign-in-user-handler unit', () => {
       password: 'wrongpassword',
     };
 
-    const newUser = new User({
+    const newUser = new UserEntity({
       name: 'Test User',
       email: mockData.email,
       passwordHash: 'correctpasswordhash',

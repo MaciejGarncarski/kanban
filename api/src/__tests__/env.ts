@@ -7,4 +7,5 @@ export const testEnv = {
     '47cd57138513028bbf5918346ff30439fd8032d8cf5ed762590ea899a5dcd885',
   COOKIE_SECURE: 'false',
   CORS_ORIGIN: 'http://localhost:3000',
+  WEB_DOMAIN: 'localhost',
 } as const;

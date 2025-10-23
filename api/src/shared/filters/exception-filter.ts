@@ -9,7 +9,10 @@ import {
 import { type Response, type Request } from 'express';
 import { CorrelationContext } from 'src/shared/context/correlation-context';
 import { randomUUID } from 'crypto';
-import { ApiErrorResponse } from 'src/shared/dtos/api-error.response';
+import {
+  ApiErrorResponse,
+  ValidationError,
+} from 'src/shared/dtos/api-error.response';
 import { DrizzleQueryError } from 'drizzle-orm';
 
 @Catch()
@@ -28,7 +31,7 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
     let message: string = 'Unknown error';
-    let validationErrors: Record<string, unknown>[] = [];
+    let validationErrors: ValidationError[] = [];
     let subErrors: string[] = [];
     let stack: string | undefined;
 

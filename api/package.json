@@ -18,7 +18,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./jest-e2e.json",
+    "test:e2e": "jest --detectOpenHandles --config ./jest-e2e.json",
+    "test:all": "pnpm test && pnpm test:e2e",
     "db:reset": "pnpm tsx --env-file=.env ./src/db/reset.ts",
     "db:seed": "pnpm tsx --env-file=.env ./src/db/seed.ts"
   },

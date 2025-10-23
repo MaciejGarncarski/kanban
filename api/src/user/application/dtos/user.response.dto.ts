@@ -1,27 +1,38 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsEmail } from 'class-validator';
-
+import { Expose, Type } from 'class-transformer';
+import { IsISO8601, IsNotEmpty, IsString } from 'class-validator';
 export class UserResponseDto {
   @ApiProperty({
-    example: 'joh-doe@gmail.com',
-    description: "User's email address",
+    example: '0199f343-b727-7971-a165-2c495b512976',
+    description: 'User ID',
   })
-  @IsEmail({}, { message: 'Invalid email address' })
-  email: string;
+  @IsString({ message: 'User ID must be a string' })
+  @Expose()
+  id: string;
 
   @ApiProperty({
-    example: 'John Doe',
-    description: "User's full name",
+    example: 'Alice',
+    description: 'User name',
   })
+  @IsString({ message: 'User name must be a string' })
+  @Expose()
   name: string;
 
   @ApiProperty({
-    example: '2023-10-05T14:48:00.000Z',
-    description: 'Timestamp when the user was created',
+    example: 'alice@example.com',
+    description: 'User email address',
   })
-  @IsDateString(
-    {},
-    { message: 'createdAt must be a valid ISO 8601 date string' },
-  )
-  createdAt: string;
+  @IsString({ message: 'User email must be a string' })
+  @Expose()
+  email: string;
+
+  @ApiProperty({
+    example: '2025-10-17T15:42:05.351Z',
+    description: 'User account creation date',
+  })
+  @IsISO8601({ strict: true })
+  @IsNotEmpty()
+  @Type(() => Date)
+  @Expose()
+  createdAt: Date;
 }

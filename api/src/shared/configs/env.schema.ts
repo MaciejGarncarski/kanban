@@ -8,6 +8,7 @@ export const envSchema = z.object({
     .refine((val) => !isNaN(val) && val > 0, {
       message: 'API_PORT must be a positive number',
     }),
+  WEB_DOMAIN: z.string().min(1, { message: 'WEB_DOMAIN is required' }),
   JWT_SECRET: z
     .string()
     .min(32, { message: 'JWT_SECRET must be at least 32 characters' }),

@@ -27,7 +27,7 @@ export class ApiErrorResponse {
     nullable: true,
     required: false,
   })
-  readonly validationErrors?: Record<string, unknown>[];
+  readonly validationErrors?: ValidationError[];
 
   constructor(body: ApiErrorResponse) {
     this.statusCode = body.statusCode;
@@ -38,3 +38,8 @@ export class ApiErrorResponse {
     this.validationErrors = body.validationErrors;
   }
 }
+
+export type ValidationError = {
+  field: string;
+  message: string;
+};

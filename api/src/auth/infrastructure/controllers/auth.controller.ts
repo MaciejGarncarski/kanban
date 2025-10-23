@@ -16,8 +16,10 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
   ApiBadRequestResponse,
   ApiBody,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiResponse,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { type Request, type Response } from 'express';
 import { RefreshAccessTokenReturn } from 'src/auth/application/commands/handlers/refresh-access-token.handler';
@@ -25,15 +27,18 @@ import { SignInUserCommandReturn } from 'src/auth/application/commands/handlers/
 import { LogoutCommand } from 'src/auth/application/commands/logout.command';
 import { RefreshAccessTokenCommand } from 'src/auth/application/commands/refresh-access-token.command';
 import { SignInUserCommand } from 'src/auth/application/commands/sign-in-user.command';
+import { LogoutResponseDto } from 'src/auth/application/dtos/logout.response.dto';
 import { RefreshTokenResponseDto } from 'src/auth/application/dtos/refresh-token-response.dto';
 import { SignInBodyDto } from 'src/auth/application/dtos/sign-in-body.dto';
 import { SignInResponseDto } from 'src/auth/application/dtos/sign-in-response.dto';
-import { GetSessionQuery } from 'src/auth/application/queries/get-session.query';
+import { GetMeQuery } from 'src/auth/application/queries/get-me.query';
 import { Auth } from 'src/auth/common/decorators/auth.decorator';
 import { JWTPayload } from 'src/auth/domain/token.types';
+import accessTokenCookieConfig from 'src/shared/configs/access-token-cookie.config';
 import { routesV1 } from 'src/shared/configs/app.routes';
 import refreshTokenCookieConfig from 'src/shared/configs/refresh-token-cookie.config';
 import { ApiErrorResponse } from 'src/shared/dtos/api-error.response';
+import { UserResponseDto } from 'src/user/application/dtos/user.response.dto';
 
 @Controller()
 export class AuthController {
@@ -42,6 +47,10 @@ export class AuthController {
     private readonly queryBus: QueryBus,
     @Inject(refreshTokenCookieConfig.KEY)
     private readonly cookieConf: ConfigType<typeof refreshTokenCookieConfig>,
+    @Inject(accessTokenCookieConfig.KEY)
+    private readonly accessTokenConf: ConfigType<
+      typeof accessTokenCookieConfig
+    >,
   ) {}
 
   @HttpCode(HttpStatus.OK)
@@ -52,7 +61,6 @@ export class AuthController {
     description: 'Access token and refresh token set in HttpOnly cookie',
   })
   @ApiBadRequestResponse({
-    description: 'Invalid credentials',
     type: ApiErrorResponse,
   })
   async signInUser(
@@ -65,12 +73,21 @@ export class AuthController {
     >(new SignInUserCommand(body.email, body.password));
 
     response.cookie(this.cookieConf.name, refreshToken, {
-      secure: this.cookieConf.secure,
+      sameSite: this.cookieConf.sameSite,
+      domain: this.cookieConf.domain,
+      signed: this.cookieConf.signed,
       httpOnly: this.cookieConf.httpOnly,
+      secure: this.cookieConf.secure,
       maxAge: this.cookieConf.maxAge,
-      domain: 'localhost',
-      sameSite: 'lax',
-      signed: true,
+    });
+
+    response.cookie('accessToken', accessToken, {
+      sameSite: this.accessTokenConf.sameSite,
+      domain: this.accessTokenConf.domain,
+      signed: this.accessTokenConf.signed,
+      httpOnly: this.accessTokenConf.httpOnly,
+      secure: this.accessTokenConf.secure,
+      maxAge: this.accessTokenConf.maxAge,
     });
 
     return { accessToken };
@@ -81,6 +98,9 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'Registered user',
+  })
+  @ApiBadRequestResponse({
+    type: ApiErrorResponse,
   })
   registerUser(@Body() body: SignInBodyDto) {
     return this.commandBus.execute(
@@ -93,22 +113,36 @@ export class AuthController {
   @Get(routesV1.auth.me)
   @ApiResponse({
     status: 200,
+    type: UserResponseDto,
     description: 'Signed in user',
   })
+  @ApiUnauthorizedResponse({
+    type: ApiErrorResponse,
+  })
+  @ApiNotFoundResponse({
+    type: ApiErrorResponse,
+  })
+  @ApiBadRequestResponse({
+    type: ApiErrorResponse,
+  })
   async checkCurrentSession(@Req() req: Request) {
-    const data = await this.queryBus.execute<GetSessionQuery, JWTPayload>(
-      new GetSessionQuery(req.userId),
+    const data = await this.queryBus.execute<GetMeQuery, JWTPayload>(
+      new GetMeQuery(req.userId),
     );
 
     return data;
   }
 
+  @Auth()
   @HttpCode(HttpStatus.OK)
   @Post(routesV1.auth.refresh)
   @ApiResponse({
     status: 200,
     type: RefreshTokenResponseDto,
     description: 'Refresh access token',
+  })
+  @ApiUnauthorizedResponse({
+    type: ApiErrorResponse,
   })
   async refreshAccessToken(
     @Req() req: Request,
@@ -140,6 +174,7 @@ export class AuthController {
   @Delete(routesV1.auth.logout)
   @ApiResponse({
     status: 200,
+    type: LogoutResponseDto,
     description: 'Logged out',
   })
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {

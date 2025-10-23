@@ -13,7 +13,7 @@ import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refr
 import { DB } from 'src/db/client';
 import { DB_PROVIDER } from 'src/db/db.provider';
 import { UserRepositoryInterface } from 'src/user/domain/repository/user.interface';
-import { User } from 'src/user/domain/user.entity';
+import { UserEntity } from 'src/user/domain/user.entity';
 import { UserMapper } from 'src/user/infrastructure/persistence/mappers/user.mapper';
 import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
 
@@ -64,7 +64,7 @@ describe('sign-in-user-handler integration', () => {
       password: 'password123',
     };
 
-    const newUser = await User.createNew(
+    const newUser = await UserEntity.createNew(
       'Test User',
       mockData.email,
       mockData.password,
@@ -89,7 +89,7 @@ describe('sign-in-user-handler integration', () => {
       password: 'wrongpassword',
     };
 
-    const newUser = await User.createNew(
+    const newUser = await UserEntity.createNew(
       'Test User',
       mockData.email,
       'correctpassword',

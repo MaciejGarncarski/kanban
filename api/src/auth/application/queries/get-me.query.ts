@@ -1,3 +1,3 @@
-export class GetSessionQuery {
+export class GetMeQuery {
   constructor(public readonly userId: string) {}
 }

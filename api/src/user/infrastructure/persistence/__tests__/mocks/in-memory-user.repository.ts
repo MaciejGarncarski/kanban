@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { UserRepositoryInterface } from 'src/user/domain/repository/user.interface';
-import { User } from 'src/user/domain/user.entity';
+import { UserEntity } from 'src/user/domain/user.entity';
 import { NewUserRecord } from 'src/user/infrastructure/persistence/mappers/user.mapper';
 
 @Injectable()
 export class InMemoryUserRepository implements UserRepositoryInterface {
-  private users: User[] = [];
+  private users: UserEntity[] = [];
 
   async find(id: string) {
     const user = this.users.find((user) => user.id === id);
@@ -37,7 +37,7 @@ export class InMemoryUserRepository implements UserRepositoryInterface {
   }
 
   async create(data: NewUserRecord) {
-    const newUser = new User({
+    const newUser = new UserEntity({
       id: randomUUID(),
       name: data.name,
       email: data.email,

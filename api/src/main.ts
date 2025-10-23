@@ -1,7 +1,11 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import {
+  BadRequestException,
+  ClassSerializerInterceptor,
+  ValidationPipe,
+} from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 import { GlobalHttpExceptionFilter } from 'src/shared/filters/exception-filter';
 import { ConfigService } from '@nestjs/config';
@@ -64,7 +68,7 @@ async function bootstrap() {
       },
     }),
   );
-
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.useGlobalFilters(new GlobalHttpExceptionFilter());
 
   await app.listen(env.API_PORT ?? 3000);

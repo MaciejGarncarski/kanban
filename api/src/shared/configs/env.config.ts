@@ -4,8 +4,6 @@ import { testEnv } from 'src/__tests__/env';
 import { envSchema } from 'src/shared/configs/env.schema';
 
 export const registerEnv = registerAs('ENV', () => {
-  console.trace();
-
   return envSchema.parse(process.env);
 });
 

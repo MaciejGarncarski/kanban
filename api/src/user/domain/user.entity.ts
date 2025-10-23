@@ -1,4 +1,5 @@
 import { hash, verify } from '@node-rs/argon2';
+import { Exclude } from 'class-transformer';
 import { randomUUID } from 'crypto';
 
 export interface UserProps {
@@ -9,10 +10,11 @@ export interface UserProps {
   createdAt?: Date;
 }
 
-export class User {
+export class UserEntity {
   readonly id: string;
   readonly name: string;
   readonly email: string;
+
   private readonly passwordHash: string;
   readonly createdAt: Date;
 
@@ -28,9 +30,9 @@ export class User {
     name: string,
     email: string,
     plainPassword: string,
-  ): Promise<User> {
+  ): Promise<UserEntity> {
     const passwordHash = await hash(plainPassword);
-    return new User({ name, email, passwordHash });
+    return new UserEntity({ name, email, passwordHash });
   }
 
   async checkPassword(plainPassword: string): Promise<boolean> {
