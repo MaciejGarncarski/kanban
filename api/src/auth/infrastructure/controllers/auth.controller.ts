@@ -34,10 +34,10 @@ import { SignInResponseDto } from 'src/auth/application/dtos/sign-in-response.dt
 import { GetMeQuery } from 'src/auth/application/queries/get-me.query';
 import { Auth } from 'src/auth/common/decorators/auth.decorator';
 import { JWTPayload } from 'src/auth/domain/token.types';
-import accessTokenCookieConfig from 'src/shared/configs/access-token-cookie.config';
-import { routesV1 } from 'src/shared/configs/app.routes';
-import refreshTokenCookieConfig from 'src/shared/configs/refresh-token-cookie.config';
-import { ApiErrorResponse } from 'src/shared/dtos/api-error.response.dto';
+import { ApiErrorResponse } from 'src/core/application/dtos/api-error.response.dto';
+import accessTokenCookieConfig from 'src/infrastructure/configs/access-token-cookie.config';
+import { routesV1 } from 'src/infrastructure/configs/app.routes.config';
+import refreshTokenCookieConfig from 'src/infrastructure/configs/refresh-token-cookie.config';
 import { UserResponseDto } from 'src/user/application/dtos/user.response.dto';
 
 @Controller()

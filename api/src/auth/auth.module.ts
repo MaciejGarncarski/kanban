@@ -8,8 +8,8 @@ import { LogoutHandler } from 'src/auth/application/commands/handlers/logout.han
 import { AuthController } from 'src/auth/infrastructure/controllers/auth.controller';
 import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { getEnvConfig } from 'src/shared/configs/env.config';
 import { GetMeHandler } from 'src/auth/application/queries/handlers/get-me.handler';
+import { getEnvConfig } from 'src/infrastructure/configs/env.config';
 
 @Module({
   imports: [

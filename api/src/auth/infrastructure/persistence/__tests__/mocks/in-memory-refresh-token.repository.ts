@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { sha256 } from 'src/shared/utils/sha256.utils';
-import { RefreshTokenRepositoryInterface } from 'src/auth/domain/repository/refresh-token.interface';
+import { RefreshTokenRepositoryInterface } from 'src/auth/domain/ports/refresh-token.interface';
 import { RefreshTokenEntity } from 'src/auth/domain/refresh-token.entity';
 
 interface StoredToken {

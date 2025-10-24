@@ -10,9 +10,9 @@ import { SignInUserHandler } from 'src/auth/application/commands/handlers/sign-i
 import { SignInUserCommand } from 'src/auth/application/commands/sign-in-user.command';
 import { JWTPayload } from 'src/auth/domain/token.types';
 import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
-import { DB } from 'src/db/client';
-import { DB_PROVIDER } from 'src/db/db.provider';
-import { UserRepositoryInterface } from 'src/user/domain/repository/user.interface';
+import { type DB } from 'src/infrastructure/persistence/db/client';
+import { DB_PROVIDER } from 'src/infrastructure/persistence/db/db.provider';
+import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
 import { UserEntity } from 'src/user/domain/user.entity';
 import { UserMapper } from 'src/user/infrastructure/persistence/mappers/user.mapper';
 import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';

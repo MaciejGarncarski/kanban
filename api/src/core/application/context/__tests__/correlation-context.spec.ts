@@ -1,4 +1,4 @@
-import { CorrelationContext } from 'src/shared/context/correlation.context';
+import { CorrelationContext } from 'src/core/application/context/correlation.context';
 
 describe('CorrelationContext', () => {
   it('should return undefined if no context is set', () => {

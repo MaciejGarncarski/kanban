@@ -1,8 +1,8 @@
 import { ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
-import { GlobalHttpExceptionFilter } from 'src/shared/filters/exception.filter';
 import { Response, Request } from 'express';
-import { ApiErrorResponse } from 'src/shared/dtos/api-error.response.dto';
+import { ApiErrorResponse } from 'src/core/application/dtos/api-error.response.dto';
 import { DrizzleQueryError } from 'drizzle-orm';
+import { GlobalHttpExceptionFilter } from 'src/infrastructure/filters/exception.filter';
 
 describe('GlobalHttpExceptionFilter', () => {
   let filter: GlobalHttpExceptionFilter;

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { CorrelationIdMiddleware } from 'src/shared/middlewares/correlation-id.middleware';
+import { CorrelationIdMiddleware } from 'src/infrastructure/middlewares/correlation-id.middleware';
 
 describe('CorrelationIdMiddleware', () => {
   let middleware: CorrelationIdMiddleware;

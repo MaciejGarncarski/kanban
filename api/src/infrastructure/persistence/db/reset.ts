@@ -1,4 +1,4 @@
-import { resetDB } from 'src/db/reset-db';
+import { resetDB } from 'src/infrastructure/persistence/db/reset-db';
 
 resetDB()
   .catch((err) => {

@@ -1,7 +1,7 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Client, Pool } from 'pg';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
-import { seed } from 'src/db/seed';
+import { seed } from 'src/infrastructure/persistence/db/seed';
 
 function log(message: string) {
   if (process.env.NODE_ENV !== 'test') {

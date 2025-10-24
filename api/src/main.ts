@@ -7,10 +7,10 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
-import { GlobalHttpExceptionFilter } from 'src/shared/filters/exception.filter';
 import { ConfigService } from '@nestjs/config';
-import { getEnvConfig } from 'src/shared/configs/env.config';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { getEnvConfig } from 'src/infrastructure/configs/env.config';
+import { GlobalHttpExceptionFilter } from 'src/infrastructure/filters/exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {

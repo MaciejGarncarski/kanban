@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import { UserRepositoryInterface } from 'src/user/domain/repository/user.interface';
+import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
 import { UserEntity } from 'src/user/domain/user.entity';
 import { NewUserRecord } from 'src/user/infrastructure/persistence/mappers/user.mapper';
 

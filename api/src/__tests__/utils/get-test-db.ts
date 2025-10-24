@@ -4,7 +4,7 @@ import {
 } from '@testcontainers/postgresql';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import { resetDB } from 'src/db/reset-db';
+import { resetDB } from 'src/infrastructure/persistence/db/reset-db';
 
 export async function getTestDb() {
   const pgContainer = await new PostgreSqlContainer('postgres:18-alpine')

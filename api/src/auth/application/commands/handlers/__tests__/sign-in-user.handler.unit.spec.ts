@@ -5,7 +5,7 @@ import { SignInUserHandler } from 'src/auth/application/commands/handlers/sign-i
 import { SignInUserCommand } from 'src/auth/application/commands/sign-in-user.command';
 import { InMemoryRefreshTokenRepository } from 'src/auth/infrastructure/persistence/__tests__/mocks/in-memory-refresh-token.repository';
 import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
-import { UserRepositoryInterface } from 'src/user/domain/repository/user.interface';
+import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
 import { UserEntity } from 'src/user/domain/user.entity';
 import { InMemoryUserRepository } from 'src/user/infrastructure/persistence/__tests__/mocks/in-memory-user.repository';
 import { UserMapper } from 'src/user/infrastructure/persistence/mappers/user.mapper';

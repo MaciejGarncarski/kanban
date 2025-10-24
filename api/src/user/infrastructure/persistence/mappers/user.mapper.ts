@@ -1,5 +1,5 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
-import { users } from 'src/db/schema';
+import { users } from 'src/infrastructure/persistence/db/schema';
 import { UserEntity } from 'src/user/domain/user.entity';
 
 export type UserRecord = InferSelectModel<typeof users>;

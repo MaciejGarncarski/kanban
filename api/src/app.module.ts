@@ -1,16 +1,16 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { DbModule } from 'src/db/db.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from 'src/user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { CqrsModule } from '@nestjs/cqrs';
-import refreshTokenConfig from 'src/shared/configs/refresh-token-cookie.config';
-import { CorrelationIdMiddleware } from 'src/shared/middlewares/correlation-id.middleware';
-import { validate } from 'src/shared/configs/env.schema';
-import { registerEnv } from 'src/shared/configs/env.config';
-import accessTokenCookieConfig from 'src/shared/configs/access-token-cookie.config';
 import { seconds, ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { DbModule } from 'src/infrastructure/persistence/db/db.module';
+import { validate } from 'src/infrastructure/configs/env.schema';
+import { refreshTokenConfigTest } from 'src/infrastructure/configs/refresh-token-cookie.config';
+import accessTokenCookieConfig from 'src/infrastructure/configs/access-token-cookie.config';
+import { registerEnv } from 'src/infrastructure/configs/env.config';
+import { CorrelationIdMiddleware } from 'src/infrastructure/middlewares/correlation-id.middleware';
 
 @Module({
   imports: [
@@ -33,7 +33,7 @@ import { APP_GUARD } from '@nestjs/core';
       isGlobal: true,
       validate: validate,
       envFilePath: ['.env'],
-      load: [refreshTokenConfig, accessTokenCookieConfig, registerEnv],
+      load: [refreshTokenConfigTest, accessTokenCookieConfig, registerEnv],
     }),
     CqrsModule.forRoot(),
   ],

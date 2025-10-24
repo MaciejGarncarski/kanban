@@ -7,12 +7,12 @@ import {
   Logger,
 } from '@nestjs/common';
 import { type Response, type Request } from 'express';
-import { CorrelationContext } from 'src/shared/context/correlation.context';
+import { CorrelationContext } from 'src/core/application/context/correlation.context';
 import { randomUUID } from 'crypto';
 import {
   ApiErrorResponse,
   ValidationError,
-} from 'src/shared/dtos/api-error.response.dto';
+} from 'src/core/application/dtos/api-error.response.dto';
 import { DrizzleQueryError } from 'drizzle-orm';
 
 @Catch()

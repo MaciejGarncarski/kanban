@@ -1,11 +1,11 @@
 import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { DB } from 'src/db/client';
 import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
 import { Pool } from 'pg';
 import { faker } from '@faker-js/faker';
-import { UserRepositoryInterface } from 'src/user/domain/repository/user.interface';
+import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
+import { DB } from 'src/infrastructure/persistence/db/client';
 
 jest.setTimeout(60_000);
 

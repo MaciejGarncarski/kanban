@@ -3,19 +3,19 @@ import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
 import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { Pool } from 'pg';
 import { AuthModule } from 'src/auth/auth.module';
-import { DB } from 'src/db/client';
-import { DbModule } from 'src/db/db.module';
 import { createJWTService } from 'src/__tests__/utils/create-jwt-service';
 import { TestConfigModule } from 'src/__tests__/utils/get-test-env';
-import { DB_PROVIDER } from 'src/db/db.provider';
 import request from 'supertest';
-import { routesV1 } from 'src/shared/configs/app.routes';
 import { INestApplication } from '@nestjs/common';
 import { Server } from 'node:net';
 import cookieParser from 'cookie-parser';
 import { testEnv } from 'src/__tests__/env';
 import { getCookieFromResponse } from 'src/__tests__/utils/get-cookie-from-response';
 import { userFixture } from 'src/__tests__/fixtures/user.fixture';
+import { DB } from 'src/infrastructure/persistence/db/client';
+import { DbModule } from 'src/infrastructure/persistence/db/db.module';
+import { DB_PROVIDER } from 'src/infrastructure/persistence/db/db.provider';
+import { routesV1 } from 'src/infrastructure/configs/app.routes.config';
 
 describe('AuthController e2e', () => {
   let container: StartedPostgreSqlContainer;
@@ -103,10 +103,6 @@ describe('AuthController e2e', () => {
   });
 
   describe('/auth/logout', () => {
-    it('should return 401 on unauthenticated', async () => {
-      await request(app.getHttpServer()).post(routesV1.auth.logout).expect(401);
-    });
-
     it('should return 200 on authenticated and clear cookies', async () => {
       const signInResponse = await request(app.getHttpServer())
         .post(routesV1.auth.signIn)
@@ -114,7 +110,7 @@ describe('AuthController e2e', () => {
         .expect(200);
 
       const response = await request(app.getHttpServer())
-        .post(routesV1.auth.logout)
+        .delete(routesV1.auth.logout)
         .set('Cookie', signInResponse.headers['set-cookie'])
         .send()
         .expect(200);

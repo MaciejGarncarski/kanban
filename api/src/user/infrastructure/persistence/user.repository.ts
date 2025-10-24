@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import { type DB } from 'src/db/client';
-import { InjectDb } from 'src/db/db.provider';
-import { lower, users } from 'src/db/schema';
-import { UserRepositoryInterface } from 'src/user/domain/repository/user.interface';
+import { type DB } from 'src/infrastructure/persistence/db/client';
+import { InjectDb } from 'src/infrastructure/persistence/db/db.provider';
+import { lower, users } from 'src/infrastructure/persistence/db/schema';
+import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
 import { UserMapper } from 'src/user/infrastructure/persistence/mappers/user.mapper';
 
 @Injectable()
