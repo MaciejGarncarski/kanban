@@ -8,3 +8,12 @@ export default async function SignInPage() {
     </div>
   )
 }
+
+// async function isAuthenticated() {
+//   try {
+//     const data = await fetchSSR.GET('/v1/auth/me')
+//     return !!data
+//   } catch {
+//     return false
+//   }
+// }

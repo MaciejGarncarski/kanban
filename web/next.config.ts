@@ -2,12 +2,9 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   output: 'standalone',
-  reactCompiler: true,
   experimental: {
-    turbopackFileSystemCacheForDev: true,
-    routerBFCache: true,
-    cssChunking: true,
     cacheComponents: true,
+    turbopackFileSystemCacheForDev: true,
     optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
   },
 }

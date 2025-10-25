@@ -15,6 +15,7 @@ export const setAuthCookies = async ({
   if (refreshToken) {
     cookieStore.set('refreshToken', refreshToken, cookieConfigRefreshToken)
   }
+
   if (accessToken) {
     cookieStore.set('accessToken', accessToken, cookieConfigAccessToken)
   }

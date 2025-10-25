@@ -41,9 +41,19 @@ fetchClient.use(jwtMiddleware)
 export const fetchSSR = createFetchClient<paths>({
   baseUrl: process.env.SSR_API_URL,
   credentials: 'include',
+  redirect: 'manual',
   headers: {
     'Content-Type': 'application/json',
   },
 })
 
 fetchSSR.use(jwtMiddleware)
+
+export const fetchProxy = createFetchClient<paths>({
+  baseUrl: process.env.SSR_API_URL,
+  credentials: 'include',
+  redirect: 'manual',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})

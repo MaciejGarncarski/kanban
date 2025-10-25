@@ -4,3 +4,8 @@ packages:
 syncInjectedDepsAfterScripts:
   - build
 injectWorkspacePackages: true
+
+catalog:
+  typescript: ^5.9.3
+  prettier: "^3.6.2"
+  eslint: "^9.38.0"

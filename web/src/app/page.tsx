@@ -17,11 +17,11 @@ export default async function Home() {
 
 const signOut = async () => {
   'use server'
-  await fetchSSR.DELETE('/auth/logout')
+  await fetchSSR.DELETE('/v1/auth/logout')
 
   const cookieStore = await cookies()
   cookieStore.delete('refreshToken')
   cookieStore.delete('accessToken')
 
-  throw redirect('/auth/sign-in')
+  redirect('/auth/sign-in')
 }

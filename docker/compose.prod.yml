@@ -21,6 +21,7 @@ services:
       COOKIE_SECRET: ${COOKIE_SECRET}
       COOKIE_SECURE: ${COOKIE_SECURE}
       CORS_ORIGIN: ${CORS_ORIGIN}
+      WEB_DOMAIN: ${WEB_DOMAIN}
     build:
       context: ..
       dockerfile: docker/Dockerfile.api

@@ -1,6 +1,6 @@
 'use server'
 
-import { getApiUrl } from '@/utils/get-api-url'
+import { fetchProxy } from '@/api-client/api-client'
 import { getCookieValue } from '@/utils/get-cookie-value'
 import { setAuthCookies } from '@/utils/set-auth-cookie'
 import { cookies } from 'next/headers'
@@ -8,22 +8,18 @@ import { cookies } from 'next/headers'
 export async function rotateToken() {
   const cookieStore = await cookies()
   const refreshToken = cookieStore.get('refreshToken')?.value
-  const BACKEND_URL = getApiUrl()
 
-  const refreshRes = await fetch(`${BACKEND_URL}/auth/refresh-token`, {
-    method: 'POST',
-    credentials: 'include',
+  const refreshResponse = await fetchProxy.POST('/v1/auth/refresh-token', {
     headers: {
-      'Content-Type': 'application/json',
       Cookie: `refreshToken=${refreshToken}`,
     },
   })
 
-  if (refreshRes.ok) {
-    const { accessToken: newAccessToken } = await refreshRes.json()
+  if (refreshResponse.data) {
+    const { accessToken: newAccessToken } = refreshResponse.data
 
     const refreshTokenCookie = getCookieValue(
-      refreshRes.headers.get('set-cookie') || '',
+      refreshResponse.response.headers.get('set-cookie') || '',
       'refreshToken',
     )
     const newRefreshToken = refreshTokenCookie || ''
