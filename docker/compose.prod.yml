@@ -5,6 +5,9 @@ services:
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
       SSR_API_URL: ${SSR_API_URL}
+    args:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+      NODE_ENV: production
     build:
       context: ..
       dockerfile: docker/Dockerfile.web
