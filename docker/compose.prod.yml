@@ -9,7 +9,7 @@ services:
       context: ..
       dockerfile: docker/Dockerfile.web
     ports:
-      - "3000:3000"
+      - "${WEB_PORT}:3000"
     networks:
       - kanban-network
 
@@ -40,7 +40,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: kanban
     volumes:
-      - kanban-db-data:/var/lib/postgresql/data
+      - kanban-db-data:/var/lib/postgresql/data-kanban
     networks:
       - kanban-network
 
