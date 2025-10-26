@@ -41,7 +41,9 @@ export async function proxy(request: NextRequest) {
       return NextResponse.next()
     }
 
-    return NextResponse.redirect(new URL('/auth/sign-in', request.url))
+    return NextResponse.redirect(new URL('/auth/sign-in', request.url), {
+      status: 302,
+    })
   }
 
   const isAboutToExpire = accessToken
@@ -64,6 +66,9 @@ export async function proxy(request: NextRequest) {
       if (status < 200 || status >= 300 || !refreshResponse.data) {
         const redirectRes = NextResponse.redirect(
           new URL('/auth/sign-in', request.url),
+          {
+            status: 302,
+          },
         )
         redirectRes.cookies.delete('accessToken')
         redirectRes.cookies.delete('refreshToken')
@@ -79,6 +84,9 @@ export async function proxy(request: NextRequest) {
       if (!refreshTokenCookie) {
         const redirectRes = NextResponse.redirect(
           new URL('/auth/sign-in', request.url),
+          {
+            status: 302,
+          },
         )
 
         redirectRes.cookies.delete('accessToken')
@@ -101,6 +109,9 @@ export async function proxy(request: NextRequest) {
     } catch {
       const redirectRes = NextResponse.redirect(
         new URL('/auth/sign-in', request.url),
+        {
+          status: 302,
+        },
       )
 
       redirectRes.cookies.delete('accessToken')
