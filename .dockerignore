@@ -1,8 +1,21 @@
-Dockerfile
-.dockerignore
+# Node modules
 node_modules
-npm-debug.log
-README.md
+
+# Next.js build output
 .next
-.git
+
+# Dist / build folders
 dist
+
+# Logs
+npm-debug.log
+pnpm-debug.log
+
+# Git
+.git
+
+# Local configs / editors
+.vscode
+.DS_Store
+
+README.md

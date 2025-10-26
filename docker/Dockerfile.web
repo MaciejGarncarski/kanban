@@ -3,46 +3,46 @@
 ARG NODE_VERSION=24.10.0
 ARG PNPM_VERSION=10.18.2
 
+# -----------------------------
+# Base image with Node + pnpm
+# -----------------------------
 FROM node:${NODE_VERSION}-alpine AS base
 RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
-
-# 1. Install dependencies only when needed
-FROM base AS deps
-RUN apk add --no-cache libc6-compat
 WORKDIR /app
-COPY package.json ./
-COPY pnpm-lock.yaml ./
-COPY pnpm-workspace.yaml ./
-COPY web/package.json ./web/package.json
-RUN pnpm --filter=web install --frozen-lockfile
 
-# 2. Rebuild the source code only when needed
+# -----------------------------
+# Install dependencies & build
+# -----------------------------
 FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+# Install OS deps
+RUN apk add --no-cache libc6-compat
+
+# Copy all files (including workspace packages)
 COPY . .
+
+# Install dependencies and build the web package
+RUN pnpm install --frozen-lockfile
 RUN pnpm --filter=web build
 
-# 3. Production image, copy all the files and run next
-FROM base AS runner
+# -----------------------------
+# Production image
+# -----------------------------
+FROM node:${NODE_VERSION}-alpine AS runner
 WORKDIR /app
 
+# Set production env
 ENV NODE_ENV=production
+ENV PORT=3000
 
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
 
+# Copy only what we need from builder
 COPY --from=builder /app/web/public ./web/public
-
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/web/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/web/.next/standalone ./ 
 COPY --from=builder --chown=nextjs:nodejs /app/web/.next/static ./web/.next/static
 
 USER nextjs
 
 EXPOSE 3000
-
-ENV PORT=3000
-
-CMD HOSTNAME="0.0.0.0" node web/server.js
+CMD ["node", "web/server.js"]
