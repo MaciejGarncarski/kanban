@@ -50,10 +50,14 @@ export class InMemoryRefreshTokenRepository
     }
   }
 
-  async rotate(refreshToken: RefreshTokenEntity): Promise<RefreshTokenEntity> {
+  async rotate(refreshToken: RefreshTokenEntity) {
     const created = await this.create(refreshToken.userId);
     await this.revoke(refreshToken.id, created.entity.id);
-    return created.entity;
+    return {
+      tokenPlain: created.tokenPlain,
+      tokenHash: created.tokenHash,
+      entity: created.entity,
+    };
   }
 
   getAll(): RefreshTokenEntity[] {

@@ -63,8 +63,8 @@ describe('UserRepository', () => {
     expect(user.email).toBe(email.toLowerCase());
 
     const found = await repo.find(user.id);
-    expect(found.name).toBe(fullName);
-    expect(found.email).toBe(email.toLowerCase());
+    expect(found?.name).toBe(fullName);
+    expect(found?.email).toBe(email.toLowerCase());
   });
 
   it('should create and find user by email', async () => {
@@ -80,7 +80,7 @@ describe('UserRepository', () => {
 
     expect(user.email).toBe(email.toLowerCase());
     const found = await repo.findByEmail(user.email);
-    expect(found.name).toBe(fullName);
-    expect(found.email).toBe(email.toLowerCase());
+    expect(found?.name).toBe(fullName);
+    expect(found?.email).toBe(email.toLowerCase());
   });
 });
