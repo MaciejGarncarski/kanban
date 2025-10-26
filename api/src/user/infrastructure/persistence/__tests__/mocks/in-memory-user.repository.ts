@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
 import { UserEntity } from 'src/user/domain/user.entity';
@@ -22,7 +22,7 @@ export class InMemoryUserRepository implements UserRepositoryInterface {
     const user = this.users.find((user) => user.email === email);
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      return null;
     }
 
     return user;

@@ -13,8 +13,10 @@ export default function AuthLayout({
   children: React.ReactNode
 }) {
   return (
-    <Container strategy="block" size={500} my={40}>
-      {children}
-    </Container>
+    <>
+      <Container strategy="block" size={500} my={40}>
+        {children}
+      </Container>
+    </>
   )
 }

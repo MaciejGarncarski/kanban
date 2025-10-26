@@ -10,6 +10,14 @@ import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refr
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GetMeHandler } from 'src/auth/application/queries/handlers/get-me.handler';
 import { getEnvConfig } from 'src/infrastructure/configs/env.config';
+import { RegisterUserHandler } from 'src/auth/application/commands/handlers/register.handler';
+
+export const CommandHandlers = [
+  RegisterUserHandler,
+  SignInUserHandler,
+  RefreshAccessTokenHandler,
+  LogoutHandler,
+];
 
 @Module({
   imports: [
@@ -24,7 +32,7 @@ import { getEnvConfig } from 'src/infrastructure/configs/env.config';
 
         return {
           secret: env.JWT_SECRET,
-          signOptions: { expiresIn: '10m' },
+          signOptions: { expiresIn: '5m' },
         };
       },
       inject: [ConfigService],
@@ -33,10 +41,8 @@ import { getEnvConfig } from 'src/infrastructure/configs/env.config';
   ],
   controllers: [AuthController],
   providers: [
-    SignInUserHandler,
+    ...CommandHandlers,
     GetMeHandler,
-    RefreshAccessTokenHandler,
-    LogoutHandler,
     UserRepository,
     RefreshTokenRepository,
   ],

@@ -29,6 +29,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
+        /** Login a user and get access and refresh tokens */
         post: operations["AuthController_signInUser"];
         delete?: never;
         options?: never;
@@ -45,6 +46,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
+        /** Register a new user */
         post: operations["AuthController_registerUser"];
         delete?: never;
         options?: never;
@@ -59,6 +61,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** Gets the current logged-in user */
         get: operations["AuthController_checkCurrentSession"];
         put?: never;
         post?: never;
@@ -77,6 +80,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
+        /** Refresh access token */
         post: operations["AuthController_refreshAccessToken"];
         delete?: never;
         options?: never;
@@ -94,6 +98,7 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
+        /** Logout user */
         delete: operations["AuthController_logout"];
         options?: never;
         head?: never;
@@ -149,6 +154,28 @@ export interface components {
              *     ]
              */
             validationErrors?: string[] | null;
+        };
+        RegisterBodyDto: {
+            /**
+             * @description User email
+             * @example alice@example.com
+             */
+            email: string;
+            /**
+             * @description User name
+             * @example John Doe
+             */
+            name: string;
+            /**
+             * @description User password
+             * @example Abcd123
+             */
+            password: string;
+            /**
+             * @description Password confirmation
+             * @example Abcd123
+             */
+            confirmPassword: string;
         };
         UserResponseDto: {
             /**
@@ -254,7 +281,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["SignInBodyDto"];
+                "application/json": components["schemas"]["RegisterBodyDto"];
             };
         };
         responses: {
@@ -263,7 +290,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["UserResponseDto"];
+                };
             };
             400: {
                 headers: {
@@ -325,10 +354,7 @@ export interface operations {
     AuthController_refreshAccessToken: {
         parameters: {
             query?: never;
-            header?: {
-                /** @description Bearer access token */
-                Authorization?: string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };

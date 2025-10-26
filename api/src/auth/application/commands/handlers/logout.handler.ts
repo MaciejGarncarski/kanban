@@ -1,5 +1,4 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UnauthorizedException } from '@nestjs/common';
 import { LogoutCommand } from 'src/auth/application/commands/logout.command';
 import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
 
@@ -13,7 +12,7 @@ export class LogoutHandler implements ICommandHandler<LogoutCommand> {
     );
 
     if (!tokenRecord) {
-      throw new UnauthorizedException('Invalid refresh token');
+      return;
     }
 
     await this.refreshTokenRepo.revoke(tokenRecord.id);

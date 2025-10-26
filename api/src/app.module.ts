@@ -21,7 +21,7 @@ import { CorrelationIdMiddleware } from 'src/infrastructure/middlewares/correlat
       {
         name: 'short',
         ttl: seconds(60),
-        limit: 10,
+        limit: 50,
       },
       {
         name: 'long',

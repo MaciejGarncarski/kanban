@@ -1,10 +1,10 @@
 import { checkIsAuthed } from '@/features/auth/api/check-is-authed'
-import { SignInForm } from '@/features/auth/sign-in/components/sign-in-form'
+import { RegisterForm } from '@/features/auth/register/components/register-form'
 import { ThemeSwitch } from '@/features/layout/components/theme-switch'
 import { Flex, Text, Title } from '@mantine/core'
 import { redirect } from 'next/navigation'
 
-export default async function SignInPage() {
+export default async function RegisterPage() {
   const isAuthed = await checkIsAuthed()
 
   if (isAuthed) {
@@ -20,7 +20,7 @@ export default async function SignInPage() {
       w="100%"
       h="100%">
       <Flex direction="column" align="center" gap="xl" w="100%">
-        <SignInForm />
+        <RegisterForm />
         <Flex direction="column" mt="md">
           <Title order={4}>Demo User:</Title>
           <Text>Email: alice@example.com</Text>

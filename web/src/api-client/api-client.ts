@@ -1,14 +1,14 @@
 import { paths } from '@/api-client/api'
 import { rotateToken } from '@/api/rotate-token'
 import createFetchClient, { Middleware } from 'openapi-fetch'
+import createQuery from 'openapi-react-query'
 
 export const fetchClient = createFetchClient<paths>({
   baseUrl: process.env.NEXT_PUBLIC_API_URL,
   credentials: 'include',
-  headers: {
-    'Content-Type': 'application/json',
-  },
 })
+
+export const appQuery = createQuery(fetchClient)
 
 const jwtMiddleware: Middleware = {
   onRequest: async ({ request }) => {
@@ -38,22 +38,17 @@ const jwtMiddleware: Middleware = {
 
 fetchClient.use(jwtMiddleware)
 
-export const fetchSSR = createFetchClient<paths>({
+export const fetchServer = createFetchClient<paths>({
   baseUrl: process.env.SSR_API_URL,
   credentials: 'include',
-  redirect: 'manual',
-  headers: {
-    'Content-Type': 'application/json',
-  },
 })
 
-fetchSSR.use(jwtMiddleware)
+fetchServer.use(jwtMiddleware)
 
-export const fetchProxy = createFetchClient<paths>({
+export const fetchServerNoMiddleware = createFetchClient<paths>({
   baseUrl: process.env.SSR_API_URL,
   credentials: 'include',
-  redirect: 'manual',
   headers: {
-    'Content-Type': 'application/json',
+    accept: 'application/json',
   },
 })

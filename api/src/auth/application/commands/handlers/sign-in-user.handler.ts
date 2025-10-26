@@ -21,6 +21,11 @@ export class SignInUserHandler implements ICommandHandler<SignInUserCommand> {
 
   async execute(command: SignInUserCommand): Promise<SignInUserCommandReturn> {
     const user = await this.userRepo.findByEmail(command.email);
+
+    if (!user) {
+      throw new BadRequestException('Invalid credentials');
+    }
+
     const isVerified = await user.checkPassword(command.password);
 
     if (!isVerified) {

@@ -1,4 +1,4 @@
-import { fetchProxy } from '@/api-client/api-client'
+import { fetchServerNoMiddleware } from '@/api-client/api-client'
 import {
   cookieConfigAccessToken,
   cookieConfigRefreshToken,
@@ -15,14 +15,12 @@ const skipPaths = [
   '/public',
   '/api',
   '/static',
+  '/auth/sign-in',
+  '/auth/register',
 ]
 
-const skipAuthPaths = ['/auth/sign-in', '/auth/register']
-
-export async function proxy(req: NextRequest) {
-  const accessToken = req.cookies.get('accessToken')?.value
-  const refreshToken = req.cookies.get('refreshToken')?.value
-  const url = req.nextUrl
+export async function proxy(request: NextRequest) {
+  const url = request.nextUrl
 
   if (url.pathname.startsWith('/.')) {
     return NextResponse.next()
@@ -32,73 +30,84 @@ export async function proxy(req: NextRequest) {
     return NextResponse.next()
   }
 
-  const isAuthRoute = skipAuthPaths.some((path) =>
-    url.pathname.startsWith(path),
-  )
+  const accessToken = request.cookies.get('accessToken')?.value
+  const refreshToken = request.cookies.get('refreshToken')?.value
 
-  if (isAuthRoute && !refreshToken) {
-    return NextResponse.next()
-  }
+  if (!refreshToken) {
+    const isServerAction =
+      request.headers.has('next-action') || request.headers.has('x-action')
 
-  if (isAuthRoute && !accessToken) {
-    return NextResponse.next()
-  }
-
-  if (isAuthRoute) {
-    const meResponse = await fetchProxy.GET('/v1/auth/me', {
-      headers: {
-        Cookie: `accessToken=${accessToken};`,
-      },
-    })
-
-    if (meResponse.error) {
+    if (isServerAction) {
       return NextResponse.next()
     }
 
-    return NextResponse.redirect(new URL('/', url))
-  }
-
-  if (!refreshToken) {
-    return NextResponse.redirect(new URL('/auth/sign-in', url))
+    return NextResponse.redirect(new URL('/auth/sign-in', request.url))
   }
 
   const isAboutToExpire = accessToken
     ? checkJWTExpiration({ token: accessToken })
     : false
 
-  let shouldRedirect = false
-
   if (!accessToken || isAboutToExpire) {
     try {
-      const refreshResponse = await fetchProxy.POST('/v1/auth/refresh-token', {
-        headers: {
-          Cookie: `refreshToken=${refreshToken}`,
+      const refreshResponse = await fetchServerNoMiddleware.POST(
+        '/v1/auth/refresh-token',
+        {
+          headers: {
+            Cookie: `refreshToken=${encodeURIComponent(refreshToken)}`,
+          },
         },
-      })
+      )
 
-      if (refreshResponse.error) {
-        return NextResponse.redirect(new URL('/auth/sign-in', url))
+      const status = refreshResponse.response?.status ?? 0
+
+      if (status < 200 || status >= 300 || !refreshResponse.data) {
+        const redirectRes = NextResponse.redirect(
+          new URL('/auth/sign-in', request.url),
+        )
+        redirectRes.cookies.delete('accessToken')
+        redirectRes.cookies.delete('refreshToken')
+
+        return redirectRes
       }
 
       const refreshTokenCookie = getCookieValue(
         refreshResponse.response.headers.get('set-cookie') || '',
         'refreshToken',
       )
-      const newRefreshToken = refreshTokenCookie || ''
+
+      if (!refreshTokenCookie) {
+        const redirectRes = NextResponse.redirect(
+          new URL('/auth/sign-in', request.url),
+        )
+
+        redirectRes.cookies.delete('accessToken')
+        redirectRes.cookies.delete('refreshToken')
+
+        return redirectRes
+      }
 
       const newAccessToken = refreshResponse.data.accessToken
       const res = NextResponse.next()
-      res.cookies.set('refreshToken', newRefreshToken, cookieConfigRefreshToken)
+
+      res.cookies.set(
+        'refreshToken',
+        refreshTokenCookie,
+        cookieConfigRefreshToken,
+      )
       res.cookies.set('accessToken', newAccessToken, cookieConfigAccessToken)
 
       return res
     } catch {
-      shouldRedirect = true
-    }
-  }
+      const redirectRes = NextResponse.redirect(
+        new URL('/auth/sign-in', request.url),
+      )
 
-  if (shouldRedirect) {
-    return NextResponse.redirect(new URL('/auth/sign-in', url))
+      redirectRes.cookies.delete('accessToken')
+      redirectRes.cookies.delete('refreshToken')
+
+      return redirectRes
+    }
   }
 
   return NextResponse.next()

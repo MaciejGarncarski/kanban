@@ -1,6 +1,8 @@
+const THRESHOLD = 90
+
 export function checkJWTExpiration({
   token,
-  thresholdSeconds = 300,
+  thresholdSeconds = THRESHOLD,
 }: {
   token: string
   thresholdSeconds?: number

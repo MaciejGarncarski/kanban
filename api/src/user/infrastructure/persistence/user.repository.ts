@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { type DB } from 'src/infrastructure/persistence/db/client';
 import { InjectDb } from 'src/infrastructure/persistence/db/db.provider';
@@ -23,7 +23,7 @@ export class UserRepository implements UserRepositoryInterface {
       .where(eq(users.id, id));
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      return null;
     }
 
     return UserMapper.toDomain(user);
@@ -36,7 +36,7 @@ export class UserRepository implements UserRepositoryInterface {
       .where(eq(lower(users.email), email.toLowerCase()));
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      return null;
     }
 
     return UserMapper.toDomain(user);

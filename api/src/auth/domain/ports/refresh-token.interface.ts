@@ -14,7 +14,7 @@ export interface RefreshTokenRepositoryInterface {
     refreshToken: RefreshTokenEntity,
     newRefreshTokenPlain: string,
     expiresAt: Date,
-  ): Promise<RefreshTokenEntity>;
+  ): Promise<CreateRefreshTokenReturn>;
 }
 
 type CreateRefreshTokenReturn = {

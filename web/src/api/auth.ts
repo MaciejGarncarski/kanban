@@ -1,11 +1,11 @@
 'use server'
 
-import { fetchSSR } from '@/api-client/api-client'
+import { fetchServerNoMiddleware } from '@/api-client/api-client'
 import { setAuthCookies } from '@/utils/set-auth-cookie'
 import { cookies } from 'next/headers'
 
 export const signOut = async () => {
-  await fetchSSR.DELETE('/v1/auth/logout')
+  await fetchServerNoMiddleware.DELETE('/v1/auth/logout')
 
   const cookieStore = await cookies()
   cookieStore.delete('refreshToken')
@@ -13,14 +13,15 @@ export const signOut = async () => {
 }
 
 export const signIn = async (email: string, password: string) => {
-  const request = fetchSSR.POST('/v1/auth/sign-in', {
-    body: { email, password },
-  })
+  const { response, data, error } = await fetchServerNoMiddleware.POST(
+    '/v1/auth/sign-in',
+    {
+      body: { email, password },
+    },
+  )
 
-  const { response, data } = await request
-
-  if (!response.ok) {
-    throw new Error('Sign in failed', { cause: data })
+  if (error) {
+    throw new Error(error.correlationId)
   }
 
   await setAuthCookies({
