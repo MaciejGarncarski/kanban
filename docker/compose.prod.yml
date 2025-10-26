@@ -1,5 +1,6 @@
 services:
   kanban-web:
+    image: ghcr.io/maciejgarncarski/kanban-web:latest
     container_name: kanban-web-prod
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
@@ -13,6 +14,7 @@ services:
       - kanban-network
 
   kanban-api:
+    image: ghcr.io/maciejgarncarski/kanban-api:latest
     container_name: kanban-api-prod
     environment:
       DATABASE_URL: ${DATABASE_URL}
