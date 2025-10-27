@@ -1,0 +1,43 @@
+name: Deploy to VPS
+
+# This allows you to manually trigger the workflow in the GitHub UI
+on:
+  workflow_dispatch:
+    # inputs:
+    #   environment:
+    #     description: "Deployment environment"
+    #     required: true
+    #     default: "production"
+    #     type: choice
+    #     options:
+    #       - production
+    #       - staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Confirm previous workflows
+        run: |
+          echo "Before deploying, make sure tests passed and Docker images are published."
+          echo "You can check the 'Run Tests' and 'Publish Docker Images' workflow runs in Actions."
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          port: ${{ secrets.VPS_PORT }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            echo "Starting deployment..."
+            cd kanban
+
+            echo "Stopping..."
+            docker compose --env-file .env.production -f ./docker/compose.prod.yml down
+            echo "Pulling latest images..."
+            docker compose --env-file .env.production -f ./docker/compose.prod.yml pull
+            echo "Starting containers..."
+            docker compose --env-file .env.production -f ./docker/compose.prod.yml up -d --remove-orphans
+
+            echo "✅ Deployment completed!"
