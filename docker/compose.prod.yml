@@ -40,10 +40,15 @@ services:
   kanban-db:
     container_name: kanban-db-prod
     image: postgres:18
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      retries: 5
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: kanban
+      PGDATA: /var/lib/postgresql/data-kanban
     volumes:
       - kanban-db-data:/var/lib/postgresql/data-kanban
     networks:
