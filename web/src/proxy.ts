@@ -56,7 +56,7 @@ export async function proxy(request: NextRequest) {
         '/v1/auth/refresh-token',
         {
           headers: {
-            Cookie: `refreshToken=${encodeURIComponent(refreshToken)}`,
+            Cookie: `refreshToken=${refreshToken}`,
           },
         },
       )

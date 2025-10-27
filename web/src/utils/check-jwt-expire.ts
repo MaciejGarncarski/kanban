@@ -1,4 +1,4 @@
-const THRESHOLD = 90
+const THRESHOLD = 100 // seconds
 
 export function checkJWTExpiration({
   token,
