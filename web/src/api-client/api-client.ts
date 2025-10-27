@@ -12,8 +12,6 @@ export const appQuery = createQuery(fetchClient)
 
 const jwtMiddleware: Middleware = {
   onRequest: async ({ request }) => {
-    console.log('MY ENV:', process.env.NEXT_PUBLIC_API_URL)
-
     const requestId = crypto.randomUUID()
     request.headers.set('x-correlation-id', requestId)
     return request

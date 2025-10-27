@@ -15,8 +15,6 @@ export function setTokenCookie(
     signed: config.signed,
   } as CookieOptions;
 
-  console.log(cookieOptions);
-
   response.cookie(config.name, token, cookieOptions);
 }
 
