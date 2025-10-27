@@ -39,6 +39,10 @@ import { SignInResponseDto } from 'src/auth/application/dtos/sign-in-response.dt
 import { GetMeQuery } from 'src/auth/application/queries/get-me.query';
 import { Auth } from 'src/auth/common/decorators/auth.decorator';
 import { JWTPayload } from 'src/auth/domain/token.types';
+import {
+  clearTokenCookie,
+  setTokenCookie,
+} from 'src/auth/infrastructure/utils/set-token-cookie';
 import { ApiErrorResponse } from 'src/core/application/dtos/api-error.response.dto';
 import accessTokenCookieConfig from 'src/infrastructure/configs/access-token-cookie.config';
 import { routesV1 } from 'src/infrastructure/configs/app.routes.config';
@@ -51,7 +55,9 @@ export class AuthController {
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
     @Inject(refreshTokenCookieConfig.KEY)
-    private readonly cookieConf: ConfigType<typeof refreshTokenCookieConfig>,
+    private readonly refreshTokenConf: ConfigType<
+      typeof refreshTokenCookieConfig
+    >,
     @Inject(accessTokenCookieConfig.KEY)
     private readonly accessTokenConf: ConfigType<
       typeof accessTokenCookieConfig
@@ -80,23 +86,8 @@ export class AuthController {
       SignInUserCommandReturn
     >(new SignInUserCommand(body.email, body.password));
 
-    response.cookie(this.cookieConf.name, refreshToken, {
-      sameSite: this.cookieConf.sameSite,
-      domain: this.cookieConf.domain,
-      signed: this.cookieConf.signed,
-      httpOnly: this.cookieConf.httpOnly,
-      secure: this.cookieConf.secure,
-      maxAge: this.cookieConf.maxAge,
-    });
-
-    response.cookie('accessToken', accessToken, {
-      sameSite: this.accessTokenConf.sameSite,
-      domain: this.accessTokenConf.domain,
-      signed: this.accessTokenConf.signed,
-      httpOnly: this.accessTokenConf.httpOnly,
-      secure: this.accessTokenConf.secure,
-      maxAge: this.accessTokenConf.maxAge,
-    });
+    setTokenCookie(response, this.refreshTokenConf, refreshToken);
+    setTokenCookie(response, this.accessTokenConf, accessToken);
 
     return { accessToken };
   }
@@ -134,23 +125,8 @@ export class AuthController {
       throw new UnauthorizedException('Registration failed');
     }
 
-    response.cookie(this.cookieConf.name, refreshToken, {
-      sameSite: this.cookieConf.sameSite,
-      domain: this.cookieConf.domain,
-      signed: this.cookieConf.signed,
-      httpOnly: this.cookieConf.httpOnly,
-      secure: this.cookieConf.secure,
-      maxAge: this.cookieConf.maxAge,
-    });
-
-    response.cookie('accessToken', accessToken, {
-      sameSite: this.accessTokenConf.sameSite,
-      domain: this.accessTokenConf.domain,
-      signed: this.accessTokenConf.signed,
-      httpOnly: this.accessTokenConf.httpOnly,
-      secure: this.accessTokenConf.secure,
-      maxAge: this.accessTokenConf.maxAge,
-    });
+    setTokenCookie(response, this.refreshTokenConf, refreshToken);
+    setTokenCookie(response, this.accessTokenConf, accessToken);
 
     return { accessToken, user };
   }
@@ -200,7 +176,9 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const refreshToken = req.signedCookies[this.cookieConf.name] as string;
+    const refreshToken = req.signedCookies[
+      this.refreshTokenConf.name
+    ] as string;
 
     if (!refreshToken) {
       throw new UnauthorizedException('No refresh token');
@@ -211,12 +189,7 @@ export class AuthController {
       RefreshAccessTokenReturn
     >(new RefreshAccessTokenCommand(refreshToken));
 
-    res.cookie(this.cookieConf.name, newRefreshToken, {
-      secure: this.cookieConf.secure,
-      httpOnly: this.cookieConf.httpOnly,
-      maxAge: this.cookieConf.maxAge,
-      signed: this.cookieConf.signed,
-    });
+    setTokenCookie(res, this.refreshTokenConf, newRefreshToken);
 
     return { accessToken };
   }
@@ -232,24 +205,12 @@ export class AuthController {
     description: 'Logged out',
   })
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const refreshToken = req.signedCookies[this.cookieConf.name] as string;
+    const refreshToken = req.signedCookies[
+      this.refreshTokenConf.name
+    ] as string;
 
-    res.clearCookie(this.cookieConf.name, {
-      secure: this.cookieConf.secure,
-      httpOnly: this.cookieConf.httpOnly,
-      maxAge: this.cookieConf.maxAge,
-      signed: this.cookieConf.signed,
-      domain: this.cookieConf.domain,
-      sameSite: this.cookieConf.sameSite,
-    });
-    res.clearCookie(this.accessTokenConf.name, {
-      secure: this.accessTokenConf.secure,
-      httpOnly: this.accessTokenConf.httpOnly,
-      maxAge: this.accessTokenConf.maxAge,
-      signed: this.accessTokenConf.signed,
-      domain: this.accessTokenConf.domain,
-      sameSite: this.accessTokenConf.sameSite,
-    });
+    clearTokenCookie(res, this.refreshTokenConf);
+    clearTokenCookie(res, this.accessTokenConf);
 
     if (!refreshToken) {
       return { message: 'Logged out' };

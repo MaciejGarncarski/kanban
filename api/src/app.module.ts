@@ -7,7 +7,7 @@ import { seconds, ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { DbModule } from 'src/infrastructure/persistence/db/db.module';
 import { validate } from 'src/infrastructure/configs/env.schema';
-import { refreshTokenConfigTest } from 'src/infrastructure/configs/refresh-token-cookie.config';
+import refreshTokenCookieConfig from 'src/infrastructure/configs/refresh-token-cookie.config';
 import accessTokenCookieConfig from 'src/infrastructure/configs/access-token-cookie.config';
 import { registerEnv } from 'src/infrastructure/configs/env.config';
 import { CorrelationIdMiddleware } from 'src/infrastructure/middlewares/correlation-id.middleware';
@@ -33,7 +33,7 @@ import { CorrelationIdMiddleware } from 'src/infrastructure/middlewares/correlat
       isGlobal: true,
       validate: validate,
       envFilePath: ['.env'],
-      load: [refreshTokenConfigTest, accessTokenCookieConfig, registerEnv],
+      load: [refreshTokenCookieConfig, accessTokenCookieConfig, registerEnv],
     }),
     CqrsModule.forRoot(),
   ],

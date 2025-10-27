@@ -2,17 +2,7 @@ import { registerAs } from '@nestjs/config';
 import { REFRESH_TOKEN_MAX_AGE } from 'src/shared/constants/cookie.const';
 import { testEnv } from 'src/__tests__/env';
 import { envSchema } from 'src/infrastructure/configs/env.schema';
-
-export interface CookieConfig {
-  secret: string;
-  name: string;
-  secure: boolean;
-  maxAge: number;
-  httpOnly: boolean;
-  signed: boolean;
-  sameSite: 'lax' | 'strict' | 'none';
-  domain: string;
-}
+import { CookieConfig } from 'src/infrastructure/configs/cookie-config.type';
 
 export const REFRESH_TOKEN_COOKIE_CONFIG_KEY = 'refresh-token-cookie';
 export default registerAs(REFRESH_TOKEN_COOKIE_CONFIG_KEY, (): CookieConfig => {
