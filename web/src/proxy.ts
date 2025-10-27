@@ -95,7 +95,13 @@ export async function proxy(request: NextRequest) {
         return redirectRes
       }
 
-      const newAccessToken = refreshResponse.data.accessToken
+      const newAccessTokenCookie = getCookieValue(
+        refreshResponse.response.headers.get('set-cookie') || '',
+        'accessToken',
+      )
+
+      const newAccessToken =
+        newAccessTokenCookie || refreshResponse.data.accessToken
       const res = NextResponse.next()
 
       res.cookies.set(

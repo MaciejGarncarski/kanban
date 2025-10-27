@@ -190,6 +190,7 @@ export class AuthController {
     >(new RefreshAccessTokenCommand(refreshToken));
 
     setTokenCookie(res, this.refreshTokenConf, newRefreshToken);
+    setTokenCookie(res, this.accessTokenConf, accessToken);
 
     return { accessToken };
   }

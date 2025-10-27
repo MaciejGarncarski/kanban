@@ -1,9 +1,15 @@
 export function getCookieValue(
-  cookieString: string,
-  name: string,
+  setCookieHeader: string,
+  cookieName: string,
 ): string | null {
-  const cookie = cookieString
-    .split('; ')
-    .find((row) => row.startsWith(name + '='))
-  return cookie ? cookie.split('=')[1] || null : null
+  if (!setCookieHeader) return null
+
+  const cookies = setCookieHeader.split(/,(?=\s*\w+=)/)
+
+  for (const cookie of cookies) {
+    const match = cookie.match(new RegExp(`${cookieName}=([^;]+)`))
+    if (match) return match[1] || null
+  }
+
+  return null
 }

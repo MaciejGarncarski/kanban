@@ -1,5 +1,6 @@
 import { fetchServerNoMiddleware } from '@/api-client/api-client'
 import { attachCookies } from '@/features/auth/utils/attach-cookies'
+import { redirect } from 'next/navigation'
 import { connection } from 'next/server'
 
 export default async function Home() {
@@ -11,17 +12,13 @@ export default async function Home() {
     },
   })
 
-  if (userData) {
-    return (
-      <main>
-        <h1>Welcome back, {userData.data?.email}!</h1>
-      </main>
-    )
+  if (userData.error) {
+    redirect('/auth/sign-in')
   }
 
   return (
     <main>
-      <h1>Welcome to the Kanban App!</h1>
+      <h1>Welcome back, {userData.data?.email}!</h1>
     </main>
   )
 }
