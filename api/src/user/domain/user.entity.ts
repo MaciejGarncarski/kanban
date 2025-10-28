@@ -1,6 +1,5 @@
 import { hash, verify } from '@node-rs/argon2';
-import { Exclude } from 'class-transformer';
-import { randomUUID } from 'crypto';
+import { v7 } from 'uuid';
 
 export interface UserProps {
   id?: string;
@@ -19,7 +18,7 @@ export class UserEntity {
   readonly createdAt: Date;
 
   constructor(props: UserProps) {
-    this.id = props.id ?? randomUUID();
+    this.id = props.id ?? v7();
     this.name = props.name;
     this.email = props.email.toLowerCase();
     this.passwordHash = props.passwordHash;

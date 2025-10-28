@@ -6,9 +6,11 @@ import {
   Card,
   Flex,
   Paper,
+  PasswordInput,
   Text,
   TextInput,
   Title,
+  Transition,
 } from '@mantine/core'
 import { useRouter } from 'next/navigation'
 import { useForm } from '@mantine/form'
@@ -89,19 +91,17 @@ export function RegisterForm() {
               key={form.key('name')}
               {...form.getInputProps('name')}
             />
-            <TextInput
+            <PasswordInput
               withAsterisk
               label="Password"
               placeholder="password"
-              type="password"
               key={form.key('password')}
               {...form.getInputProps('password')}
             />
-            <TextInput
+            <PasswordInput
               withAsterisk
               label="Confirm Password"
               placeholder="confirm password"
-              type="password"
               key={form.key('confirmPassword')}
               {...form.getInputProps('confirmPassword')}
             />
@@ -111,11 +111,17 @@ export function RegisterForm() {
           </Flex>
         </form>
       </Paper>
-      {error && (
-        <Card>
-          <Text>{error.message}</Text>
-        </Card>
-      )}
+      <Transition
+        mounted={Boolean(error?.message && !isPending)}
+        transition="fade"
+        duration={400}
+        timingFunction="ease">
+        {(styles) => (
+          <Card withBorder shadow="sm" radius="md" p="md" style={styles}>
+            <Text>{error?.message}</Text>
+          </Card>
+        )}
+      </Transition>
 
       <Anchor component={Link} href="/auth/sign-in">
         Already have an account? Sign in

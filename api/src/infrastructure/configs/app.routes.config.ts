@@ -16,6 +16,10 @@ export const routesV1 = {
     refresh: `${prefix}${authRoot}/refresh-token`,
     logout: `${prefix}${authRoot}/logout`,
   },
+  teams: {
+    root: `${prefix}teams`,
+    createTeam: `${prefix}teams`,
+  },
   user: {
     root: usersRoot,
     getUserById: `${prefix}${usersRoot}/:id`,

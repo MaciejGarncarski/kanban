@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { type Response, type Request } from 'express';
 import { CorrelationContext } from 'src/core/application/context/correlation.context';
-import { randomUUID } from 'crypto';
+import { v7 } from 'uuid';
 import {
   ApiErrorResponse,
   ValidationError,
@@ -23,7 +23,7 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const request = ctx.getRequest<Request>();
     const response = ctx.getResponse<Response>();
-    const correlationId = CorrelationContext.getCorrelationId() ?? randomUUID();
+    const correlationId = CorrelationContext.getCorrelationId() ?? v7();
 
     const status =
       exception instanceof HttpException

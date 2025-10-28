@@ -2,6 +2,7 @@ import { paths } from '@/api-client/api'
 import { rotateToken } from '@/api/rotate-token'
 import createFetchClient, { Middleware } from 'openapi-fetch'
 import createQuery from 'openapi-react-query'
+import { v7 } from 'uuid'
 
 export const fetchClient = createFetchClient<paths>({
   baseUrl: process.env.NEXT_PUBLIC_API_URL,
@@ -12,7 +13,7 @@ export const appQuery = createQuery(fetchClient)
 
 const jwtMiddleware: Middleware = {
   onRequest: async ({ request }) => {
-    const requestId = crypto.randomUUID()
+    const requestId = v7()
     request.headers.set('x-correlation-id', requestId)
     return request
   },
@@ -52,3 +53,4 @@ export const fetchServerNoMiddleware = createFetchClient<paths>({
     accept: 'application/json',
   },
 })
+export const appServerQueryNoMiddleware = createQuery(fetchServerNoMiddleware)

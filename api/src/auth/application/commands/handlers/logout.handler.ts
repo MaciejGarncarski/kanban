@@ -16,5 +16,6 @@ export class LogoutHandler implements ICommandHandler<LogoutCommand> {
     }
 
     await this.refreshTokenRepo.revoke(tokenRecord.id);
+    return true;
   }
 }

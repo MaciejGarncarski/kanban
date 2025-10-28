@@ -9,14 +9,18 @@ export const metadata: Metadata = {
   description: 'A Kanban board application',
 }
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+export default async function AppLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
     <>
       <Flex component="nav" px="12" py="sm" justify={'space-between'}>
         <Button onClick={logout}>Logout</Button>
         <ThemeSwitch />
       </Flex>
-      <Container>{children}</Container>
+      <Container size={'app-container'}>{children}</Container>
     </>
   )
 }

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { randomUUID } from 'node:crypto';
 import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
 import { UserEntity } from 'src/user/domain/user.entity';
 import { NewUserRecord } from 'src/user/infrastructure/persistence/mappers/user.mapper';
+import { v7 } from 'uuid';
 
 @Injectable()
 export class InMemoryUserRepository implements UserRepositoryInterface {
@@ -38,7 +38,7 @@ export class InMemoryUserRepository implements UserRepositoryInterface {
 
   async create(data: NewUserRecord) {
     const newUser = new UserEntity({
-      id: randomUUID(),
+      id: v7(),
       name: data.name,
       email: data.email,
       passwordHash: data.password_hash,

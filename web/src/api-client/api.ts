@@ -105,6 +105,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/teams": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all teams for the authenticated user */
+        get: operations["TeamsController_getTeams"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -200,6 +217,15 @@ export interface components {
              */
             createdAt: string;
         };
+        RegisterResponseDto: {
+            /**
+             * @description JWT access token
+             * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+             */
+            accessToken: string;
+            /** @description Registered user information */
+            user: components["schemas"]["UserResponseDto"];
+        };
         RefreshTokenResponseDto: {
             /**
              * @description JWT access token
@@ -213,6 +239,24 @@ export interface components {
              * @example Logged out
              */
             message: string;
+        };
+        TeamDto: {
+            /** @example 019a2a86-2c15-77a7-84a2-55e02cdf0d5f */
+            id: string;
+            /** @example Awesome Team */
+            name: string;
+            /** @example This is an awesome team working on great projects. */
+            description?: string;
+            /**
+             * Format: date-time
+             * @description User account creation date
+             * @example 2025-10-17T15:42:05.351Z
+             */
+            created_at: string;
+        };
+        GetTeamsResponseDto: {
+            /** @description List of teams for the user */
+            teams: components["schemas"]["TeamDto"][];
         };
     };
     responses: never;
@@ -291,7 +335,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UserResponseDto"];
+                    "application/json": components["schemas"]["RegisterResponseDto"];
                 };
             };
             400: {
@@ -395,6 +439,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["LogoutResponseDto"];
+                };
+            };
+        };
+    };
+    TeamsController_getTeams: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Returns a list of teams associated with the authenticated user. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetTeamsResponseDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
                 };
             };
         };

@@ -1,4 +1,5 @@
 import { REFRESH_TOKEN_MAX_AGE } from 'src/shared/constants/cookie.const';
+import { v7 } from 'uuid';
 
 export class RefreshTokenEntity {
   constructor(
@@ -17,7 +18,7 @@ export class RefreshTokenEntity {
   }
 
   static createNew(userId: string): RefreshTokenEntity {
-    const id = crypto.randomUUID();
+    const id = v7();
 
     return new RefreshTokenEntity(
       id,

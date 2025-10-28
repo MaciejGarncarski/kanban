@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import '@mantine/core/styles.css'
-import { Container } from '@mantine/core'
+import { Container, Flex, Text, Title } from '@mantine/core'
+import { ThemeSwitch } from '@/features/layout/components/theme-switch'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -13,10 +14,22 @@ export default function AuthLayout({
   children: React.ReactNode
 }) {
   return (
-    <>
-      <Container strategy="block" size={500} my={40}>
+    <Container strategy="block" size={500} my={40}>
+      <Flex
+        direction={'column'}
+        align={'center'}
+        justify={'center'}
+        gap="xl"
+        w="100%"
+        h="100%">
+        <ThemeSwitch />
         {children}
-      </Container>
-    </>
+        <Flex direction="column" mt="md" mr="auto">
+          <Title order={4}>Demo User:</Title>
+          <Text>Email: alice@example.com</Text>
+          <Text>Password: Abcd123</Text>
+        </Flex>
+      </Flex>
+    </Container>
   )
 }

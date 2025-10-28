@@ -32,8 +32,10 @@ export async function proxy(request: NextRequest) {
 
   const accessToken = request.cookies.get('accessToken')?.value
   const refreshToken = request.cookies.get('refreshToken')?.value
+  const isAuthPage = url.pathname.startsWith('/auth')
 
-  if (!refreshToken) {
+  // If does not have refresh token, and on / route, it creates infinite redirect loop
+  if (!refreshToken && !isAuthPage) {
     const isServerAction =
       request.headers.has('next-action') || request.headers.has('x-action')
 
@@ -41,9 +43,9 @@ export async function proxy(request: NextRequest) {
       return NextResponse.next()
     }
 
-    return NextResponse.redirect(new URL('/auth/sign-in', request.url), {
-      status: 302,
-    })
+    // there happens infinite redirect loop
+
+    return NextResponse.redirect(new URL('/auth/sign-in', request.url))
   }
 
   const isAboutToExpire = accessToken

@@ -6,9 +6,11 @@ import {
   Card,
   Flex,
   Paper,
+  PasswordInput,
   Text,
   TextInput,
   Title,
+  Transition,
 } from '@mantine/core'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
@@ -70,11 +72,10 @@ export function SignInForm() {
               key={form.key('email')}
               {...form.getInputProps('email')}
             />
-            <TextInput
+            <PasswordInput
               withAsterisk
               label="Password"
               placeholder="password"
-              type="password"
               key={form.key('password')}
               {...form.getInputProps('password')}
             />
@@ -84,11 +85,18 @@ export function SignInForm() {
           </Flex>
         </form>
       </Paper>
-      {error && (
-        <Card>
-          <Text>{error.message}</Text>
-        </Card>
-      )}
+      <Transition
+        mounted={Boolean(error?.message)}
+        transition="fade"
+        duration={400}
+        timingFunction="ease">
+        {(styles) => (
+          <Card withBorder shadow="sm" radius="md" p="md" style={styles}>
+            <Text>{error?.message}</Text>
+          </Card>
+        )}
+      </Transition>
+
       <Anchor component={Link} href="/auth/register">
         Don&apos;t have an account? Register
       </Anchor>

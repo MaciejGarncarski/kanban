@@ -1,18 +1,14 @@
 import { Module } from '@nestjs/common';
 import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
 import { SignInUserHandler } from 'src/auth/application/commands/handlers/sign-in-user.handler';
-import { JwtModule } from '@nestjs/jwt';
-import { CqrsModule } from '@nestjs/cqrs';
 import { RefreshAccessTokenHandler } from 'src/auth/application/commands/handlers/refresh-access-token.handler';
 import { LogoutHandler } from 'src/auth/application/commands/handlers/logout.handler';
 import { AuthController } from 'src/auth/infrastructure/controllers/auth.controller';
 import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GetMeHandler } from 'src/auth/application/queries/handlers/get-me.handler';
-import { getEnvConfig } from 'src/infrastructure/configs/env.config';
 import { RegisterUserHandler } from 'src/auth/application/commands/handlers/register.handler';
 
-export const CommandHandlers = [
+const CommandHandlers = [
   RegisterUserHandler,
   SignInUserHandler,
   RefreshAccessTokenHandler,
@@ -20,25 +16,6 @@ export const CommandHandlers = [
 ];
 
 @Module({
-  imports: [
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => {
-        const env = getEnvConfig(configService);
-
-        if (!env || !env.JWT_SECRET) {
-          throw new Error('JWT_SECRET is not defined in environment variables');
-        }
-
-        return {
-          secret: env.JWT_SECRET,
-          signOptions: { expiresIn: '5m' },
-        };
-      },
-      inject: [ConfigService],
-    }),
-    CqrsModule,
-  ],
   controllers: [AuthController],
   providers: [
     ...CommandHandlers,
