@@ -1,9 +1,11 @@
 import { fetchServerNoMiddleware } from '@/api-client/api-client'
 import { attachCookies } from '@/features/auth/utils/attach-cookies'
 import { Board } from '@/features/board/components/board'
+import { BoardSwitch } from '@/features/board/components/board-switch'
+import { CreateTeamLink } from '@/features/layout/components/create-team-link'
 import { TeamSwitchPlaceholder } from '@/features/team-switch/components/team-switch-placeholder'
 import { TeamSwitchSSR } from '@/features/team-switch/components/team-switch-ssr'
-import { Flex, Group } from '@mantine/core'
+import { Group, Stack, Title } from '@mantine/core'
 import { redirect } from 'next/navigation'
 import { connection } from 'next/server'
 import { Suspense } from 'react'
@@ -23,15 +25,26 @@ export default async function Home() {
 
   return (
     <main>
-      <Group justify="between" w="100%">
-        <h1>Welcome back, {userData.data.email}!</h1>
-        <div style={{ marginLeft: 'auto' }}>
-          <Suspense fallback={<TeamSwitchPlaceholder />}>
-            <TeamSwitchSSR />
-          </Suspense>
-        </div>
+      <Group>
+        <Title order={1} size="32">
+          Teams
+        </Title>
+        <CreateTeamLink />
+        <Suspense fallback={<TeamSwitchPlaceholder />}>
+          <TeamSwitchSSR />
+        </Suspense>
       </Group>
-      <Board />
+      <Stack mt="md">
+        <Group justify="between" w="100%">
+          <Title size={24} order={1}>
+            Welcome back, {userData.data.email}!
+          </Title>
+          <div style={{ marginLeft: 'auto' }}>
+            <BoardSwitch />
+          </div>
+        </Group>
+        <Board />
+      </Stack>
     </main>
   )
 }

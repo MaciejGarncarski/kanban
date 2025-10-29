@@ -113,7 +113,41 @@ export interface paths {
             cookie?: never;
         };
         /** Get all teams for the authenticated user */
-        get: operations["TeamsController_getTeams"];
+        get: operations["TeamController_getTeams"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/teams/{teamId}/boards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all boards by team ID */
+        get: operations["BoardController_getAllBoardsByTeamId"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/boards/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get board by ID */
+        get: operations["BoardController_getBoardById"];
         put?: never;
         post?: never;
         delete?: never;
@@ -257,6 +291,29 @@ export interface components {
         GetTeamsResponseDto: {
             /** @description List of teams for the user */
             teams: components["schemas"]["TeamDto"][];
+        };
+        BoardDto: {
+            /** @example 019a2a86-2c15-77a7-84a2-55e02cdf0d5f */
+            id: string;
+            /** @example Awesome board */
+            name: string;
+            /** @example This is an awesome board. */
+            description?: string;
+            /**
+             * @description Team ID associated with the board
+             * @example 7f3b2c1e-1c4d-4f5e-8b2f-1c4d5e8b2f1c
+             */
+            teamId: string;
+            /**
+             * Format: date-time
+             * @description User account creation date
+             * @example 2025-10-17T15:42:05.351Z
+             */
+            createdAt: string;
+        };
+        GetBoardsByTeamResponseDto: {
+            /** @description List of boards for the team */
+            boards: components["schemas"]["BoardDto"][];
         };
     };
     responses: never;
@@ -443,7 +500,7 @@ export interface operations {
             };
         };
     };
-    TeamsController_getTeams: {
+    TeamController_getTeams: {
         parameters: {
             query?: never;
             header?: {
@@ -462,6 +519,74 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GetTeamsResponseDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    BoardController_getAllBoardsByTeamId: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path: {
+                /** @description Team ID */
+                teamId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully retrieved boards for the team */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetBoardsByTeamResponseDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    BoardController_getBoardById: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path: {
+                /** @description Board ID */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully retrieved board */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BoardDto"];
                 };
             };
             400: {

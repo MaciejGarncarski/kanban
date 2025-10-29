@@ -11,11 +11,11 @@ import { Auth } from 'src/auth/common/decorators/auth.decorator';
 
 import { ApiErrorResponse } from 'src/core/application/dtos/api-error.response.dto';
 import { routesV1 } from 'src/infrastructure/configs/app.routes.config';
-import { GetTeamsResponseDto } from 'src/teams/application/dtos/get-teams.response.dto';
-import { GetTeamsQuery } from 'src/teams/application/queries/get-teams.query';
+import { GetTeamsResponseDto } from 'src/team/application/dtos/get-teams.response.dto';
+import { GetTeamsQuery } from 'src/team/application/queries/get-teams.query';
 
 @Controller()
-export class TeamsController {
+export class TeamController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,

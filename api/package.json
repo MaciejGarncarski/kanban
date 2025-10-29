@@ -21,7 +21,8 @@
     "test:e2e": "jest --detectOpenHandles --config ./jest-e2e.json",
     "test:all": "pnpm test && pnpm test:e2e",
     "db:reset": "pnpm tsx --env-file=.env ./src/infrastructure/persistence/db/reset.ts",
-    "db:seed": "pnpm tsx --env-file=.env ./src/infrastructure/persistence/db/seed.ts"
+    "db:seed": "pnpm tsx --env-file=.env ./src/infrastructure/persistence/db/seed.ts",
+    "db:migrate": "pnpm tsx --env-file=.env ./src/infrastructure/persistence/db/migrate.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.6",
@@ -43,7 +44,7 @@
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
-    "uuid": "^13.0.0",
+    "uuid": "^11.1.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {

@@ -9,7 +9,13 @@ export const fetchClient = createFetchClient<paths>({
   credentials: 'include',
 })
 
+export const fetchClientNoMiddleware = createFetchClient<paths>({
+  baseUrl: process.env.NEXT_PUBLIC_API_URL,
+  credentials: 'include',
+})
+
 export const appQuery = createQuery(fetchClient)
+export const appQueryNoMiddleware = createQuery(fetchClientNoMiddleware)
 
 const jwtMiddleware: Middleware = {
   onRequest: async ({ request }) => {

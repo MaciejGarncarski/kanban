@@ -12,16 +12,14 @@ import {
 } from '@mantine/core'
 import { CheckIcon } from 'lucide-react'
 import { useQueryState } from 'nuqs'
-import { useEffect } from 'react'
 
-export function TeamSwitch() {
+export function BoardSwitch() {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   })
-  const [teamId, setTeamId] = useQueryState('teamId')
   const [boardId, setBoardId] = useQueryState('boardId')
-  const { data } = appQuery.useSuspenseQuery('get', '/v1/teams')
-  const boards = appQuery.useQuery(
+  const [teamId] = useQueryState('teamId')
+  const { data } = appQuery.useQuery(
     'get',
     '/v1/teams/{teamId}/boards',
     {
@@ -32,21 +30,15 @@ export function TeamSwitch() {
     },
   )
 
-  useEffect(() => {
-    if (!boardId && boards.data?.boards.length) {
-      setBoardId(boards.data?.boards[0]?.id || null)
-    }
-  }, [boardId, boards.data?.boards, setBoardId])
-
-  const setTeam = (val: string | null) => {
+  const setBoard = (val: string | null) => {
     if (!val) return
-    setTeamId(val)
+    setBoardId(val)
   }
 
-  const options = data.teams.map(({ description, id, name }) => (
+  const options = data?.boards.map(({ description, id, name }) => (
     <Combobox.Option value={id} key={id}>
       <Group gap="sm" wrap="nowrap">
-        {id === teamId && (
+        {id === boardId && (
           <CheckIcon size={12} style={{ flexGrow: 0, flexShrink: 0 }} />
         )}
         <Flex direction={'column'}>
@@ -62,7 +54,7 @@ export function TeamSwitch() {
       store={combobox}
       width={250}
       onOptionSubmit={(val) => {
-        setTeam(val)
+        setBoard(val)
         combobox.closeDropdown()
       }}>
       <Combobox.Target>
@@ -75,8 +67,9 @@ export function TeamSwitch() {
           rightSectionPointerEvents="none"
           onClick={() => combobox.toggleDropdown()}>
           <>
-            {teamId && data.teams.find((team) => team.id === teamId)?.name}
-            {!teamId && <Input.Placeholder>Select team</Input.Placeholder>}
+            {boardId &&
+              data?.boards.find((board) => board.id === boardId)?.name}
+            {!boardId && <Input.Placeholder>Select board</Input.Placeholder>}
           </>
         </InputBase>
       </Combobox.Target>

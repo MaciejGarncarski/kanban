@@ -3,11 +3,14 @@ import { eq } from 'drizzle-orm';
 import { type DB } from 'src/infrastructure/persistence/db/client';
 import { InjectDb } from 'src/infrastructure/persistence/db/db.provider';
 import { team_members, teams } from 'src/infrastructure/persistence/db/schema';
-import { GetTeamsResponseDto } from 'src/teams/application/dtos/get-teams.response.dto';
-import { TeamsRepositoryInterface } from 'src/teams/domain/ports/teams.interface';
+import { GetTeamsResponseDto } from 'src/team/application/dtos/get-teams.response.dto';
+import {
+  InsertTeamDto,
+  TeamRepositoryInterface,
+} from 'src/team/domain/ports/team.interface';
 
 @Injectable()
-export class TeamsRepository implements TeamsRepositoryInterface {
+export class TeamRepository implements TeamRepositoryInterface {
   constructor(@InjectDb() private readonly db: DB) {}
 
   async getUserTeams(userId: string): Promise<GetTeamsResponseDto> {
@@ -26,5 +29,26 @@ export class TeamsRepository implements TeamsRepositoryInterface {
     });
 
     return { teams: userTeams };
+  }
+
+  async createTeam(userId: string, teamData: InsertTeamDto): Promise<void> {
+    const [createdTeam] = await this.db
+      .insert(teams)
+      .values(teamData)
+      .returning();
+
+    await this.db.insert(team_members).values({
+      team_id: createdTeam.id,
+      user_id: userId,
+      role: 'owner',
+    });
+  }
+
+  async deleteTeam(teamId: string): Promise<void> {
+    await this.db.delete(teams).where(eq(teams.id, teamId));
+  }
+
+  async updateTeam(teamId: string, teamData: InsertTeamDto): Promise<void> {
+    await this.db.update(teams).set(teamData).where(eq(teams.id, teamId));
   }
 }

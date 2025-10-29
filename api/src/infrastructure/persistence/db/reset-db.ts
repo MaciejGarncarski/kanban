@@ -1,7 +1,6 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
 import { Client, Pool } from 'pg';
-import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { seed } from 'src/infrastructure/persistence/db/seed';
+import { migrateDB } from 'src/infrastructure/persistence/db/migrate-db';
 
 function log(message: string) {
   if (process.env.NODE_ENV !== 'test') {
@@ -36,9 +35,7 @@ export async function resetDB(pgPool?: Pool) {
 
     log('🚀 Running migrations...');
 
-    const db = drizzle(pgPool);
-
-    await migrate(db, { migrationsFolder: 'drizzle' });
+    await migrateDB({ pool: pgPool });
 
     log('✅ Database reset complete!');
 
@@ -76,8 +73,7 @@ export async function resetDB(pgPool?: Pool) {
   const dbClient = new Client({ connectionString });
   await dbClient.connect();
 
-  const db = drizzle(dbClient);
-  await migrate(db, { migrationsFolder: 'drizzle' });
+  await migrateDB({ dbClient });
 
   log('✅ Database reset complete!');
 

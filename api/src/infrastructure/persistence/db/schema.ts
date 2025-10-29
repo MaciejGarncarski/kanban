@@ -149,7 +149,7 @@ export const refreshTokens = pgTable('refresh_tokens', {
     .references(() => users.id, { onDelete: 'cascade' }),
   tokenHash: text('token_hash').notNull(),
   revoked: boolean('revoked').notNull().default(false),
-  replacedBy: uuid('replaced_by'), // ID nowego tokena po rotacji
+  replacedBy: uuid('replaced_by'),
   createdAt: timestamp('created_at').defaultNow(),
   expiresAt: timestamp('expires_at').notNull(),
 });

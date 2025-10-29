@@ -67,6 +67,9 @@ export async function seed(pool?: Pool) {
   ]);
 
   const boardId = v7();
+  const boardId2 = v7();
+  const boardId3 = v7();
+  const boardId4 = v7();
 
   await db.insert(schema.boards).values([
     {
@@ -74,6 +77,24 @@ export async function seed(pool?: Pool) {
       team_id: teamId,
       description: 'Team Board',
       name: 'Project Alpha',
+    },
+    {
+      id: boardId2,
+      team_id: teamId,
+      description: 'Dev Board',
+      name: 'Backend Development',
+    },
+    {
+      id: boardId3,
+      team_id: teamId2,
+      description: 'Frontend tasks and bugs',
+      name: 'Frontend Development',
+    },
+    {
+      id: boardId4,
+      team_id: teamId2,
+      description: 'Marketing strategies and plans',
+      name: 'Marketing Board',
     },
   ]);
 
@@ -99,6 +120,30 @@ export async function seed(pool?: Pool) {
       board_id: boardId,
       position: 3,
       name: 'Done',
+    },
+    {
+      id: v7(),
+      board_id: boardId2,
+      position: 1,
+      name: 'Backlog',
+    },
+    {
+      id: v7(),
+      board_id: boardId2,
+      position: 2,
+      name: 'In Development',
+    },
+    {
+      id: v7(),
+      board_id: boardId2,
+      position: 3,
+      name: 'Completed',
+    },
+    {
+      id: v7(),
+      board_id: boardId3,
+      position: 1,
+      name: 'To Do',
     },
   ]);
 

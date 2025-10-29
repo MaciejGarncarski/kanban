@@ -14,14 +14,10 @@ const CommandHandlers = [
   RefreshAccessTokenHandler,
   LogoutHandler,
 ];
-
+const QueryHandlers = [GetMeHandler];
+const Repositories = [UserRepository, RefreshTokenRepository];
 @Module({
   controllers: [AuthController],
-  providers: [
-    ...CommandHandlers,
-    GetMeHandler,
-    UserRepository,
-    RefreshTokenRepository,
-  ],
+  providers: [...CommandHandlers, ...QueryHandlers, ...Repositories],
 })
 export class AuthModule {}

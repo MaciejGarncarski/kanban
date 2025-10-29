@@ -7,10 +7,11 @@ export function TeamSwitchPlaceholder() {
     <InputBase
       component="button"
       type="button"
+      w="12rem"
       pointer
       rightSection={<Combobox.Chevron />}
       rightSectionPointerEvents="none">
-      <Input.Placeholder>Pick value</Input.Placeholder>
+      <Input.Placeholder>Select team</Input.Placeholder>
     </InputBase>
   )
 }

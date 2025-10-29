@@ -14,7 +14,7 @@ export const ThemeSwitch = () => {
           Wait...
         </Button>
       }>
-      <Menu shadow="md" width={200}>
+      <Menu shadow="md" width={100}>
         <Menu.Target>
           <Button
             variant="light"
@@ -34,19 +34,19 @@ export const ThemeSwitch = () => {
         <Menu.Dropdown>
           <Menu.Label>Theme</Menu.Label>
           <Menu.Item
-            onClick={() => setColorScheme('dark')}
-            leftSection={<Moon size={14} />}>
-            Dark Mode
-          </Menu.Item>
-          <Menu.Item
             onClick={() => setColorScheme('light')}
             leftSection={<Sun size={14} />}>
-            Light Mode
+            Light
+          </Menu.Item>
+          <Menu.Item
+            onClick={() => setColorScheme('dark')}
+            leftSection={<Moon size={14} />}>
+            Dark
           </Menu.Item>
           <Menu.Item
             onClick={() => setColorScheme('auto')}
             leftSection={<Monitor size={14} />}>
-            Auto Mode
+            Auto
           </Menu.Item>
         </Menu.Dropdown>
       </Menu>

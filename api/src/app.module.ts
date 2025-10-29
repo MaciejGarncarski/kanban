@@ -14,15 +14,19 @@ import {
   registerEnv,
 } from 'src/infrastructure/configs/env.config';
 import { CorrelationIdMiddleware } from 'src/infrastructure/middlewares/correlation-id.middleware';
-import { TeamsModule } from 'src/teams/teams.module';
 import { JwtModule } from '@nestjs/jwt';
+import { TeamModule } from 'src/team/team.module';
+import { BoardModule } from 'src/board/board.module';
+import { CardModule } from 'src/card/card.module';
 
 @Module({
   imports: [
     DbModule,
     UserModule,
     AuthModule,
-    TeamsModule,
+    TeamModule,
+    BoardModule,
+    CardModule,
     CqrsModule.forRoot(),
     JwtModule.registerAsync({
       global: true,
