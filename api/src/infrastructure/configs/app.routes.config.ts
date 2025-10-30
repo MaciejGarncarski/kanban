@@ -23,6 +23,7 @@ export const routesV1 = {
   user: {
     root: usersRoot,
     getUserById: `${prefix}${usersRoot}/:id`,
+    getRoleByTeamId: `${prefix}${usersRoot}/:teamId/role`,
     getUsersByBoardId: `${prefix}boards/:boardId/users`,
   },
   board: {
@@ -39,7 +40,7 @@ export const routesV1 = {
   },
   card: {
     createCard: `${prefix}cards`,
-    updateCard: `${prefix}cards/:id`,
-    deleteCard: `${prefix}cards/:id`,
+    updateCard: `${prefix}cards/:cardId`,
+    deleteCard: `${prefix}cards/:cardId`,
   },
 };

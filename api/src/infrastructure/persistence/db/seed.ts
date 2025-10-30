@@ -36,8 +36,7 @@ export async function seed(pool?: Pool) {
       id: userId2,
       name: 'Bob',
       email: 'bob@example.com',
-      password_hash:
-        '$argon2id$v=19$m=16,t=2,p=1$MTIzNDU2Nzg$v88qiYnV1bYFz0DzEJDxjA',
+      password_hash: await hash(userFixture.password),
     },
   ]);
 
@@ -61,6 +60,7 @@ export async function seed(pool?: Pool) {
     {
       team_id: teamId,
       user_id: userId,
+      role: 'admin',
     },
     {
       team_id: teamId2,

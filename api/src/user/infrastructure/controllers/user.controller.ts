@@ -6,7 +6,9 @@ import { type Request } from 'express';
 import { Auth } from 'src/auth/common/decorators/auth.decorator';
 import { ApiErrorResponse } from 'src/core/application/dtos/api-error.response.dto';
 import { routesV1 } from 'src/infrastructure/configs/app.routes.config';
+import { RoleResponseDto } from 'src/user/application/dtos/role.response.dto';
 import { UserArrayResponseDto } from 'src/user/application/dtos/user-array.response.dto';
+import { GetRoleByTeamIdQuery } from 'src/user/application/queries/get-role-by-team-id.query';
 import { GetUsersByBoardQuery } from 'src/user/application/queries/get-users-by-board.query';
 import { UserEntity } from 'src/user/domain/user.entity';
 
@@ -36,5 +38,29 @@ export class UserController {
       },
     );
     return usersDto;
+  }
+
+  @Auth()
+  @Get(routesV1.user.getRoleByTeamId)
+  @ApiOkResponse({
+    type: RoleResponseDto,
+  })
+  @ApiBadRequestResponse({
+    type: ApiErrorResponse,
+  })
+  async getRoleByTeamId(@Param('teamId') teamId: string, @Req() req: Request) {
+    const result = await this.queryBus.execute<GetRoleByTeamIdQuery, string>(
+      new GetRoleByTeamIdQuery(teamId, req.userId),
+    );
+
+    const roleDto = plainToInstance(
+      RoleResponseDto,
+      { role: result },
+      {
+        excludeExtraneousValues: true,
+      },
+    );
+
+    return roleDto;
   }
 }

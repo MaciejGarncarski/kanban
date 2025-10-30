@@ -1,9 +1,14 @@
+import { BadRequestException } from '@nestjs/common';
 import { desc, eq } from 'drizzle-orm';
 import { CardEntity } from 'src/card/domain/card.entity';
 import { CardRepositoryInterface } from 'src/card/domain/ports/card.interface';
 import { type DB } from 'src/infrastructure/persistence/db/client';
 import { InjectDb } from 'src/infrastructure/persistence/db/db.provider';
-import { cards } from 'src/infrastructure/persistence/db/schema';
+import {
+  boards,
+  cards,
+  columns,
+} from 'src/infrastructure/persistence/db/schema';
 
 type NewCardRecord = {
   title: string;
@@ -54,5 +59,24 @@ export class CardRepository implements CardRepositoryInterface {
     });
 
     return entity;
+  }
+
+  async getTeamIdByCardId(cardId: string): Promise<string> {
+    const [cardRecord] = await this.db
+      .select({ teamId: boards.team_id })
+      .from(cards)
+      .innerJoin(columns, eq(cards.column_id, columns.id))
+      .innerJoin(boards, eq(columns.board_id, boards.id))
+      .where(eq(cards.id, cardId));
+
+    if (!cardRecord) {
+      throw new BadRequestException('Card not found');
+    }
+
+    return cardRecord.teamId;
+  }
+
+  async deleteCard(cardId: string): Promise<void> {
+    await this.db.delete(cards).where(eq(cards.id, cardId));
   }
 }

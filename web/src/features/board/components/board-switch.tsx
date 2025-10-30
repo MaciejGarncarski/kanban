@@ -52,16 +52,18 @@ export function BoardSwitch() {
 const BoardSwitchInputEmpty = ({ combobox }: { combobox: ComboboxStore }) => {
   return (
     <Combobox.Target>
-      <InputBase
-        component="button"
-        type="button"
-        pointer
-        w="12rem"
-        rightSection={<Combobox.Chevron />}
-        rightSectionPointerEvents="none"
-        onClick={() => combobox.toggleDropdown()}>
-        <Input.Placeholder>Select board</Input.Placeholder>
-      </InputBase>
+      <Input.Wrapper label="Board">
+        <InputBase
+          component="button"
+          type="button"
+          pointer
+          w="12rem"
+          rightSection={<Combobox.Chevron />}
+          rightSectionPointerEvents="none"
+          onClick={() => combobox.toggleDropdown()}>
+          <Input.Placeholder>Select board</Input.Placeholder>
+        </InputBase>
+      </Input.Wrapper>
     </Combobox.Target>
   )
 }
@@ -88,19 +90,21 @@ const BoardSwitchInput = ({
   })?.name
   return (
     <Combobox.Target>
-      <InputBase
-        component="button"
-        type="button"
-        pointer
-        w="12rem"
-        rightSection={<Combobox.Chevron />}
-        rightSectionPointerEvents="none"
-        onClick={() => combobox.toggleDropdown()}>
-        <>
-          {boardId && boardName}
-          {!boardId && <Input.Placeholder>Select board</Input.Placeholder>}
-        </>
-      </InputBase>
+      <Input.Wrapper label="Board">
+        <InputBase
+          component="button"
+          type="button"
+          pointer
+          w="12rem"
+          rightSection={<Combobox.Chevron />}
+          rightSectionPointerEvents="none"
+          onClick={() => combobox.toggleDropdown()}>
+          <>
+            {boardId && boardName}
+            {!boardId && <Input.Placeholder>Select board</Input.Placeholder>}
+          </>
+        </InputBase>
+      </Input.Wrapper>
     </Combobox.Target>
   )
 }

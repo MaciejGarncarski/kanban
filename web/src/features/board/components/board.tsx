@@ -5,8 +5,8 @@ import { MAX_COLUMN_COUNT } from '@/const/column'
 import { AddTaskCardModal } from '@/features/board/components/add-task-card-modal'
 import { TaskCard } from '@/features/board/components/task-card'
 import { AddColumnModal } from '@/features/column/components/add-column-modal'
+import { ColumnInfoModal } from '@/features/column/components/column-info-modal'
 import {
-  ActionIcon,
   Card,
   Center,
   Flex,
@@ -16,7 +16,6 @@ import {
   Text,
   Title,
 } from '@mantine/core'
-import { Edit } from 'lucide-react'
 import { useQueryState } from 'nuqs'
 
 export function Board() {
@@ -47,7 +46,7 @@ const BoardContent = ({ boardId }: { boardId: string }) => {
 
       <ScrollAreaAutosize scrollbars="x" offsetScrollbars>
         <Group justify="flex-start" wrap="nowrap" gap="lg">
-          {data?.columns.map(({ name, cards, id: columnId }) => {
+          {data?.columns.map(({ name, cards, id: columnId, createdAt }) => {
             return (
               <Card
                 key={name}
@@ -58,9 +57,12 @@ const BoardContent = ({ boardId }: { boardId: string }) => {
                 style={{ flexShrink: 0 }}>
                 <Group justify="space-between">
                   <Title order={2}>{name}</Title>
-                  <ActionIcon variant="light">
-                    <Edit size="70%" />
-                  </ActionIcon>
+                  <ColumnInfoModal
+                    columnId={columnId}
+                    name={name}
+                    createdAt={createdAt}
+                    teamId={data.teamId}
+                  />
                 </Group>
                 <ScrollAreaAutosize scrollbars="y" maw={'20rem'}>
                   <Stack gap="md" mt="lg" px="4" py="xs" w="18rem">
@@ -69,7 +71,9 @@ const BoardContent = ({ boardId }: { boardId: string }) => {
                         <TaskCard
                           key={id}
                           boardId={boardId}
+                          teamId={data.teamId}
                           description={description}
+                          cardId={id}
                           title={title}
                           assignedToId={assignedTo}
                           dueDate={dueDate ? new Date(dueDate) : null}

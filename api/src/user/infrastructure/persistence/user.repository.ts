@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import { type DB } from 'src/infrastructure/persistence/db/client';
 import { InjectDb } from 'src/infrastructure/persistence/db/db.provider';
@@ -10,12 +10,30 @@ import {
   teams,
   users,
 } from 'src/infrastructure/persistence/db/schema';
+import { TeamRole } from 'src/team/domain/types/team.types';
 import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
 import { UserMapper } from 'src/user/infrastructure/persistence/mappers/user.mapper';
 
 @Injectable()
 export class UserRepository implements UserRepositoryInterface {
   constructor(@InjectDb() private readonly db: DB) {}
+
+  async getUserRoleByTeamId(teamId: string, userId: string): Promise<TeamRole> {
+    const [teamMember] = await this.db
+      .select()
+      .from(team_members)
+      .where(
+        and(eq(team_members.team_id, teamId), eq(team_members.user_id, userId)),
+      );
+
+    if (!teamMember) {
+      throw new BadRequestException(
+        'User is not a member of the specified team',
+      );
+    }
+
+    return teamMember.role as TeamRole;
+  }
 
   async find(id: string) {
     const [user] = await this.db
@@ -80,8 +98,6 @@ export class UserRepository implements UserRepositoryInterface {
   }
 
   async isUserInTeamByColumn(userId: string, columnId: string) {
-    console.log(columnId);
-
     const [userInTeam] = await this.db
       .select()
       .from(users)

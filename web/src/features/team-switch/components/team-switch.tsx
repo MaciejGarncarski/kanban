@@ -1,5 +1,6 @@
 'use client'
 
+import { paths } from '@/api-client/api'
 import { appQuery } from '@/api-client/api-client'
 import {
   Combobox,
@@ -11,6 +12,7 @@ import {
   useCombobox,
   ComboboxStore,
 } from '@mantine/core'
+import { useQueryClient } from '@tanstack/react-query'
 import { CheckIcon } from 'lucide-react'
 import { useQueryState } from 'nuqs'
 
@@ -18,11 +20,34 @@ export function TeamSwitch() {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   })
+  const queryClient = useQueryClient()
   const [teamId, setTeamId] = useQueryState('teamId')
+  const [, setBoardId] = useQueryState('boardId')
 
   const setTeam = async (val: string | null) => {
     if (!val) return
     setTeamId(val)
+
+    const queryData = queryClient.getQueryData<
+      paths['/v1/teams/{teamId}/boards']['get']['responses']['200']['content']['application/json']
+    >([
+      'get',
+      '/v1/teams/{teamId}/boards',
+      {
+        params: {
+          path: {
+            teamId: val,
+          },
+        },
+      },
+    ])
+
+    if (!queryData) {
+      setBoardId(null)
+      return
+    }
+
+    setBoardId(queryData.boards[0]?.id ?? null)
   }
 
   return (
@@ -49,16 +74,18 @@ export function TeamSwitch() {
 const TeamSwitchInputEmpty = ({ combobox }: { combobox: ComboboxStore }) => {
   return (
     <Combobox.Target>
-      <InputBase
-        component="button"
-        type="button"
-        pointer
-        w="12rem"
-        rightSection={<Combobox.Chevron />}
-        rightSectionPointerEvents="none"
-        onClick={() => combobox.toggleDropdown()}>
-        <Input.Placeholder>Select team</Input.Placeholder>
-      </InputBase>
+      <Input.Wrapper label="Team">
+        <InputBase
+          component="button"
+          type="button"
+          pointer
+          w="12rem"
+          rightSection={<Combobox.Chevron />}
+          rightSectionPointerEvents="none"
+          onClick={() => combobox.toggleDropdown()}>
+          <Input.Placeholder>Select team</Input.Placeholder>
+        </InputBase>
+      </Input.Wrapper>
     </Combobox.Target>
   )
 }
@@ -74,19 +101,21 @@ const TeamSwitchInput = ({
 
   return (
     <Combobox.Target>
-      <InputBase
-        component="button"
-        type="button"
-        pointer
-        w="12rem"
-        rightSection={<Combobox.Chevron />}
-        rightSectionPointerEvents="none"
-        onClick={() => combobox.toggleDropdown()}>
-        <>
-          {teamId && data.teams.find((team) => team.id === teamId)?.name}
-          {!teamId && <Input.Placeholder>Select team</Input.Placeholder>}
-        </>
-      </InputBase>
+      <Input.Wrapper label="Team">
+        <InputBase
+          component="button"
+          type="button"
+          pointer
+          w="12rem"
+          rightSection={<Combobox.Chevron />}
+          rightSectionPointerEvents="none"
+          onClick={() => combobox.toggleDropdown()}>
+          <>
+            {teamId && data.teams.find((team) => team.id === teamId)?.name}
+            {!teamId && <Input.Placeholder>Select team</Input.Placeholder>}
+          </>
+        </InputBase>
+      </Input.Wrapper>
     </Combobox.Target>
   )
 }

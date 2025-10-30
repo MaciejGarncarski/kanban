@@ -3,6 +3,7 @@
 import { appQuery } from '@/api-client/api-client'
 import {
   ActionIcon,
+  Button,
   Flex,
   Group,
   Modal,
@@ -12,7 +13,7 @@ import {
   Title,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import { Info } from 'lucide-react'
+import { EditIcon, Info, TrashIcon } from 'lucide-react'
 
 type Props = {
   title: string
@@ -20,6 +21,8 @@ type Props = {
   assignedToId?: string
   dueDate?: Date | null
   boardId: string
+  teamId: string
+  cardId: string
 }
 
 export function TaskCard({
@@ -28,6 +31,8 @@ export function TaskCard({
   assignedToId,
   dueDate,
   boardId,
+  teamId,
+  cardId,
 }: Props) {
   const [opened, { open, close }] = useDisclosure(false)
 
@@ -43,7 +48,37 @@ export function TaskCard({
     },
   )
 
+  const { data: roleData } = appQuery.useSuspenseQuery(
+    'get',
+    '/user/v1/users/{teamId}/role',
+    {
+      params: { path: { teamId } },
+    },
+  )
+
+  const deleteMutation = appQuery.useMutation('delete', '/v1/cards/{cardId}')
+
+  const isAdmin = roleData.role === 'admin'
   const assignedToUser = data.users.find((user) => user.id === assignedToId)
+
+  const handleDelete = () => {
+    if (!isAdmin) return
+
+    deleteMutation.mutate(
+      {
+        params: {
+          path: { cardId: cardId },
+        },
+      },
+      {
+        onSuccess: (_, __, ___, context) => {
+          context.client.invalidateQueries({
+            queryKey: ['get', '/v1/boards/{id}'],
+          })
+        },
+      },
+    )
+  }
 
   return (
     <Paper withBorder py="sm" px="md" style={{ maxWidth: '100%' }}>
@@ -92,6 +127,24 @@ export function TaskCard({
               Due date: {dueDate ? dueDate.toLocaleString() : 'No due date'}
             </Text>
           </Stack>
+          {isAdmin && (
+            <Group justify="space-between">
+              <Button
+                mt="md"
+                onClick={close}
+                leftSection={<EditIcon size={20} />}>
+                Edit
+              </Button>
+              <Button
+                mt="md"
+                onClick={handleDelete}
+                loading={deleteMutation.isPending}
+                bg="red"
+                leftSection={<TrashIcon size={20} />}>
+                Delete
+              </Button>
+            </Group>
+          )}
         </Stack>
       </Modal>
     </Paper>

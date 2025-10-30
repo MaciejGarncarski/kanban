@@ -9,4 +9,6 @@ export interface CardRepositoryInterface {
     dueDate?: Date;
   }): Promise<CardEntity>;
   getPositionForNewCard(columnId: string): Promise<number>;
+  getTeamIdByCardId(cardId: string): Promise<string>;
+  deleteCard(cardId: string): Promise<void>;
 }

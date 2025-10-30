@@ -6,7 +6,7 @@ import { CreateTeamLink } from '@/features/layout/components/create-team-link'
 import { TeamSwitchPlaceholder } from '@/features/team-switch/components/team-switch-placeholder'
 import { TeamSwitchSSR } from '@/features/team-switch/components/team-switch-ssr'
 import { getQueryClient } from '@/utils/get-query-client'
-import { Group, Stack, Title } from '@mantine/core'
+import { Box, Group, Stack } from '@mantine/core'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { redirect } from 'next/navigation'
 import { connection } from 'next/server'
@@ -59,9 +59,42 @@ export default async function Home({ searchParams }: PageProps) {
         return res.data
       },
     })
+
+    void queryClient.prefetchQuery({
+      queryKey: ['get', `/user/v1/users/{teamId}/role`],
+      queryFn: async () => {
+        const res = await fetchServer.GET(`/user/v1/users/{teamId}/role`, {
+          params: {
+            path: { teamId: teamId },
+          },
+          headers: {
+            'x-skip-jwt-middleware': 'true',
+            cookie: cookies,
+          },
+        })
+
+        return res.data
+      },
+    })
   }
 
   if (boardId) {
+    void queryClient.prefetchQuery({
+      queryKey: ['get', '/user/v1/boards/{boardId}/users'],
+      queryFn: async () => {
+        const res = await fetchServer.GET('/user/v1/boards/{boardId}/users', {
+          params: {
+            path: { boardId: boardId },
+          },
+          headers: {
+            'x-skip-jwt-middleware': 'true',
+            cookie: cookies,
+          },
+        })
+        return res.data
+      },
+    })
+
     void queryClient.prefetchQuery({
       queryKey: ['get', `/v1/boards/{id}`],
       queryFn: async () => {
@@ -80,31 +113,25 @@ export default async function Home({ searchParams }: PageProps) {
   }
 
   return (
-    <main>
-      <Group>
-        <Title order={1} size="24">
-          Teams
-        </Title>
-        <CreateTeamLink />
-        <Suspense fallback={<TeamSwitchPlaceholder />}>
-          <TeamSwitchSSR />
-        </Suspense>
-      </Group>
-      <Stack mt="md">
-        <Group justify="between" w="100%">
-          <Title order={1} size="24">
-            Board
-          </Title>
-          <Suspense fallback={<div>Loading board switcher...</div>}>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <main>
+        <Group justify="flex-start" align="flex-end">
+          <Suspense fallback={<TeamSwitchPlaceholder />}>
+            <TeamSwitchSSR />
+          </Suspense>
+          <Suspense fallback={<TeamSwitchPlaceholder />}>
             <BoardSwitch />
           </Suspense>
+          <Box ml={'auto'}>
+            <CreateTeamLink />
+          </Box>
         </Group>
-        <Suspense fallback={<p>Loading board...</p>}>
-          <HydrationBoundary state={dehydrate(queryClient)}>
+        <Stack mt="md">
+          <Suspense fallback={<p>Loading board...</p>}>
             <Board />
-          </HydrationBoundary>
-        </Suspense>
-      </Stack>
-    </main>
+          </Suspense>
+        </Stack>
+      </main>
+    </HydrationBoundary>
   )
 }
