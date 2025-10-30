@@ -35,6 +35,7 @@ export class BoardMapper {
               description: card.description ?? null,
               position: card.position,
               createdAt: card.created_at ? new Date(card.created_at) : null,
+              updatedAt: card.updated_at ? new Date(card.updated_at) : null,
               dueDate: card.due_date ? new Date(card.due_date) : null,
             }),
         );

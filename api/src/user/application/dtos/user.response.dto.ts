@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
-import { IsISO8601, IsNotEmpty, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 export class UserResponseDto {
   @ApiProperty({
     example: '0199f343-b727-7971-a165-2c495b512976',
@@ -30,9 +30,7 @@ export class UserResponseDto {
     example: '2025-10-17T15:42:05.351Z',
     description: 'User account creation date',
   })
-  @IsISO8601({ strict: true })
-  @IsNotEmpty()
-  @Type(() => Date)
   @Expose()
-  createdAt: Date;
+  @Type(() => Date)
+  createdAt: string;
 }

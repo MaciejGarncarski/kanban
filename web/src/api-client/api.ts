@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/user": {
+    "/user/v1/boards/{boardId}/users": {
         parameters: {
             query?: never;
             header?: never;
@@ -156,6 +156,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/cards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CardController_createCard"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/columns": {
         parameters: {
             query?: never;
@@ -176,24 +192,31 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        SignInBodyDto: {
+        UserResponseDto: {
             /**
-             * @description User email
+             * @description User ID
+             * @example 0199f343-b727-7971-a165-2c495b512976
+             */
+            id: string;
+            /**
+             * @description User name
+             * @example Alice
+             */
+            name: string;
+            /**
+             * @description User email address
              * @example alice@example.com
              */
             email: string;
             /**
-             * @description User password
-             * @example Abcd123
+             * @description User account creation date
+             * @example 2025-10-17T15:42:05.351Z
              */
-            password: string;
+            createdAt: string;
         };
-        SignInResponseDto: {
-            /**
-             * @description JWT access token
-             * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-             */
-            accessToken: string;
+        UserArrayResponseDto: {
+            /** @description Array of users */
+            users: components["schemas"]["UserResponseDto"][];
         };
         ApiErrorResponse: {
             /** @example 400 */
@@ -222,6 +245,25 @@ export interface components {
              */
             validationErrors?: string[] | null;
         };
+        SignInBodyDto: {
+            /**
+             * @description User email
+             * @example alice@example.com
+             */
+            email: string;
+            /**
+             * @description User password
+             * @example Abcd123
+             */
+            password: string;
+        };
+        SignInResponseDto: {
+            /**
+             * @description JWT access token
+             * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+             */
+            accessToken: string;
+        };
         RegisterBodyDto: {
             /**
              * @description User email
@@ -243,29 +285,6 @@ export interface components {
              * @example Abcd123
              */
             confirmPassword: string;
-        };
-        UserResponseDto: {
-            /**
-             * @description User ID
-             * @example 0199f343-b727-7971-a165-2c495b512976
-             */
-            id: string;
-            /**
-             * @description User name
-             * @example Alice
-             */
-            name: string;
-            /**
-             * @description User email address
-             * @example alice@example.com
-             */
-            email: string;
-            /**
-             * Format: date-time
-             * @description User account creation date
-             * @example 2025-10-17T15:42:05.351Z
-             */
-            createdAt: string;
         };
         RegisterResponseDto: {
             /**
@@ -298,7 +317,6 @@ export interface components {
             /** @example This is an awesome team working on great projects. */
             description?: string;
             /**
-             * Format: date-time
              * @description User account creation date
              * @example 2025-10-17T15:42:05.351Z
              */
@@ -313,7 +331,6 @@ export interface components {
             name: string;
             description?: string;
             teamId: string;
-            /** Format: date-time */
             createdAt?: string;
         };
         GetBoardsByTeamResponseDto: {
@@ -327,8 +344,8 @@ export interface components {
             position: number;
             assignedTo?: string;
             columnId: string;
-            /** Format: date-time */
             createdAt?: string;
+            updatedAt?: string;
             /** Format: date-time */
             dueDate?: string;
         };
@@ -337,8 +354,11 @@ export interface components {
             boardId: string;
             name: string;
             position: number;
-            /** Format: date-time */
-            createdAt?: string;
+            /**
+             * @description User account creation date
+             * @example 2025-10-17T15:42:05.351Z
+             */
+            createdAt: string;
             cards: components["schemas"]["CardDto"][];
         };
         BoardDetailDto: {
@@ -346,10 +366,21 @@ export interface components {
             name: string;
             description?: string;
             teamId: string;
-            /** Format: date-time */
             createdAt?: string;
             /** @description List of columns with their cards */
             columns: components["schemas"]["ColumnDto"][];
+        };
+        CreateCardRequestDto: {
+            /** @example Title */
+            title: string;
+            /** @example column-uuid */
+            columnId: string;
+            /** @example Description */
+            description?: string;
+            /** @example 2023-01-01 */
+            dueDate?: string;
+            /** @example user-uuid */
+            assignedTo?: string;
         };
         CreateColumnRequestDto: {
             /**
@@ -370,8 +401,11 @@ export interface components {
             name: string;
             /** @example a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6 */
             boardId: string;
-            /** Format: date-time */
-            createdAt?: string;
+            /**
+             * @description User account creation date
+             * @example 2025-10-17T15:42:05.351Z
+             */
+            createdAt: string;
             /** @example 1 */
             position: number;
         };
@@ -387,8 +421,13 @@ export interface operations {
     UserController_getUsers: {
         parameters: {
             query?: never;
-            header?: never;
-            path?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path: {
+                boardId: string;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -397,7 +436,17 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["UserArrayResponseDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
             };
         };
     };
@@ -647,6 +696,40 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BoardDetailDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    CardController_createCard: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateCardRequestDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CardDto"];
                 };
             };
             400: {

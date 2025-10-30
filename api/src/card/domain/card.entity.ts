@@ -7,6 +7,7 @@ export class CardEntity {
   readonly columnId: string;
   readonly dueDate: Date | null;
   readonly createdAt: Date | null;
+  readonly updatedAt: Date | null;
 
   constructor(props: {
     id: string;
@@ -16,6 +17,7 @@ export class CardEntity {
     columnId: string;
     assignedTo: string | null;
     createdAt: Date | null;
+    updatedAt: Date | null;
     dueDate: Date | null;
   }) {
     if (!props) {
@@ -30,5 +32,6 @@ export class CardEntity {
     this.columnId = props.columnId;
     this.dueDate = props.dueDate;
     this.createdAt = props.createdAt;
+    this.updatedAt = props.updatedAt;
   }
 }

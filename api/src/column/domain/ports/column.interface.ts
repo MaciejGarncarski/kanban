@@ -1,13 +1,7 @@
+import { ColumnEntity } from 'src/column/domain/column.entity';
+
 export interface ColumnRepositoryInterface {
-  createColumn(
-    boardId: string,
-    name: string,
-    position: number,
-  ): Promise<{
-    name: string;
-    id: string;
-    board_id: string;
-    created_at: Date | null;
-    position: number;
-  }>;
+  createColumn(boardId: string, name: string): Promise<ColumnEntity>;
+  checkMaxColumns(boardId: string): Promise<boolean>;
+  existsByNameAndBoardId(name: string, boardId: string): Promise<boolean>;
 }

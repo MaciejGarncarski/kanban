@@ -23,6 +23,7 @@ export const routesV1 = {
   user: {
     root: usersRoot,
     getUserById: `${prefix}${usersRoot}/:id`,
+    getUsersByBoardId: `${prefix}boards/:boardId/users`,
   },
   board: {
     getBoardsByTeamId: `${prefix}teams/:teamId/boards`,

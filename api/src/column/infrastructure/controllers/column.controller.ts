@@ -1,4 +1,4 @@
-import { Body, Controller, Post, SerializeOptions } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiBadRequestResponse, ApiBody, ApiOkResponse } from '@nestjs/swagger';
 import { Auth } from 'src/auth/common/decorators/auth.decorator';
@@ -21,7 +21,6 @@ export class ColumnController {
   @ApiBadRequestResponse({
     type: ApiErrorResponse,
   })
-  @SerializeOptions({})
   @ApiBody({ type: CreateColumnRequestDto })
   async createColumn(@Body() createColumnDto: CreateColumnRequestDto) {
     const result = await this.commandBus.execute<

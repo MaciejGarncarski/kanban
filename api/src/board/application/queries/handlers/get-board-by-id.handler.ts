@@ -16,7 +16,9 @@ export class GetBoardByIdHandler implements IQueryHandler<GetBoardByIdQuery> {
       throw new NotFoundException('Board not found');
     }
 
-    const dto = plainToInstance(BoardDetailDto, instanceToPlain(board));
+    const dto = plainToInstance(BoardDetailDto, instanceToPlain(board), {
+      excludeExtraneousValues: true,
+    });
 
     return dto;
   }

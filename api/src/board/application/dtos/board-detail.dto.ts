@@ -36,7 +36,7 @@ export class BoardDetailDto {
   @IsOptional()
   @IsDate()
   @Expose()
-  createdAt: Date;
+  createdAt: string;
 
   @ApiProperty({
     type: [ColumnDto],

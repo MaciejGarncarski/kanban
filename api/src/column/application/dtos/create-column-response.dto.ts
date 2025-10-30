@@ -1,27 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Transform, Type } from 'class-transformer';
-import {
-  IsDate,
-  IsOptional,
-  IsPositive,
-  isString,
-  IsString,
-  IsUUID,
-} from 'class-validator';
+import { Expose, Type } from 'class-transformer';
+import { IsPositive, IsString, IsUUID } from 'class-validator';
 
 export class CreateColumnResponseDto {
-  @Expose({ name: 'id' })
+  @Expose()
   @IsUUID()
   @ApiProperty({ name: 'id', example: 'a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6' })
   id: string;
 
-  @Expose({ name: 'name' })
+  @Expose()
   @ApiProperty({ name: 'name', example: 'To Do' })
   @IsString()
   name: string;
 
   @Expose()
-  @Transform(({ obj }) => obj.board_id, { toClassOnly: true })
   @ApiProperty({
     name: 'boardId',
     example: 'a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6',
@@ -29,14 +21,16 @@ export class CreateColumnResponseDto {
   @IsString()
   boardId: string;
 
-  @Expose({ name: 'created_at' })
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsDate()
+  @Expose()
+  @ApiProperty({
+    example: '2025-10-17T15:42:05.351Z',
+    description: 'User account creation date',
+  })
+  @Expose()
   @Type(() => Date)
-  createdAt: Date;
+  createdAt: string;
 
-  @Expose({ name: 'position' })
+  @Expose()
   @IsPositive()
   @ApiProperty({ example: 1 })
   position: number;

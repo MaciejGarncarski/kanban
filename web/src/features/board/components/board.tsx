@@ -2,6 +2,7 @@
 
 import { appQuery } from '@/api-client/api-client'
 import { MAX_COLUMN_COUNT } from '@/const/column'
+import { AddTaskCardModal } from '@/features/board/components/add-task-card-modal'
 import { TaskCard } from '@/features/board/components/task-card'
 import { AddColumnModal } from '@/features/column/components/add-column-modal'
 import {
@@ -45,14 +46,14 @@ const BoardContent = ({ boardId }: { boardId: string }) => {
       </Text>
 
       <ScrollAreaAutosize scrollbars="x" offsetScrollbars>
-        <Group justify="flex-start" wrap="nowrap">
-          {data?.columns.map(({ name, cards }) => {
+        <Group justify="flex-start" wrap="nowrap" gap="lg">
+          {data?.columns.map(({ name, cards, id: columnId }) => {
             return (
               <Card
                 key={name}
                 withBorder
                 shadow="sm"
-                h={'30rem'}
+                h={'40rem'}
                 w="20rem"
                 style={{ flexShrink: 0 }}>
                 <Group justify="space-between">
@@ -61,19 +62,21 @@ const BoardContent = ({ boardId }: { boardId: string }) => {
                     <Edit size="70%" />
                   </ActionIcon>
                 </Group>
-                <ScrollAreaAutosize scrollbars="y">
-                  <Stack gap="md" mt="lg">
+                <ScrollAreaAutosize scrollbars="y" maw={'20rem'}>
+                  <Stack gap="md" mt="lg" px="4" py="xs" w="18rem">
                     {cards.map(
                       ({ id, title, assignedTo, description, dueDate }) => (
                         <TaskCard
                           key={id}
-                          description={description || ''}
+                          boardId={boardId}
+                          description={description}
                           title={title}
-                          assignedToId={assignedTo || ''}
+                          assignedToId={assignedTo}
                           dueDate={dueDate ? new Date(dueDate) : null}
                         />
                       ),
                     )}
+                    <AddTaskCardModal boardId={boardId} columnId={columnId} />
                   </Stack>
                 </ScrollAreaAutosize>
               </Card>
@@ -84,7 +87,7 @@ const BoardContent = ({ boardId }: { boardId: string }) => {
             <Card
               withBorder
               shadow="sm"
-              h={'30rem'}
+              h={'40rem'}
               w="20rem"
               style={{ flexShrink: 0, justifyContent: 'center' }}>
               <Center>

@@ -29,9 +29,11 @@ export async function seed(pool?: Pool) {
     password_hash: await hash(userFixture.password),
   };
 
+  const userId2 = v7();
   await db.insert(schema.users).values([
     defaultUser,
     {
+      id: userId2,
       name: 'Bob',
       email: 'bob@example.com',
       password_hash:
@@ -63,6 +65,10 @@ export async function seed(pool?: Pool) {
     {
       team_id: teamId2,
       user_id: userId,
+    },
+    {
+      team_id: teamId2,
+      user_id: userId2,
     },
   ]);
 

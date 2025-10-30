@@ -15,6 +15,7 @@ export class CardMapper {
       assignedTo: record.assigned_to,
       columnId: record.column_id,
       createdAt: record.created_at ? new Date(record.created_at) : null,
+      updatedAt: record.updated_at ? new Date(record.updated_at) : null,
       dueDate: record.due_date ? new Date(record.due_date) : null,
     });
 
@@ -30,6 +31,7 @@ export class CardMapper {
       assigned_to: card.assignedTo,
       column_id: card.columnId,
       created_at: card.createdAt,
+      updated_at: new Date(),
       due_date: card.dueDate,
     };
   }

@@ -72,6 +72,7 @@ export class BoardRepository implements BoardRepositoryInterface {
           position: row.card.position,
           createdAt: row.card.created_at ? new Date(row.card.created_at) : null,
           dueDate: row.card.due_date ? new Date(row.card.due_date) : null,
+          updatedAt: row.card.updated_at ? new Date(row.card.updated_at) : null,
         });
         columnEntity.addCard(card);
       }
@@ -82,22 +83,58 @@ export class BoardRepository implements BoardRepositoryInterface {
     return boardAggregate;
   }
 
-  // async createBoard(board: BoardAggregate): Promise<BoardAggregate> {
-  //   const boardRecord = BoardMapper.toPersistence(board);
-  //   const columnRecords = BoardMapper.toPersistenceColumns(board);
-  //   const cardRecords = BoardMapper.toPersistenceCards(board);
+  async createBoard(board: BoardAggregate): Promise<BoardAggregate> {
+    const boardRecord = BoardMapper.toPersistence(board);
+    const columnRecords = BoardMapper.toPersistenceColumns(board);
+    const cardRecords = BoardMapper.toPersistenceCards(board);
 
-  //   const result = await this.db.transaction(async (tx) => {
-  //     const boardRow = await tx.insert(boards).values(boardRecord).returning();
-  //     let columnRows = [];
-  //     if (columnRecords.length > 0) {
-  //       columnRows = await tx.insert(columns).values(columnRecords).returning();
-  //     }
-  //     if (cardRecords.length > 0) {
-  //       await tx.insert(cards).values(cardRecords);
-  //     }
-  //   });
+    const result = await this.db.transaction(async (tx) => {
+      const boardRow = await tx.insert(boards).values(boardRecord).returning();
+      let columnRows: {
+        name: string;
+        id: string;
+        created_at: Date | null;
+        board_id: string;
+        position: number;
+      }[] = [];
 
-  //   return BoardMapper.toDomain(result);
-  // }
+      let cardRows: {
+        id: string;
+        column_id: string;
+        title: string;
+        description: string | null;
+        assigned_to: string | null;
+        position: number;
+        created_at: Date | null;
+        updated_at: Date | null;
+        due_date: Date | null;
+      }[] = [];
+
+      if (columnRecords.length > 0) {
+        columnRows = await tx.insert(columns).values(columnRecords).returning();
+      }
+
+      if (cardRecords.length > 0) {
+        cardRows = await tx.insert(cards).values(cardRecords).returning();
+      }
+
+      return {
+        board: boardRow[0],
+        columns: columnRows,
+        cards: cardRows,
+      };
+    });
+
+    return BoardMapper.toDomain(
+      {
+        created_at: result.board.created_at,
+        description: result.board.description,
+        id: result.board.id,
+        name: result.board.name,
+        team_id: result.board.team_id,
+      },
+      result.columns,
+      result.cards,
+    );
+  }
 }

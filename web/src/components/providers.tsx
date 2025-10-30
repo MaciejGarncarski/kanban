@@ -5,6 +5,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { NuqsAdapter } from 'nuqs/adapters/next'
 import type * as React from 'react'
+import { Notifications } from '@mantine/notifications'
 
 const CONTAINER_SIZES: Record<string, number> = {
   xxs: 300,
@@ -38,6 +39,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <MantineProvider theme={theme}>
+        <Notifications />
         <NuqsAdapter>{children}</NuqsAdapter>
       </MantineProvider>
       <ReactQueryDevtools />

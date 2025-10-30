@@ -6,8 +6,6 @@ import {
   IsNumber,
   IsArray,
   ValidateNested,
-  IsOptional,
-  IsDate,
 } from 'class-validator';
 import { CardDto } from 'src/card/application/dtos/card.dto';
 
@@ -32,11 +30,13 @@ export class ColumnDto {
   @Expose()
   position: number;
 
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsDate()
+  @ApiProperty({
+    example: '2025-10-17T15:42:05.351Z',
+    description: 'User account creation date',
+  })
   @Expose()
-  createdAt: Date;
+  @Type(() => Date)
+  createdAt: string;
 
   @ApiProperty({ type: [CardDto] })
   @IsArray()

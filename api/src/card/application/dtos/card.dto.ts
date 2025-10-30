@@ -45,7 +45,13 @@ export class CardDto {
   @IsOptional()
   @IsDate()
   @Expose()
-  createdAt: Date;
+  createdAt: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsDate()
+  @Expose()
+  updatedAt: string;
 
   @ApiProperty({ required: false })
   @IsOptional()

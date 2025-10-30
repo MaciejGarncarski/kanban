@@ -24,7 +24,7 @@ export class TeamRepository implements TeamRepositoryInterface {
     const userTeams = rawResult.map((row) => {
       return {
         ...row.teams,
-        created_at: new Date(row.teams.created_at),
+        created_at: row.teams.created_at,
         description: row.teams.description || '',
       };
     });

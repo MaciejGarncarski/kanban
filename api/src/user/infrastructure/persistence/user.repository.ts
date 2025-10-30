@@ -1,8 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { type DB } from 'src/infrastructure/persistence/db/client';
 import { InjectDb } from 'src/infrastructure/persistence/db/db.provider';
-import { lower, users } from 'src/infrastructure/persistence/db/schema';
+import {
+  boards,
+  columns,
+  lower,
+  team_members,
+  teams,
+  users,
+} from 'src/infrastructure/persistence/db/schema';
 import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
 import { UserMapper } from 'src/user/infrastructure/persistence/mappers/user.mapper';
 
@@ -56,5 +63,46 @@ export class UserRepository implements UserRepositoryInterface {
     const [createdUser] = await this.db.insert(users).values(data).returning();
 
     return UserMapper.toDomain(createdUser);
+  }
+
+  async findAllByBoardId(boardId: string) {
+    const usersOnBoard = await this.db
+      .select()
+      .from(users)
+      .innerJoin(team_members, eq(users.id, team_members.user_id))
+      .innerJoin(teams, eq(team_members.team_id, teams.id))
+      .innerJoin(boards, eq(boards.team_id, teams.id))
+      .where(eq(boards.id, boardId));
+
+    return usersOnBoard.map(({ users }) => {
+      return UserMapper.toDomain(users);
+    });
+  }
+
+  async isUserInTeamByColumn(userId: string, columnId: string) {
+    console.log(columnId);
+
+    const [userInTeam] = await this.db
+      .select()
+      .from(users)
+      .innerJoin(team_members, eq(users.id, team_members.user_id))
+      .innerJoin(teams, eq(team_members.team_id, teams.id))
+      .innerJoin(boards, eq(boards.team_id, teams.id))
+      .innerJoin(columns, eq(columns.board_id, boards.id))
+      .where(and(eq(columns.id, columnId), eq(users.id, userId)));
+
+    return Boolean(userInTeam);
+  }
+
+  async isUserInTeamByBoard(userId: string, boardId: string) {
+    const [userInTeam] = await this.db
+      .select()
+      .from(users)
+      .innerJoin(team_members, eq(users.id, team_members.user_id))
+      .innerJoin(teams, eq(team_members.team_id, teams.id))
+      .innerJoin(boards, eq(boards.team_id, teams.id))
+      .where(and(eq(boards.id, boardId), eq(users.id, userId)));
+
+    return Boolean(userInTeam);
   }
 }

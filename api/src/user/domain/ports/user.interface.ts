@@ -7,4 +7,7 @@ export interface UserRepositoryInterface {
   all(): Promise<UserEntity[]>;
   lastTen(): Promise<UserEntity[]>;
   create(data: NewUserRecord): Promise<UserEntity>;
+  findAllByBoardId(boardId: string): Promise<UserEntity[]>;
+  isUserInTeamByColumn(userId: string, columnId: string): Promise<boolean>;
+  isUserInTeamByBoard(userId: string, boardId: string): Promise<boolean>;
 }

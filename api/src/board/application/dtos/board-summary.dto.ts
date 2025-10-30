@@ -28,5 +28,5 @@ export class BoardSummaryDto {
   @IsOptional()
   @IsDate()
   @Expose()
-  createdAt: Date;
+  createdAt: string;
 }
