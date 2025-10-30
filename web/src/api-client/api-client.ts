@@ -15,15 +15,36 @@ export const fetchClientNoMiddleware = createFetchClient<paths>({
 })
 
 export const appQuery = createQuery(fetchClient)
-export const appQueryNoMiddleware = createQuery(fetchClientNoMiddleware)
 
 const jwtMiddleware: Middleware = {
   onRequest: async ({ request }) => {
     const requestId = v7()
+
+    if (typeof document === 'undefined') {
+      const cookieStore = await import('next/headers').then(
+        (mod) => mod.cookies,
+      )
+      const cookies = await cookieStore()
+      const cookieHeader = cookies.getAll()
+      if (cookieHeader) {
+        request.headers.set(
+          'cookie',
+          cookieHeader.map((c) => `${c.name}=${c.value}`).join('; '),
+        )
+      }
+    }
+
     request.headers.set('x-correlation-id', requestId)
     return request
   },
   onResponse: async ({ response, request }) => {
+    const skipHeader = request.headers.get('x-skip-jwt-middleware')
+    const shouldSkip = skipHeader ? skipHeader.trim() !== '' : false
+
+    if (shouldSkip) {
+      return response
+    }
+
     if (response.ok) {
       return response
     }
@@ -51,12 +72,3 @@ export const fetchServer = createFetchClient<paths>({
 })
 
 fetchServer.use(jwtMiddleware)
-
-export const fetchServerNoMiddleware = createFetchClient<paths>({
-  baseUrl: process.env.SSR_API_URL,
-  credentials: 'include',
-  headers: {
-    accept: 'application/json',
-  },
-})
-export const appServerQueryNoMiddleware = createQuery(fetchServerNoMiddleware)

@@ -1,23 +1,23 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { UnauthorizedException } from '@nestjs/common';
-import { plainToInstance } from 'class-transformer';
+import { NotFoundException } from '@nestjs/common';
 import { BoardRepository } from 'src/board/infrastructure/persistence/board.repository';
 import { GetBoardByIdQuery } from 'src/board/application/queries/get-board-by-id-query';
-import { BoardDto } from 'src/board/application/dtos/board.dto';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
+import { BoardDetailDto } from 'src/board/application/dtos/board-detail.dto';
 
 @QueryHandler(GetBoardByIdQuery)
 export class GetBoardByIdHandler implements IQueryHandler<GetBoardByIdQuery> {
   constructor(private readonly boardRepo: BoardRepository) {}
 
-  async execute(query: GetBoardByIdQuery) {
+  async execute(query: GetBoardByIdQuery): Promise<BoardDetailDto> {
     const board = await this.boardRepo.findById(query.boardId);
 
     if (!board) {
-      throw new UnauthorizedException('Board not found');
+      throw new NotFoundException('Board not found');
     }
 
-    return plainToInstance(BoardDto, board, {
-      excludeExtraneousValues: true,
-    });
+    const dto = plainToInstance(BoardDetailDto, instanceToPlain(board));
+
+    return dto;
   }
 }

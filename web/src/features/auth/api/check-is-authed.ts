@@ -1,6 +1,6 @@
 'use server'
 
-import { fetchServerNoMiddleware } from '@/api-client/api-client'
+import { fetchServer } from '@/api-client/api-client'
 import { cookies } from 'next/headers'
 
 export async function checkIsAuthed() {
@@ -9,8 +9,9 @@ export async function checkIsAuthed() {
     const accessToken = cookieStore.get('accessToken')?.value || ''
     const refreshToken = cookieStore.get('refreshToken')?.value || ''
 
-    const res = await fetchServerNoMiddleware.GET('/v1/auth/me', {
+    const res = await fetchServer.GET('/v1/auth/me', {
       headers: {
+        'x-skip-jwt-middleware': 'true',
         Cookie: `accessToken=${accessToken}; refreshToken=${refreshToken};`,
       },
     })

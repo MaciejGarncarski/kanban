@@ -11,6 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { getEnvConfig } from 'src/infrastructure/configs/env.config';
 import { GlobalHttpExceptionFilter } from 'src/infrastructure/filters/exception.filter';
+import { TeamRole } from 'src/team/domain/types/team.types';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -72,7 +73,8 @@ async function bootstrap() {
       },
     }),
   );
-  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+  const reflector = app.get(Reflector);
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector));
   app.useGlobalFilters(new GlobalHttpExceptionFilter());
 
   await app.listen(env.API_PORT ?? 3000);
@@ -93,5 +95,6 @@ bootstrap();
 declare module 'express' {
   export interface Request {
     userId: string;
+    userRole?: TeamRole;
   }
 }

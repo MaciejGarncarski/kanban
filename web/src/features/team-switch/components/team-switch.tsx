@@ -9,41 +9,92 @@ import {
   Group,
   Text,
   useCombobox,
+  ComboboxStore,
 } from '@mantine/core'
 import { CheckIcon } from 'lucide-react'
 import { useQueryState } from 'nuqs'
-import { useEffect } from 'react'
 
 export function TeamSwitch() {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   })
   const [teamId, setTeamId] = useQueryState('teamId')
-  const [boardId, setBoardId] = useQueryState('boardId')
-  const { data } = appQuery.useSuspenseQuery('get', '/v1/teams')
-  const boards = appQuery.useQuery(
-    'get',
-    '/v1/teams/{teamId}/boards',
-    {
-      params: { path: { teamId: teamId || '' } },
-    },
-    {
-      enabled: !!teamId,
-    },
-  )
 
-  useEffect(() => {
-    if (!boardId && boards.data?.boards.length) {
-      setBoardId(boards.data?.boards[0]?.id || null)
-    }
-  }, [boardId, boards.data?.boards, setBoardId])
-
-  const setTeam = (val: string | null) => {
+  const setTeam = async (val: string | null) => {
     if (!val) return
     setTeamId(val)
   }
 
-  const options = data.teams.map(({ description, id, name }) => (
+  return (
+    <Combobox
+      store={combobox}
+      width={250}
+      onOptionSubmit={(val) => {
+        setTeam(val)
+        combobox.closeDropdown()
+      }}>
+      {teamId ? (
+        <TeamSwitchInput combobox={combobox} teamId={teamId} />
+      ) : (
+        <TeamSwitchInputEmpty combobox={combobox} />
+      )}
+      <Combobox.Dropdown>
+        <Combobox.Options>
+          <TeamSwitchOptions teamId={teamId} />
+        </Combobox.Options>
+      </Combobox.Dropdown>
+    </Combobox>
+  )
+}
+const TeamSwitchInputEmpty = ({ combobox }: { combobox: ComboboxStore }) => {
+  return (
+    <Combobox.Target>
+      <InputBase
+        component="button"
+        type="button"
+        pointer
+        w="12rem"
+        rightSection={<Combobox.Chevron />}
+        rightSectionPointerEvents="none"
+        onClick={() => combobox.toggleDropdown()}>
+        <Input.Placeholder>Select team</Input.Placeholder>
+      </InputBase>
+    </Combobox.Target>
+  )
+}
+
+const TeamSwitchInput = ({
+  combobox,
+  teamId,
+}: {
+  combobox: ComboboxStore
+  teamId: string
+}) => {
+  const { data } = appQuery.useSuspenseQuery('get', '/v1/teams')
+
+  return (
+    <Combobox.Target>
+      <InputBase
+        component="button"
+        type="button"
+        pointer
+        w="12rem"
+        rightSection={<Combobox.Chevron />}
+        rightSectionPointerEvents="none"
+        onClick={() => combobox.toggleDropdown()}>
+        <>
+          {teamId && data.teams.find((team) => team.id === teamId)?.name}
+          {!teamId && <Input.Placeholder>Select team</Input.Placeholder>}
+        </>
+      </InputBase>
+    </Combobox.Target>
+  )
+}
+
+const TeamSwitchOptions = ({ teamId }: { teamId: string | null }) => {
+  const { data } = appQuery.useSuspenseQuery('get', '/v1/teams')
+
+  return data.teams.map(({ description, id, name }) => (
     <Combobox.Option value={id} key={id}>
       <Group gap="sm" wrap="nowrap">
         {id === teamId && (
@@ -56,34 +107,4 @@ export function TeamSwitch() {
       </Group>
     </Combobox.Option>
   ))
-
-  return (
-    <Combobox
-      store={combobox}
-      width={250}
-      onOptionSubmit={(val) => {
-        setTeam(val)
-        combobox.closeDropdown()
-      }}>
-      <Combobox.Target>
-        <InputBase
-          component="button"
-          type="button"
-          pointer
-          w="12rem"
-          rightSection={<Combobox.Chevron />}
-          rightSectionPointerEvents="none"
-          onClick={() => combobox.toggleDropdown()}>
-          <>
-            {teamId && data.teams.find((team) => team.id === teamId)?.name}
-            {!teamId && <Input.Placeholder>Select team</Input.Placeholder>}
-          </>
-        </InputBase>
-      </Combobox.Target>
-
-      <Combobox.Dropdown>
-        <Combobox.Options>{options}</Combobox.Options>
-      </Combobox.Dropdown>
-    </Combobox>
-  )
 }

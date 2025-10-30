@@ -1,4 +1,4 @@
-import { fetchServerNoMiddleware } from '@/api-client/api-client'
+import { fetchServer } from '@/api-client/api-client'
 import {
   cookieConfigAccessToken,
   cookieConfigRefreshToken,
@@ -54,14 +54,12 @@ export async function proxy(request: NextRequest) {
 
   if (!accessToken || isAboutToExpire) {
     try {
-      const refreshResponse = await fetchServerNoMiddleware.POST(
-        '/v1/auth/refresh-token',
-        {
-          headers: {
-            Cookie: `refreshToken=${refreshToken}`,
-          },
+      const refreshResponse = await fetchServer.POST('/v1/auth/refresh-token', {
+        headers: {
+          'x-skip-jwt-middleware': 'true',
+          Cookie: `refreshToken=${refreshToken}`,
         },
-      )
+      })
 
       const status = refreshResponse.response?.status ?? 0
 

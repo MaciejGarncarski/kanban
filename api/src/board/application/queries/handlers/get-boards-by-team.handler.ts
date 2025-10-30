@@ -1,6 +1,6 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { UnauthorizedException } from '@nestjs/common';
-import { plainToInstance } from 'class-transformer';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { GetBoardsByTeamQuery } from 'src/board/application/queries/get-boards-by-team.query';
 import { BoardRepository } from 'src/board/infrastructure/persistence/board.repository';
 import { GetBoardsByTeamResponseDto } from 'src/board/application/dtos/get-boards-by-team.response.dto';
@@ -18,9 +18,11 @@ export class GetBoardsByTeamHandler
       throw new UnauthorizedException('Boards not found');
     }
 
+    const plainBoards = instanceToPlain(boards);
+
     return plainToInstance(
       GetBoardsByTeamResponseDto,
-      { boards },
+      { boards: plainBoards },
       {
         excludeExtraneousValues: true,
       },

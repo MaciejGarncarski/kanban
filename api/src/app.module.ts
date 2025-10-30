@@ -18,15 +18,21 @@ import { JwtModule } from '@nestjs/jwt';
 import { TeamModule } from 'src/team/team.module';
 import { BoardModule } from 'src/board/board.module';
 import { CardModule } from 'src/card/card.module';
+import { ColumnModule } from 'src/column/column.module';
+
+const API_MODULES = [
+  UserModule,
+  AuthModule,
+  TeamModule,
+  BoardModule,
+  CardModule,
+  ColumnModule,
+];
 
 @Module({
   imports: [
     DbModule,
-    UserModule,
-    AuthModule,
-    TeamModule,
-    BoardModule,
-    CardModule,
+    ...API_MODULES,
     CqrsModule.forRoot(),
     JwtModule.registerAsync({
       global: true,

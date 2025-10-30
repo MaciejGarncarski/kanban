@@ -156,6 +156,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/columns": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ColumnController_createColumn"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -292,28 +308,72 @@ export interface components {
             /** @description List of teams for the user */
             teams: components["schemas"]["TeamDto"][];
         };
-        BoardDto: {
-            /** @example 019a2a86-2c15-77a7-84a2-55e02cdf0d5f */
+        BoardSummaryDto: {
             id: string;
-            /** @example Awesome board */
             name: string;
-            /** @example This is an awesome board. */
             description?: string;
-            /**
-             * @description Team ID associated with the board
-             * @example 7f3b2c1e-1c4d-4f5e-8b2f-1c4d5e8b2f1c
-             */
             teamId: string;
-            /**
-             * Format: date-time
-             * @description User account creation date
-             * @example 2025-10-17T15:42:05.351Z
-             */
-            createdAt: string;
+            /** Format: date-time */
+            createdAt?: string;
         };
         GetBoardsByTeamResponseDto: {
             /** @description List of boards for the team */
-            boards: components["schemas"]["BoardDto"][];
+            boards: components["schemas"]["BoardSummaryDto"][];
+        };
+        CardDto: {
+            id: string;
+            title: string;
+            description?: string;
+            position: number;
+            assignedTo?: string;
+            columnId: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            dueDate?: string;
+        };
+        ColumnDto: {
+            id: string;
+            boardId: string;
+            name: string;
+            position: number;
+            /** Format: date-time */
+            createdAt?: string;
+            cards: components["schemas"]["CardDto"][];
+        };
+        BoardDetailDto: {
+            id: string;
+            name: string;
+            description?: string;
+            teamId: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** @description List of columns with their cards */
+            columns: components["schemas"]["ColumnDto"][];
+        };
+        CreateColumnRequestDto: {
+            /**
+             * @description Title of the column
+             * @example To Do
+             */
+            title: string;
+            /**
+             * @description ID of the board the column belongs to
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            boardId: string;
+        };
+        CreateColumnResponseDto: {
+            /** @example a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6 */
+            id: string;
+            /** @example To Do */
+            name: string;
+            /** @example a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6 */
+            boardId: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** @example 1 */
+            position: number;
         };
     };
     responses: never;
@@ -586,7 +646,41 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["BoardDto"];
+                    "application/json": components["schemas"]["BoardDetailDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    ColumnController_createColumn: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateColumnRequestDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateColumnResponseDto"];
                 };
             };
             400: {

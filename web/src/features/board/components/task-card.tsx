@@ -8,9 +8,10 @@ type Props = {
   title: string
   description: string
   assignedToId: string
+  dueDate: Date | null
 }
 
-export function TaskCard({ title, description, assignedToId }: Props) {
+export function TaskCard({ title, description, assignedToId, dueDate }: Props) {
   const [opened, { open, close }] = useDisclosure(false)
 
   return (
@@ -24,6 +25,7 @@ export function TaskCard({ title, description, assignedToId }: Props) {
         <Modal opened={opened} onClose={close} title={title} centered>
           <Text>{description}</Text>
           <Text>Assigned to: {assignedToId}</Text>
+          {dueDate && <Text>Due date: {dueDate.toLocaleString()}</Text>}
         </Modal>
       </Flex>
     </Paper>

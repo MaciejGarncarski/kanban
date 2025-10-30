@@ -1,4 +1,4 @@
-import { fetchServerNoMiddleware } from '@/api-client/api-client'
+import { fetchServer } from '@/api-client/api-client'
 import { attachCookies } from '@/features/auth/utils/attach-cookies'
 import { TeamSwitch } from '@/features/team-switch/components/team-switch'
 import { getQueryClient } from '@/utils/get-query-client'
@@ -13,8 +13,9 @@ export async function TeamSwitchSSR() {
     queryKey: ['get', '/v1/teams'],
 
     queryFn: async () => {
-      const res = await fetchServerNoMiddleware.GET('/v1/teams', {
+      const res = await fetchServer.GET('/v1/teams', {
         headers: {
+          'x-skip-jwt-middleware': 'true',
           cookie: await attachCookies(),
         },
       })

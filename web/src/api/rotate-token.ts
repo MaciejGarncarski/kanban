@@ -1,6 +1,6 @@
 'use server'
 
-import { fetchServerNoMiddleware } from '@/api-client/api-client'
+import { fetchServer } from '@/api-client/api-client'
 import { getCookieValue } from '@/utils/get-cookie-value'
 import { setAuthCookies } from '@/utils/set-auth-cookie'
 import { cookies } from 'next/headers'
@@ -9,14 +9,12 @@ export async function rotateToken() {
   const cookieStore = await cookies()
   const refreshToken = cookieStore.get('refreshToken')?.value
 
-  const refreshResponse = await fetchServerNoMiddleware.POST(
-    '/v1/auth/refresh-token',
-    {
-      headers: {
-        Cookie: `refreshToken=${refreshToken}`,
-      },
+  const refreshResponse = await fetchServer.POST('/v1/auth/refresh-token', {
+    headers: {
+      'x-skip-jwt-middleware': 'true',
+      Cookie: `refreshToken=${refreshToken}`,
     },
-  )
+  })
 
   if (refreshResponse.data) {
     const { accessToken: newAccessToken } = refreshResponse.data

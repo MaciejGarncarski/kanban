@@ -6,7 +6,7 @@ import {
   ApiOperation,
 } from '@nestjs/swagger';
 import { Auth } from 'src/auth/common/decorators/auth.decorator';
-import { BoardDto } from 'src/board/application/dtos/board.dto';
+import { BoardDetailDto } from 'src/board/application/dtos/board-detail.dto';
 import { GetBoardByIdDto } from 'src/board/application/dtos/ger-board-by-id.request.dto';
 import { GetBoardsByTeamRequestDto } from 'src/board/application/dtos/get-boards-by-team.request.dto';
 import { GetBoardsByTeamResponseDto } from 'src/board/application/dtos/get-boards-by-team.response.dto';
@@ -52,18 +52,19 @@ export class BoardController {
     summary: 'Get board by ID',
   })
   @ApiOkResponse({
-    type: BoardDto,
+    type: BoardDetailDto,
     description: 'Successfully retrieved board',
   })
   @ApiBadRequestResponse({
     type: ApiErrorResponse,
   })
-  async getBoardById(@Param() params: GetBoardByIdDto): Promise<BoardDto> {
-    console.log({ params });
-
-    const board = await this.queryBus.execute<GetBoardByIdQuery, BoardDto>(
-      new GetBoardByIdQuery(params.id),
-    );
+  async getBoardById(
+    @Param() params: GetBoardByIdDto,
+  ): Promise<BoardDetailDto> {
+    const board = await this.queryBus.execute<
+      GetBoardByIdQuery,
+      BoardDetailDto
+    >(new GetBoardByIdQuery(params.id));
 
     return board;
   }

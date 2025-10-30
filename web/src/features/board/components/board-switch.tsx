@@ -1,16 +1,14 @@
 'use client'
 
 import { appQuery } from '@/api-client/api-client'
+import { BoardSwitchOptions } from '@/features/board/components/board-switch-options'
 import {
   Combobox,
-  Flex,
+  ComboboxStore,
   Input,
   InputBase,
-  Group,
-  Text,
   useCombobox,
 } from '@mantine/core'
-import { CheckIcon } from 'lucide-react'
 import { useQueryState } from 'nuqs'
 
 export function BoardSwitch() {
@@ -19,35 +17,11 @@ export function BoardSwitch() {
   })
   const [boardId, setBoardId] = useQueryState('boardId')
   const [teamId] = useQueryState('teamId')
-  const { data } = appQuery.useQuery(
-    'get',
-    '/v1/teams/{teamId}/boards',
-    {
-      params: { path: { teamId: teamId || '' } },
-    },
-    {
-      enabled: !!teamId,
-    },
-  )
 
   const setBoard = (val: string | null) => {
     if (!val) return
     setBoardId(val)
   }
-
-  const options = data?.boards.map(({ description, id, name }) => (
-    <Combobox.Option value={id} key={id}>
-      <Group gap="sm" wrap="nowrap">
-        {id === boardId && (
-          <CheckIcon size={12} style={{ flexGrow: 0, flexShrink: 0 }} />
-        )}
-        <Flex direction={'column'}>
-          <Text>{name}</Text>
-          <Text size="xs">{description}</Text>
-        </Flex>
-      </Group>
-    </Combobox.Option>
-  ))
 
   return (
     <Combobox
@@ -57,26 +31,76 @@ export function BoardSwitch() {
         setBoard(val)
         combobox.closeDropdown()
       }}>
-      <Combobox.Target>
-        <InputBase
-          component="button"
-          type="button"
-          pointer
-          w="12rem"
-          rightSection={<Combobox.Chevron />}
-          rightSectionPointerEvents="none"
-          onClick={() => combobox.toggleDropdown()}>
-          <>
-            {boardId &&
-              data?.boards.find((board) => board.id === boardId)?.name}
-            {!boardId && <Input.Placeholder>Select board</Input.Placeholder>}
-          </>
-        </InputBase>
-      </Combobox.Target>
-
+      {boardId && teamId ? (
+        <BoardSwitchInput
+          boardId={boardId}
+          combobox={combobox}
+          teamId={teamId}
+        />
+      ) : (
+        <BoardSwitchInputEmpty combobox={combobox} />
+      )}
       <Combobox.Dropdown>
-        <Combobox.Options>{options}</Combobox.Options>
+        <Combobox.Options>
+          {teamId && <BoardSwitchOptions teamId={teamId} boardId={boardId} />}
+        </Combobox.Options>
       </Combobox.Dropdown>
     </Combobox>
+  )
+}
+
+const BoardSwitchInputEmpty = ({ combobox }: { combobox: ComboboxStore }) => {
+  return (
+    <Combobox.Target>
+      <InputBase
+        component="button"
+        type="button"
+        pointer
+        w="12rem"
+        rightSection={<Combobox.Chevron />}
+        rightSectionPointerEvents="none"
+        onClick={() => combobox.toggleDropdown()}>
+        <Input.Placeholder>Select board</Input.Placeholder>
+      </InputBase>
+    </Combobox.Target>
+  )
+}
+
+const BoardSwitchInput = ({
+  combobox,
+  boardId,
+  teamId,
+}: {
+  combobox: ComboboxStore
+  boardId: string
+  teamId: string
+}) => {
+  const { data } = appQuery.useSuspenseQuery(
+    'get',
+    '/v1/teams/{teamId}/boards',
+    {
+      params: { path: { teamId: teamId || '' } },
+    },
+  )
+
+  const boardName = data?.boards.find((board) => {
+    return board.id === boardId
+  })?.name
+  return (
+    <Combobox.Target>
+      <InputBase
+        component="button"
+        type="button"
+        pointer
+        w="12rem"
+        rightSection={<Combobox.Chevron />}
+        rightSectionPointerEvents="none"
+        onClick={() => combobox.toggleDropdown()}>
+        <>
+          {boardId && boardName}
+          {!boardId && <Input.Placeholder>Select board</Input.Placeholder>}
+        </>
+      </InputBase>
+    </Combobox.Target>
   )
 }

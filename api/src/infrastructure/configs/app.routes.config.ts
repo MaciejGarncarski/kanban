@@ -31,4 +31,14 @@ export const routesV1 = {
     updateBoard: `${prefix}boards/:id`,
     deleteBoard: `${prefix}boards/:id`,
   },
+  column: {
+    createColumn: `${prefix}columns`,
+    updateColumn: `${prefix}columns/:id`,
+    deleteColumn: `${prefix}columns/:id`,
+  },
+  card: {
+    createCard: `${prefix}cards`,
+    updateCard: `${prefix}cards/:id`,
+    deleteCard: `${prefix}cards/:id`,
+  },
 };
