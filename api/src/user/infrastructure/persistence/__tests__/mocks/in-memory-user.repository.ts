@@ -48,6 +48,24 @@ export class InMemoryUserRepository implements UserRepositoryInterface {
     return newUser;
   }
 
+  async findAllByBoardId(boardId: string): Promise<UserEntity[]> {
+    // Mock implementation, returns all users
+    return this.users;
+  }
+
+  async isUserInTeamByColumn(
+    userId: string,
+    columnId: string,
+  ): Promise<boolean> {
+    // Mock implementation, always returns true
+    return true;
+  }
+
+  async isUserInTeamByBoard(userId: string, boardId: string): Promise<boolean> {
+    // Mock implementation, always returns true
+    return true;
+  }
+
   clear(): void {
     this.users = [];
   }
