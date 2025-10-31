@@ -5,12 +5,12 @@ import { UserRepository } from 'src/user/infrastructure/persistence/user.reposit
 
 @QueryHandler(GetRoleByTeamIdQuery)
 export class GetRoleByTeamIdHandler {
-  constructor(private readonly userRespo: UserRepository) {}
+  constructor(private readonly userRepo: UserRepository) {}
 
   async execute(query: GetRoleByTeamIdQuery): Promise<TeamRole> {
     const { teamId, userId } = query;
 
-    const role = await this.userRespo.getUserRoleByTeamId(teamId, userId);
+    const role = await this.userRepo.getUserRoleByTeamId(teamId, userId);
 
     return role;
   }

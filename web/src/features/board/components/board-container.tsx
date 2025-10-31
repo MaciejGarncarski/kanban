@@ -1,6 +1,7 @@
 'use client'
 
 import { Board } from '@/features/board/components/board'
+import { BoardProvider } from '@/features/board/components/board-context'
 import { useQueryState } from 'nuqs'
 
 export function BoardContainer() {
@@ -15,5 +16,9 @@ export function BoardContainer() {
     return <div>Please select a board to view its contents.</div>
   }
 
-  return <Board boardId={boardId} />
+  return (
+    <BoardProvider>
+      <Board boardId={boardId} />
+    </BoardProvider>
+  )
 }

@@ -27,6 +27,7 @@ import {
   extractClosestEdge,
 } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge'
 import { DropIndicator } from '@/components/drop-indicator'
+import { useBoardContext } from '@/features/board/components/board-context'
 
 type Props = {
   title: string
@@ -47,8 +48,9 @@ export function TaskCard({
   teamId,
   cardId,
 }: Props) {
+  const { setIsDraggingCard, isDraggingCard, isDraggingColumn } =
+    useBoardContext()
   const cardRef = useRef(null)
-  const [isDragging, setIsDragging] = useState(false)
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null)
   useEffect(() => {
     const cardEl = cardRef.current
@@ -58,8 +60,12 @@ export function TaskCard({
       draggable({
         element: cardEl,
         getInitialData: () => ({ type: 'card', cardId: cardId }),
-        onDragStart: () => setIsDragging(true),
-        onDrop: () => setIsDragging(false),
+        onDragStart: () => {
+          if (!isDraggingColumn) {
+            setIsDraggingCard(true)
+          }
+        },
+        onDrop: () => setIsDraggingCard(false),
       }),
       dropTargetForElements({
         getIsSticky: () => true,
@@ -90,7 +96,7 @@ export function TaskCard({
         },
       }),
     )
-  }, [])
+  }, [cardId, isDraggingColumn, setIsDraggingCard])
 
   const [opened, { open, close }] = useDisclosure(false)
 
@@ -144,14 +150,12 @@ export function TaskCard({
       py="sm"
       px="md"
       style={{
-        opacity: isDragging ? 0.6 : 1,
-        cursor: isDragging ? 'grabbing' : 'grab',
+        opacity: isDraggingCard ? 0.6 : 1,
         maxWidth: '100%',
         position: 'relative',
       }}
       ref={cardRef}>
-      {closestEdge && <DropIndicator edge={closestEdge} />}
-
+      {!isDraggingColumn && closestEdge && <DropIndicator edge={closestEdge} />}
       <Stack w="100%" gap="xs">
         <Flex w="100%" justify="space-between" align="center">
           <Text>{title}</Text>

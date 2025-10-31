@@ -26,6 +26,7 @@ import { ColumnEntity } from 'src/column/domain/column.entity';
 import { ApiErrorResponse } from 'src/core/application/dtos/api-error.response.dto';
 import { routesV1 } from 'src/infrastructure/configs/app.routes.config';
 import { TeamRole, teamRoles } from 'src/team/domain/types/team.types';
+import { GetRoleByBoardIdQuery } from 'src/user/application/queries/get-role-by-board-id.query';
 import { GetRoleByColumnIdQuery } from 'src/user/application/queries/get-role-by-column-id.query';
 
 @Controller()
@@ -42,7 +43,20 @@ export class ColumnController {
     type: ApiErrorResponse,
   })
   @ApiBody({ type: CreateColumnRequestDto })
-  async createColumn(@Body() createColumnDto: CreateColumnRequestDto) {
+  async createColumn(
+    @Body() createColumnDto: CreateColumnRequestDto,
+    @Req() req: Request,
+  ) {
+    const userId = req.userId;
+    const userRole = await this.queryBus.execute<
+      GetRoleByBoardIdQuery,
+      TeamRole
+    >(new GetRoleByBoardIdQuery(createColumnDto.boardId, userId));
+
+    if (userRole !== teamRoles.ADMIN) {
+      throw new ForbiddenException('User is not authorized to create a column');
+    }
+
     const result = await this.commandBus.execute<
       CreateColumnCommand,
       CreateColumnResponseDto
@@ -90,7 +104,9 @@ export class ColumnController {
     >(new GetRoleByColumnIdQuery(params.columnId, userId));
 
     if (userRole !== teamRoles.ADMIN) {
-      throw new ForbiddenException();
+      throw new ForbiddenException(
+        'User is not authorized to delete this column',
+      );
     }
 
     await this.commandBus.execute(new DeleteColumnCommand(params.columnId));

@@ -17,6 +17,8 @@ import {
   extractClosestEdge,
 } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge'
 import { DropIndicator } from '@/components/drop-indicator'
+import { useBoardContext } from '@/features/board/components/board-context'
+import { useDraggedOver } from '@/hooks/use-dragged-over'
 
 export const Column = ({
   name,
@@ -39,27 +41,15 @@ export const Column = ({
     dueDate?: string
   }>
 }) => {
-  const columnRef = useRef(null)
-  const [isDraggedOver, setIsDraggedOver] = useState(false)
+  const { isDraggingColumn, setIsDraggingColumn, isDraggingCard } =
+    useBoardContext()
 
-  const cardStackRef = useRef(null)
-  useEffect(() => {
-    const columnEl = cardStackRef.current
-    invariant(columnEl)
-
-    return dropTargetForElements({
-      element: columnEl,
-      onDragStart: () => setIsDraggedOver(true),
-      onDragEnter: () => setIsDraggedOver(true),
-      onDragLeave: () => setIsDraggedOver(false),
-      onDrop: () => setIsDraggedOver(false),
-      getData: () => ({ columnId, type: 'card-stack' }),
-      getIsSticky: () => true,
-    })
-  }, [columnId])
-
-  const [isDragging, setIsDragging] = useState(false)
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null)
+  const columnRef = useRef(null)
+  const { isDraggedOver, ref: cardStackRef } = useDraggedOver({
+    columnId,
+    type: 'card-stack',
+  })
 
   useEffect(() => {
     const columnEl = columnRef.current
@@ -69,8 +59,12 @@ export const Column = ({
       draggable({
         element: columnEl,
         getInitialData: () => ({ type: 'column', columnId: columnId }),
-        onDragStart: () => setIsDragging(true),
-        onDrop: () => setIsDragging(false),
+        onDragStart: () => {
+          if (!isDraggingCard) {
+            setIsDraggingColumn(true)
+          }
+        },
+        onDrop: () => setIsDraggingColumn(false),
       }),
       dropTargetForElements({
         getIsSticky: () => true,
@@ -101,7 +95,7 @@ export const Column = ({
         },
       }),
     )
-  }, [])
+  }, [columnId, isDraggingCard, setIsDraggingColumn])
 
   return (
     <Card
@@ -111,11 +105,10 @@ export const Column = ({
       w="20rem"
       ref={columnRef}
       style={{
-        opacity: isDragging ? 0.6 : 1,
-        cursor: isDragging ? 'grabbing' : 'grab',
+        opacity: isDraggingColumn ? 0.6 : 1,
         marginRight: '1rem',
       }}>
-      {closestEdge && <DropIndicator edge={closestEdge} />}
+      {!isDraggingCard && closestEdge && <DropIndicator edge={closestEdge} />}
       <Group justify="space-between">
         <Title order={2}>{name}</Title>
         <ColumnInfoModal
@@ -132,6 +125,7 @@ export const Column = ({
           px="4"
           py="xs"
           w="17.5rem"
+          mih={'8rem'}
           ref={cardStackRef}
           style={{
             opacity: isDraggedOver ? 0.8 : 1,

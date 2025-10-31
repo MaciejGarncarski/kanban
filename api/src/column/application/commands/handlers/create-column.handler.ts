@@ -1,7 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { plainToInstance } from 'class-transformer';
-import { validate } from 'class-validator';
 import { CreateColumnCommand } from 'src/column/application/commands/create-column.command';
 import { CreateColumnResponseDto } from 'src/column/application/dtos/create-column-response.dto';
 import { ColumnRepository } from 'src/column/infrastructure/persistence/column.repository';

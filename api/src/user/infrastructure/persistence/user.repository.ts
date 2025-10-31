@@ -56,6 +56,26 @@ export class UserRepository implements UserRepositoryInterface {
     return teamMember.role as TeamRole;
   }
 
+  async getUserRoleByBoardId(
+    boardId: string,
+    userId: string,
+  ): Promise<TeamRole> {
+    const [teamMember] = await this.db
+      .select()
+      .from(team_members)
+      .innerJoin(teams, eq(team_members.team_id, teams.id))
+      .innerJoin(boards, eq(boards.team_id, teams.id))
+      .where(and(eq(boards.id, boardId), eq(team_members.user_id, userId)));
+
+    if (!teamMember) {
+      throw new BadRequestException(
+        'User is not a member of the specified team',
+      );
+    }
+
+    return teamMember.team_members.role as TeamRole;
+  }
+
   async find(id: string) {
     const [user] = await this.db
       .select({

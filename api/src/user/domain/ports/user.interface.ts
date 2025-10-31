@@ -13,4 +13,5 @@ export interface UserRepositoryInterface {
   isUserInTeamByBoard(userId: string, boardId: string): Promise<boolean>;
   getUserRoleByColumnId(columnId: string, userId: string): Promise<TeamRole>;
   getUserRoleByTeamId(teamId: string, userId: string): Promise<TeamRole>;
+  getUserRoleByBoardId(boardId: string, userId: string): Promise<TeamRole>;
 }
