@@ -18,6 +18,27 @@ import { UserMapper } from 'src/user/infrastructure/persistence/mappers/user.map
 export class UserRepository implements UserRepositoryInterface {
   constructor(@InjectDb() private readonly db: DB) {}
 
+  async getUserRoleByColumnId(
+    columnId: string,
+    userId: string,
+  ): Promise<TeamRole> {
+    const [teamMember] = await this.db
+      .select()
+      .from(team_members)
+      .innerJoin(teams, eq(team_members.team_id, teams.id))
+      .innerJoin(boards, eq(boards.team_id, teams.id))
+      .innerJoin(columns, eq(columns.board_id, boards.id))
+      .where(and(eq(columns.id, columnId), eq(team_members.user_id, userId)));
+
+    if (!teamMember) {
+      throw new BadRequestException(
+        'User is not a member of the specified team',
+      );
+    }
+
+    return teamMember.team_members.role as TeamRole;
+  }
+
   async getUserRoleByTeamId(teamId: string, userId: string): Promise<TeamRole> {
     const [teamMember] = await this.db
       .select()

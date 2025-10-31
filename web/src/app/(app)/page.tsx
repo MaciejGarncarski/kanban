@@ -1,6 +1,7 @@
 import { fetchServer } from '@/api-client/api-client'
 import { attachCookies } from '@/features/auth/utils/attach-cookies'
-import { Board } from '@/features/board/components/board'
+import { BoardContainer } from '@/features/board/components/board-container'
+import { BoardPlaceholder } from '@/features/board/components/board-placeholder'
 import { BoardSwitch } from '@/features/board/components/board-switch'
 import { CreateTeamLink } from '@/features/layout/components/create-team-link'
 import { TeamSwitchPlaceholder } from '@/features/team-switch/components/team-switch-placeholder'
@@ -13,6 +14,7 @@ import { connection } from 'next/server'
 import { SearchParams } from 'nuqs'
 import { createLoader, parseAsString } from 'nuqs/server'
 import { Suspense } from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
 
 type PageProps = {
   searchParams: Promise<SearchParams>
@@ -43,30 +45,32 @@ export default async function Home({ searchParams }: PageProps) {
   const queryClient = getQueryClient()
 
   if (teamId) {
-    void queryClient.prefetchQuery({
-      queryKey: ['get', `/v1/teams/{teamId}/boards`],
-      queryFn: async () => {
-        const res = await fetchServer.GET(`/v1/teams/{teamId}/boards`, {
-          params: {
-            path: { teamId: teamId },
-          },
-          headers: {
-            'x-skip-jwt-middleware': 'true',
-            cookie: cookies,
-          },
-        })
+    const paramsTeamId = { params: { path: { teamId } } }
 
-        return res.data
+    void queryClient.prefetchQuery({
+      queryKey: ['get', `/v1/teams/{teamId}/boards`, paramsTeamId],
+      queryFn: async () => {
+        try {
+          const res = await fetchServer.GET(`/v1/teams/{teamId}/boards`, {
+            ...paramsTeamId,
+            headers: {
+              'x-skip-jwt-middleware': 'true',
+              cookie: cookies,
+            },
+          })
+
+          return res.data
+        } catch {
+          return { boards: [] }
+        }
       },
     })
 
     void queryClient.prefetchQuery({
-      queryKey: ['get', `/user/v1/users/{teamId}/role`],
+      queryKey: ['get', `/v1/user/{teamId}/role`, paramsTeamId],
       queryFn: async () => {
-        const res = await fetchServer.GET(`/user/v1/users/{teamId}/role`, {
-          params: {
-            path: { teamId: teamId },
-          },
+        const res = await fetchServer.GET(`/v1/user/{teamId}/role`, {
+          ...paramsTeamId,
           headers: {
             'x-skip-jwt-middleware': 'true',
             cookie: cookies,
@@ -79,29 +83,31 @@ export default async function Home({ searchParams }: PageProps) {
   }
 
   if (boardId) {
+    const paramsBoardId = { params: { path: { boardId } } }
+
     void queryClient.prefetchQuery({
-      queryKey: ['get', '/user/v1/boards/{boardId}/users'],
+      queryKey: ['get', `/v1/boards/{boardId}/users`, paramsBoardId],
       queryFn: async () => {
-        const res = await fetchServer.GET('/user/v1/boards/{boardId}/users', {
-          params: {
-            path: { boardId: boardId },
-          },
-          headers: {
-            'x-skip-jwt-middleware': 'true',
-            cookie: cookies,
-          },
-        })
-        return res.data
+        try {
+          const res = await fetchServer.GET('/v1/boards/{boardId}/users', {
+            ...paramsBoardId,
+            headers: {
+              'x-skip-jwt-middleware': 'true',
+              cookie: cookies,
+            },
+          })
+          return res.data
+        } catch {
+          return { users: [] }
+        }
       },
     })
 
     void queryClient.prefetchQuery({
-      queryKey: ['get', `/v1/boards/{id}`],
+      queryKey: ['get', `/v1/boards/{boardId}`, paramsBoardId],
       queryFn: async () => {
-        const res = await fetchServer.GET(`/v1/boards/{id}`, {
-          params: {
-            path: { id: boardId },
-          },
+        const res = await fetchServer.GET(`/v1/boards/{boardId}`, {
+          ...paramsBoardId,
           headers: {
             'x-skip-jwt-middleware': 'true',
             cookie: cookies,
@@ -120,15 +126,19 @@ export default async function Home({ searchParams }: PageProps) {
             <TeamSwitchSSR />
           </Suspense>
           <Suspense fallback={<TeamSwitchPlaceholder />}>
-            <BoardSwitch />
+            <ErrorBoundary fallback={<TeamSwitchPlaceholder />}>
+              <BoardSwitch />
+            </ErrorBoundary>
           </Suspense>
           <Box ml={'auto'}>
             <CreateTeamLink />
           </Box>
         </Group>
         <Stack mt="md">
-          <Suspense fallback={<p>Loading board...</p>}>
-            <Board />
+          <Suspense fallback={<BoardPlaceholder />}>
+            <ErrorBoundary fallback={<p>Failed to load board.</p>}>
+              <BoardContainer />
+            </ErrorBoundary>
           </Suspense>
         </Stack>
       </main>

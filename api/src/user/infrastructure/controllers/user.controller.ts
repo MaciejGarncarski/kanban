@@ -12,7 +12,7 @@ import { GetRoleByTeamIdQuery } from 'src/user/application/queries/get-role-by-t
 import { GetUsersByBoardQuery } from 'src/user/application/queries/get-users-by-board.query';
 import { UserEntity } from 'src/user/domain/user.entity';
 
-@Controller('user')
+@Controller()
 export class UserController {
   constructor(private readonly queryBus: QueryBus) {}
 

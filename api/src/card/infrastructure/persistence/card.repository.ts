@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { desc, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import { CardEntity } from 'src/card/domain/card.entity';
 import { CardRepositoryInterface } from 'src/card/domain/ports/card.interface';
 import { type DB } from 'src/infrastructure/persistence/db/client';
@@ -22,6 +22,58 @@ type NewCardRecord = {
 export class CardRepository implements CardRepositoryInterface {
   constructor(@InjectDb() private readonly db: DB) {}
 
+  async findById(cardId: string): Promise<CardEntity | null> {
+    const [cardRecord] = await this.db
+      .select()
+      .from(cards)
+      .where(eq(cards.id, cardId));
+
+    if (!cardRecord) {
+      return null;
+    }
+
+    const entity = new CardEntity({
+      id: cardRecord.id,
+      title: cardRecord.title,
+      description: cardRecord.description,
+      columnId: cardRecord.column_id,
+      position: cardRecord.position,
+      assignedTo: cardRecord.assigned_to,
+      dueDate: cardRecord.due_date,
+      createdAt: cardRecord.created_at,
+      updatedAt: cardRecord.updated_at,
+    });
+
+    return entity;
+  }
+
+  async findByTitleAndColumnId(
+    title: string,
+    columnId: string,
+  ): Promise<CardEntity | null> {
+    const [cardRecord] = await this.db
+      .select()
+      .from(cards)
+      .where(and(eq(cards.title, title), eq(cards.column_id, columnId)));
+
+    if (!cardRecord) {
+      return null;
+    }
+
+    const entity = new CardEntity({
+      id: cardRecord.id,
+      title: cardRecord.title,
+      description: cardRecord.description,
+      columnId: cardRecord.column_id,
+      position: cardRecord.position,
+      assignedTo: cardRecord.assigned_to,
+      dueDate: cardRecord.due_date,
+      createdAt: cardRecord.created_at,
+      updatedAt: cardRecord.updated_at,
+    });
+
+    return entity;
+  }
   async getPositionForNewCard(columnId: string): Promise<number> {
     const [positionRecord] = await this.db
       .select()
@@ -78,5 +130,57 @@ export class CardRepository implements CardRepositoryInterface {
 
   async deleteCard(cardId: string): Promise<void> {
     await this.db.delete(cards).where(eq(cards.id, cardId));
+  }
+
+  async findAllByColumnId(columnId: string): Promise<CardEntity[]> {
+    const cardRecords = await this.db
+      .select()
+      .from(cards)
+      .where(eq(cards.column_id, columnId))
+      .orderBy(cards.position);
+
+    return cardRecords.map(
+      (cardRecord) =>
+        new CardEntity({
+          id: cardRecord.id,
+          title: cardRecord.title,
+          description: cardRecord.description,
+          columnId: cardRecord.column_id,
+          position: cardRecord.position,
+          assignedTo: cardRecord.assigned_to,
+          dueDate: cardRecord.due_date,
+          createdAt: cardRecord.created_at,
+          updatedAt: cardRecord.updated_at,
+        }),
+    );
+  }
+
+  async updateCard(card: CardEntity): Promise<CardEntity> {
+    const [updatedCard] = await this.db
+      .update(cards)
+      .set({
+        title: card.title,
+        description: card.description,
+        column_id: card.columnId,
+        position: card.position,
+        assigned_to: card.assignedTo,
+        due_date: card.dueDate,
+      })
+      .where(eq(cards.id, card.id))
+      .returning();
+
+    const entity = new CardEntity({
+      id: updatedCard.id,
+      title: updatedCard.title,
+      description: updatedCard.description,
+      columnId: updatedCard.column_id,
+      position: updatedCard.position,
+      assignedTo: updatedCard.assigned_to,
+      dueDate: updatedCard.due_date,
+      createdAt: updatedCard.created_at,
+      updatedAt: updatedCard.updated_at,
+    });
+
+    return entity;
   }
 }

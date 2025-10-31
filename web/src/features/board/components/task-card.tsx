@@ -14,6 +14,19 @@ import {
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { EditIcon, Info, TrashIcon } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import invariant from 'tiny-invariant'
+import {
+  draggable,
+  dropTargetForElements,
+} from '@atlaskit/pragmatic-drag-and-drop/element/adapter'
+import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine'
+import {
+  attachClosestEdge,
+  Edge,
+  extractClosestEdge,
+} from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge'
+import { DropIndicator } from '@/components/drop-indicator'
 
 type Props = {
   title: string
@@ -34,11 +47,56 @@ export function TaskCard({
   teamId,
   cardId,
 }: Props) {
+  const cardRef = useRef(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const [closestEdge, setClosestEdge] = useState<Edge | null>(null)
+  useEffect(() => {
+    const cardEl = cardRef.current
+    invariant(cardEl)
+
+    return combine(
+      draggable({
+        element: cardEl,
+        getInitialData: () => ({ type: 'card', cardId: cardId }),
+        onDragStart: () => setIsDragging(true),
+        onDrop: () => setIsDragging(false),
+      }),
+      dropTargetForElements({
+        getIsSticky: () => true,
+        element: cardEl,
+        getData: ({ input, element }) => {
+          const data = { type: 'card', cardId: cardId }
+          return attachClosestEdge(data, {
+            input,
+            element,
+            allowedEdges: ['top', 'bottom'],
+          })
+        },
+        onDrag: (args) => {
+          if (args.source.data.cardId !== cardId) {
+            setClosestEdge(extractClosestEdge(args.self.data))
+          }
+        },
+        onDragEnter: (args) => {
+          if (args.source.data.cardId !== cardId) {
+            setClosestEdge(extractClosestEdge(args.self.data))
+          }
+        },
+        onDragLeave: () => {
+          setClosestEdge(null)
+        },
+        onDrop: () => {
+          setClosestEdge(null)
+        },
+      }),
+    )
+  }, [])
+
   const [opened, { open, close }] = useDisclosure(false)
 
   const { data } = appQuery.useSuspenseQuery(
     'get',
-    '/user/v1/boards/{boardId}/users',
+    '/v1/boards/{boardId}/users',
     {
       params: {
         path: {
@@ -50,7 +108,7 @@ export function TaskCard({
 
   const { data: roleData } = appQuery.useSuspenseQuery(
     'get',
-    '/user/v1/users/{teamId}/role',
+    '/v1/user/{teamId}/role',
     {
       params: { path: { teamId } },
     },
@@ -73,7 +131,7 @@ export function TaskCard({
       {
         onSuccess: (_, __, ___, context) => {
           context.client.invalidateQueries({
-            queryKey: ['get', '/v1/boards/{id}'],
+            queryKey: ['get', '/v1/boards/{boardId}'],
           })
         },
       },
@@ -81,27 +139,41 @@ export function TaskCard({
   }
 
   return (
-    <Paper withBorder py="sm" px="md" style={{ maxWidth: '100%' }}>
-      <Stack w="100%" gap="1">
+    <Paper
+      withBorder
+      py="sm"
+      px="md"
+      style={{
+        opacity: isDragging ? 0.6 : 1,
+        cursor: isDragging ? 'grabbing' : 'grab',
+        maxWidth: '100%',
+        position: 'relative',
+      }}
+      ref={cardRef}>
+      {closestEdge && <DropIndicator edge={closestEdge} />}
+
+      <Stack w="100%" gap="xs">
         <Flex w="100%" justify="space-between" align="center">
           <Text>{title}</Text>
           <ActionIcon onClick={open} variant="subtle" size={'md'}>
             <Info size={'70%'} />
           </ActionIcon>
         </Flex>
-        {description ? (
-          <Text
-            c="gray.6"
-            style={{
-              maxWidth: '100%',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}>
-            {description}
-          </Text>
-        ) : (
-          <Text c="gray.6">No description provided.</Text>
-        )}
+        <Group gap="xs" justify="space-between" align="center" wrap="nowrap">
+          {description ? (
+            <Text
+              c="gray.6"
+              style={{
+                maxWidth: '100%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}>
+              {description}
+            </Text>
+          ) : (
+            <Text c="gray.6">No description provided.</Text>
+          )}
+        </Group>
       </Stack>
 
       <Modal opened={opened} onClose={close} title={'Details'} centered>

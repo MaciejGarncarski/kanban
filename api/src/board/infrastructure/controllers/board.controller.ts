@@ -64,7 +64,7 @@ export class BoardController {
     const board = await this.queryBus.execute<
       GetBoardByIdQuery,
       BoardDetailDto
-    >(new GetBoardByIdQuery(params.id));
+    >(new GetBoardByIdQuery(params.boardId));
 
     return board;
   }

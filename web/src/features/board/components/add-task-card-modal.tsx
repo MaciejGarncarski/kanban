@@ -30,11 +30,10 @@ export function AddTaskCardModal({ boardId, columnId }: Props) {
     onDropdownClose: () => combobox.resetSelectedOption(),
   })
 
-  const { mutate } = appQuery.useMutation('post', '/v1/cards')
-
+  const { mutate, isPending } = appQuery.useMutation('post', '/v1/cards')
   const { data } = appQuery.useSuspenseQuery(
     'get',
-    '/user/v1/boards/{boardId}/users',
+    '/v1/boards/{boardId}/users',
     {
       params: {
         path: {
@@ -80,7 +79,7 @@ export function AddTaskCardModal({ boardId, columnId }: Props) {
       {
         onSuccess: async (_, __, ___, ctx) => {
           await ctx.client.invalidateQueries({
-            queryKey: ['get', '/v1/boards/{id}'],
+            queryKey: ['get', '/v1/boards/{boardId}'],
           })
           notifications.show({
             title: 'Success',
@@ -92,7 +91,7 @@ export function AddTaskCardModal({ boardId, columnId }: Props) {
         onError: (error) => {
           notifications.show({
             title: 'Error',
-            message: error.message || 'Failed to create column',
+            message: error.message || 'Failed to create task',
             color: 'red',
           })
         },
@@ -180,8 +179,8 @@ export function AddTaskCardModal({ boardId, columnId }: Props) {
               {...form.getInputProps('dueDate')}
             />
 
-            <Button loading={false} type="submit" mt="md">
-              Create Column
+            <Button loading={isPending} type="submit" mt="md">
+              Create Task
             </Button>
           </Flex>
         </form>

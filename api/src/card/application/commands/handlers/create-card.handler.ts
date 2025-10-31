@@ -1,4 +1,4 @@
-import { UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreateCardCommand } from 'src/card/application/commands/create-card.command';
 import { CardRepository } from 'src/card/infrastructure/persistence/card.repository';
@@ -14,6 +14,17 @@ export class CreateCardHandler implements ICommandHandler<CreateCardCommand> {
   async execute(command: CreateCardCommand) {
     const { title, description, columnId, assignedTo, dueDate, userId } =
       command;
+
+    const alreadyExists = await this.cardRepository.findByTitleAndColumnId(
+      title,
+      columnId,
+    );
+
+    if (alreadyExists) {
+      throw new BadRequestException(
+        'A card with this title already exists in the column',
+      );
+    }
 
     const isUserInTeam = await this.userRepository.isUserInTeamByColumn(
       userId,

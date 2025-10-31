@@ -59,7 +59,14 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      transformOptions: {
+        exposeUnsetFields: false,
+      },
       exceptionFactory: (errors) => {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Validation errors:', errors);
+        }
+
         const formattedErrors = errors.map((err) => ({
           field: err.property,
           messages: Object.values(err.constraints || {}),

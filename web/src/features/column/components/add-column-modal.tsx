@@ -25,7 +25,9 @@ export function AddColumnModal({ boardId }: { boardId: string }) {
       },
       {
         onSuccess: (_, __, ___, ctx) => {
-          ctx.client.invalidateQueries({ queryKey: ['get', '/v1/boards/{id}'] })
+          ctx.client.invalidateQueries({
+            queryKey: ['get', '/v1/boards/{boardId}'],
+          })
           notifications.show({
             title: 'Success',
             message: 'Column created successfully',

@@ -81,7 +81,7 @@ const BoardSwitchInput = ({
     'get',
     '/v1/teams/{teamId}/boards',
     {
-      params: { path: { teamId: teamId || '' } },
+      params: { path: { teamId } },
     },
   )
 
@@ -99,10 +99,8 @@ const BoardSwitchInput = ({
           rightSection={<Combobox.Chevron />}
           rightSectionPointerEvents="none"
           onClick={() => combobox.toggleDropdown()}>
-          <>
-            {boardId && boardName}
-            {!boardId && <Input.Placeholder>Select board</Input.Placeholder>}
-          </>
+          {boardName && boardName}
+          {!boardName && <Input.Placeholder>Select board</Input.Placeholder>}
         </InputBase>
       </Input.Wrapper>
     </Combobox.Target>

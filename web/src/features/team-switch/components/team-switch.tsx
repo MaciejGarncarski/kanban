@@ -1,6 +1,5 @@
 'use client'
 
-import { paths } from '@/api-client/api'
 import { appQuery } from '@/api-client/api-client'
 import {
   Combobox,
@@ -11,43 +10,48 @@ import {
   Text,
   useCombobox,
   ComboboxStore,
+  CheckIcon,
 } from '@mantine/core'
-import { useQueryClient } from '@tanstack/react-query'
-import { CheckIcon } from 'lucide-react'
 import { useQueryState } from 'nuqs'
+import { useEffect } from 'react'
 
 export function TeamSwitch() {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   })
-  const queryClient = useQueryClient()
   const [teamId, setTeamId] = useQueryState('teamId')
   const [, setBoardId] = useQueryState('boardId')
+
+  const boards = appQuery.useSuspenseQuery(
+    'get',
+    '/v1/teams/{teamId}/boards',
+    {
+      params: { path: { teamId: teamId ?? '' } },
+    },
+    {
+      initialData: { boards: [] },
+    },
+  )
+
+  useEffect(() => {
+    if (!teamId) return
+
+    const fetchBoards = async () => {
+      const updatedBoards = await boards.refetch()
+      if (!updatedBoards?.data?.boards) {
+        setBoardId(null)
+      } else {
+        setBoardId(updatedBoards.data.boards[0]?.id ?? null)
+      }
+    }
+
+    fetchBoards()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [teamId])
 
   const setTeam = async (val: string | null) => {
     if (!val) return
     setTeamId(val)
-
-    const queryData = queryClient.getQueryData<
-      paths['/v1/teams/{teamId}/boards']['get']['responses']['200']['content']['application/json']
-    >([
-      'get',
-      '/v1/teams/{teamId}/boards',
-      {
-        params: {
-          path: {
-            teamId: val,
-          },
-        },
-      },
-    ])
-
-    if (!queryData) {
-      setBoardId(null)
-      return
-    }
-
-    setBoardId(queryData.boards[0]?.id ?? null)
   }
 
   return (

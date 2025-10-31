@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/user/v1/boards/{boardId}/users": {
+    "/v1/boards/{boardId}/users": {
         parameters: {
             query?: never;
             header?: never;
@@ -20,7 +20,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/user/v1/users/{teamId}/role": {
+    "/v1/user/{teamId}/role": {
         parameters: {
             query?: never;
             header?: never;
@@ -155,7 +155,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/boards/{id}": {
+    "/v1/boards/{boardId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -201,7 +201,7 @@ export interface paths {
         delete: operations["CardController_deleteCard"];
         options?: never;
         head?: never;
-        patch?: never;
+        patch: operations["CardController_updateCard"];
         trace?: never;
     };
     "/v1/columns": {
@@ -218,6 +218,22 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/v1/columns/{columnId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["ColumnController_deleteColumn"];
+        options?: never;
+        head?: never;
+        patch: operations["ColumnController_updateColumn"];
         trace?: never;
     };
 }
@@ -418,6 +434,20 @@ export interface components {
             /** @example user-uuid */
             assignedTo?: string;
         };
+        UpdateCardRequestDto: {
+            /** @example New Title */
+            title?: string;
+            /** @example New Description */
+            description?: string;
+            /** @example 2024-12-31 */
+            dueDate?: string;
+            /** @example user-uuid */
+            assignedTo?: string;
+            /** @example 3 */
+            position?: number;
+            /** @example column-uuid */
+            columnId?: string;
+        };
         CreateColumnRequestDto: {
             /**
              * @description Title of the column
@@ -444,6 +474,12 @@ export interface components {
             createdAt: string;
             /** @example 1 */
             position: number;
+        };
+        UpdateColumnRequestDto: {
+            /** @example New Column Name */
+            name?: string;
+            /** @example 2 */
+            position?: number;
         };
     };
     responses: never;
@@ -751,7 +787,7 @@ export interface operations {
             };
             path: {
                 /** @description Board ID */
-                id: string;
+                boardId: string;
             };
             cookie?: never;
         };
@@ -842,6 +878,34 @@ export interface operations {
             };
         };
     };
+    CardController_updateCard: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path: {
+                cardId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCardRequestDto"];
+            };
+        };
+        responses: {
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
     ColumnController_createColumn: {
         parameters: {
             query?: never;
@@ -855,6 +919,66 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["CreateColumnRequestDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateColumnResponseDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    ColumnController_deleteColumn: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path: {
+                columnId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    ColumnController_updateColumn: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path: {
+                columnId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateColumnRequestDto"];
             };
         };
         responses: {

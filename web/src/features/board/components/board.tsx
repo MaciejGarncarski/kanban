@@ -2,103 +2,233 @@
 
 import { appQuery } from '@/api-client/api-client'
 import { MAX_COLUMN_COUNT } from '@/const/column'
-import { AddTaskCardModal } from '@/features/board/components/add-task-card-modal'
-import { TaskCard } from '@/features/board/components/task-card'
 import { AddColumnModal } from '@/features/column/components/add-column-modal'
-import { ColumnInfoModal } from '@/features/column/components/column-info-modal'
+import { Column } from '@/features/column/components/column'
+import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter'
 import {
   Card,
   Center,
   Flex,
   Group,
   ScrollAreaAutosize,
-  Stack,
   Text,
-  Title,
 } from '@mantine/core'
-import { useQueryState } from 'nuqs'
+import { useEffect, useRef, useState } from 'react'
+import { extractClosestEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge'
+import invariant from 'tiny-invariant'
+import { dropTargetForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter'
 
-export function Board() {
-  const [teamId] = useQueryState('teamId')
-  const [boardId] = useQueryState('boardId')
+export const Board = ({ boardId }: { boardId: string }) => {
+  const { data: boardData } = appQuery.useSuspenseQuery(
+    'get',
+    '/v1/boards/{boardId}',
+    {
+      params: { path: { boardId } },
+    },
+  )
 
-  if (!teamId) {
-    return <div>Please select a team to view the board.</div>
-  }
+  const columnMutation = appQuery.useMutation(
+    'patch',
+    '/v1/columns/{columnId}',
+    {
+      onSuccess: (_, __, ___, ctx) => {
+        ctx.client.invalidateQueries({
+          queryKey: ['get', '/v1/boards/{boardId}'],
+        })
+      },
+    },
+  )
 
-  if (!boardId) {
-    return <div>Please select a board to view its contents.</div>
-  }
-
-  return <BoardContent boardId={boardId} />
-}
-
-const BoardContent = ({ boardId }: { boardId: string }) => {
-  const { data } = appQuery.useSuspenseQuery('get', '/v1/boards/{id}', {
-    params: { path: { id: boardId } },
+  const cardMutation = appQuery.useMutation('patch', '/v1/cards/{cardId}', {
+    onSuccess: (_, __, ___, ctx) => {
+      ctx.client.invalidateQueries({
+        queryKey: ['get', '/v1/boards/{boardId}'],
+      })
+    },
   })
+
+  const [isDraggedOver, setIsDraggedOver] = useState(false)
+  const boardStack = useRef(null)
+
+  useEffect(() => {
+    const boardEl = boardStack.current
+    invariant(boardEl)
+
+    return dropTargetForElements({
+      element: boardEl,
+      onDragStart: () => setIsDraggedOver(true),
+      onDragEnter: () => setIsDraggedOver(true),
+      onDragLeave: () => setIsDraggedOver(false),
+      onDrop: () => setIsDraggedOver(false),
+      getIsSticky: () => true,
+    })
+  }, [])
+
+  useEffect(() => {
+    return monitorForElements({
+      onDrop: ({ source, location }) => {
+        const destination = location.current.dropTargets.length
+
+        if (!destination) {
+          return
+        }
+
+        if (source.data.type === 'column') {
+          const draggedColumnId = source.data.columnId as string
+
+          const [destinationTarget] = location.current.dropTargets.filter(
+            (record) => record.data.type === 'column',
+          )
+          const destinationTargetId = destinationTarget?.data.columnId as string
+
+          const closestEdgeOfTarget = extractClosestEdge({ boardId })
+
+          const indexOfTarget =
+            boardData.columns.findIndex(
+              (column) => column.id === destinationTargetId,
+            ) + 1
+
+          const destinationIndex =
+            closestEdgeOfTarget === 'bottom' ? indexOfTarget + 1 : indexOfTarget
+
+          columnMutation.mutate({
+            body: {
+              position: destinationIndex,
+            },
+            params: { path: { columnId: draggedColumnId } },
+          })
+        }
+
+        if (source.data.type === 'card') {
+          const draggedCardId = source.data.cardId as string
+          const [, sourceColumnRecord] = location.initial.dropTargets
+          const sourceColumnId = sourceColumnRecord?.data.columnId
+          const sourceColumnData = boardData.columns.find(
+            (column) => column.id === sourceColumnId,
+          )
+
+          if (!sourceColumnData) {
+            return
+          }
+
+          const cardTypeDropTargets = location.current.dropTargets.filter(
+            (record) => record.data.type === 'card',
+          )
+
+          if (cardTypeDropTargets.length === 0) {
+            const destinationColumnRecord = location.current.dropTargets.find(
+              (record) => record.data.type === 'card-stack',
+            )
+
+            const destinationColumnId = destinationColumnRecord?.data
+              .columnId as string
+            const destinationColumnData = boardData.columns.find(
+              (column) => column.id === destinationColumnId,
+            )
+
+            if (!destinationColumnData) {
+              return
+            }
+
+            cardMutation.mutate({
+              body: {
+                columnId: destinationColumnId,
+                position: 1,
+              },
+              params: {
+                path: {
+                  cardId: draggedCardId,
+                },
+              },
+            })
+
+            return
+          }
+
+          const destinationCardRecord = cardTypeDropTargets[0]
+          const destinationColumnRecord = location.current.dropTargets.find(
+            (record) => record.data.type === 'card-stack',
+          )!
+
+          const destinationColumnId = destinationColumnRecord?.data
+            .columnId as string
+
+          if (!destinationCardRecord?.data) {
+            return
+          }
+
+          const closestEdgeOfTarget = extractClosestEdge(
+            destinationCardRecord?.data,
+          )
+          const destinationColumnData = boardData.columns.find(
+            (column) => column.id === destinationColumnId,
+          )
+
+          if (!destinationColumnData) {
+            return
+          }
+
+          const indexOfTarget =
+            destinationColumnData.cards.findIndex(
+              (card) => card.id === destinationCardRecord?.data.cardId,
+            ) + 1
+
+          const destinationIndex =
+            closestEdgeOfTarget === 'bottom' ? indexOfTarget + 1 : indexOfTarget
+
+          cardMutation.mutate({
+            body: {
+              columnId: destinationColumnId,
+              position: destinationIndex,
+            },
+            params: {
+              path: {
+                cardId: draggedCardId,
+              },
+            },
+          })
+        }
+      },
+    })
+  }, [cardMutation, boardData.columns, boardId, columnMutation])
 
   return (
     <Flex direction="column" gap="md">
       <Text>
-        {data?.description || 'No description provided for this board.'}
+        {boardData?.description || 'No description provided for this board.'}
       </Text>
 
       <ScrollAreaAutosize scrollbars="x" offsetScrollbars>
-        <Group justify="flex-start" wrap="nowrap" gap="lg">
-          {data?.columns.map(({ name, cards, id: columnId, createdAt }) => {
-            return (
+        <Group justify="flex-start" wrap="nowrap" gap="lg" ref={boardStack}>
+          {boardData?.columns.map(
+            ({ name, cards, id: columnId, createdAt }) => {
+              return (
+                <Column
+                  key={columnId}
+                  boardId={boardId}
+                  name={name}
+                  columnId={columnId}
+                  createdAt={createdAt}
+                  teamId={boardData.teamId}
+                  cards={cards}
+                />
+              )
+            },
+          )}
+
+          {MAX_COLUMN_COUNT > (boardData?.columns.length || 0) &&
+            !isDraggedOver && (
               <Card
-                key={name}
                 withBorder
                 shadow="sm"
                 h={'40rem'}
                 w="20rem"
-                style={{ flexShrink: 0 }}>
-                <Group justify="space-between">
-                  <Title order={2}>{name}</Title>
-                  <ColumnInfoModal
-                    columnId={columnId}
-                    name={name}
-                    createdAt={createdAt}
-                    teamId={data.teamId}
-                  />
-                </Group>
-                <ScrollAreaAutosize scrollbars="y" maw={'20rem'}>
-                  <Stack gap="md" mt="lg" px="4" py="xs" w="18rem">
-                    {cards.map(
-                      ({ id, title, assignedTo, description, dueDate }) => (
-                        <TaskCard
-                          key={id}
-                          boardId={boardId}
-                          teamId={data.teamId}
-                          description={description}
-                          cardId={id}
-                          title={title}
-                          assignedToId={assignedTo}
-                          dueDate={dueDate ? new Date(dueDate) : null}
-                        />
-                      ),
-                    )}
-                    <AddTaskCardModal boardId={boardId} columnId={columnId} />
-                  </Stack>
-                </ScrollAreaAutosize>
+                style={{ flexShrink: 0, justifyContent: 'center' }}>
+                <Center>
+                  <AddColumnModal boardId={boardId} />
+                </Center>
               </Card>
-            )
-          })}
-
-          {MAX_COLUMN_COUNT > (data?.columns.length || 0) && (
-            <Card
-              withBorder
-              shadow="sm"
-              h={'40rem'}
-              w="20rem"
-              style={{ flexShrink: 0, justifyContent: 'center' }}>
-              <Center>
-                <AddColumnModal boardId={boardId} />
-              </Center>
-            </Card>
-          )}
+            )}
         </Group>
       </ScrollAreaAutosize>
     </Flex>

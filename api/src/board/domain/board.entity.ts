@@ -42,7 +42,6 @@ export class BoardAggregate {
     if (!this.columns) return;
 
     this.columns.sort((a, b) => a.position - b.position);
-
     this.columns.forEach((column) => column.sortCards());
   }
 }

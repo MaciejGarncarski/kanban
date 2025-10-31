@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { TeamRole } from 'src/team/domain/types/team.types';
 import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
 import { UserEntity } from 'src/user/domain/user.entity';
 import { NewUserRecord } from 'src/user/infrastructure/persistence/mappers/user.mapper';
@@ -7,6 +8,14 @@ import { v7 } from 'uuid';
 @Injectable()
 export class InMemoryUserRepository implements UserRepositoryInterface {
   private users: UserEntity[] = [];
+
+  async getUserRoleByColumnId(columnId: string, userId: string) {
+    return 'member' as TeamRole;
+  }
+
+  async getUserRoleByTeamId(teamId: string, userId: string) {
+    return 'member' as TeamRole;
+  }
 
   async find(id: string) {
     const user = this.users.find((user) => user.id === id);

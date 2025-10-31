@@ -26,6 +26,7 @@ const jwtMiddleware: Middleware = {
       )
       const cookies = await cookieStore()
       const cookieHeader = cookies.getAll()
+
       if (cookieHeader) {
         request.headers.set(
           'cookie',

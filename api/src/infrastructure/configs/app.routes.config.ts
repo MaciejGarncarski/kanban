@@ -1,6 +1,4 @@
 // Root
-const authRoot = 'auth';
-const usersRoot = 'users';
 
 // Api Versions
 const v1 = 'v1';
@@ -9,34 +7,34 @@ const prefix = `/${v1}/`;
 export const routesV1 = {
   version: v1,
   auth: {
-    root: `${prefix}${authRoot}`,
-    signIn: `${prefix}${authRoot}/sign-in`,
-    register: `${prefix}${authRoot}/register`,
-    me: `${prefix}${authRoot}/me`,
-    refresh: `${prefix}${authRoot}/refresh-token`,
-    logout: `${prefix}${authRoot}/logout`,
+    root: `${prefix}auth`,
+    signIn: `${prefix}auth/sign-in`,
+    register: `${prefix}auth/register`,
+    me: `${prefix}auth/me`,
+    refresh: `${prefix}auth/refresh-token`,
+    logout: `${prefix}auth/logout`,
   },
   teams: {
     root: `${prefix}teams`,
     createTeam: `${prefix}teams`,
   },
   user: {
-    root: usersRoot,
-    getUserById: `${prefix}${usersRoot}/:id`,
-    getRoleByTeamId: `${prefix}${usersRoot}/:teamId/role`,
+    root: `${prefix}user`,
+    getUserById: `${prefix}user/:userId`,
+    getRoleByTeamId: `${prefix}user/:teamId/role`,
     getUsersByBoardId: `${prefix}boards/:boardId/users`,
   },
   board: {
     getBoardsByTeamId: `${prefix}teams/:teamId/boards`,
-    getBoardById: `${prefix}boards/:id`,
+    getBoardById: `${prefix}boards/:boardId`,
     createBoard: `${prefix}boards`,
-    updateBoard: `${prefix}boards/:id`,
-    deleteBoard: `${prefix}boards/:id`,
+    updateBoard: `${prefix}boards/:boardId`,
+    deleteBoard: `${prefix}boards/:boardId`,
   },
   column: {
     createColumn: `${prefix}columns`,
-    updateColumn: `${prefix}columns/:id`,
-    deleteColumn: `${prefix}columns/:id`,
+    updateColumn: `${prefix}columns/:columnId`,
+    deleteColumn: `${prefix}columns/:columnId`,
   },
   card: {
     createCard: `${prefix}cards`,

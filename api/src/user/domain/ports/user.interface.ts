@@ -1,3 +1,4 @@
+import { TeamRole } from 'src/team/domain/types/team.types';
 import { UserEntity } from 'src/user/domain/user.entity';
 import { NewUserRecord } from 'src/user/infrastructure/persistence/mappers/user.mapper';
 
@@ -10,4 +11,6 @@ export interface UserRepositoryInterface {
   findAllByBoardId(boardId: string): Promise<UserEntity[]>;
   isUserInTeamByColumn(userId: string, columnId: string): Promise<boolean>;
   isUserInTeamByBoard(userId: string, boardId: string): Promise<boolean>;
+  getUserRoleByColumnId(columnId: string, userId: string): Promise<TeamRole>;
+  getUserRoleByTeamId(teamId: string, userId: string): Promise<TeamRole>;
 }

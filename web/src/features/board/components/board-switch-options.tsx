@@ -1,8 +1,7 @@
 'use client'
 
 import { appQuery } from '@/api-client/api-client'
-import { Combobox, Flex, Group, Text } from '@mantine/core'
-import { CheckIcon } from 'lucide-react'
+import { CheckIcon, Combobox, Flex, Group, Text } from '@mantine/core'
 
 type Props = {
   teamId: string

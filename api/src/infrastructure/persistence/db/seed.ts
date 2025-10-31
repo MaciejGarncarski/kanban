@@ -4,6 +4,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { userFixture } from 'src/__tests__/fixtures/user.fixture';
 import { hash } from '@node-rs/argon2';
 import { v7 } from 'uuid';
+import { teamRoles } from 'src/team/domain/types/team.types';
 
 const connectionString = process.env.DATABASE_URL!;
 
@@ -60,15 +61,17 @@ export async function seed(pool?: Pool) {
     {
       team_id: teamId,
       user_id: userId,
-      role: 'admin',
+      role: teamRoles.ADMIN,
     },
     {
       team_id: teamId2,
       user_id: userId,
+      role: teamRoles.MEMBER,
     },
     {
       team_id: teamId2,
       user_id: userId2,
+      role: teamRoles.MEMBER,
     },
   ]);
 

@@ -11,6 +11,9 @@ function makeQueryClient() {
         staleTime: 60 * 1000,
         retry: 1,
       },
+      mutations: {
+        retry: 1,
+      },
       dehydrate: {
         shouldDehydrateQuery: (query) =>
           defaultShouldDehydrateQuery(query) ||
