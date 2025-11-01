@@ -40,20 +40,23 @@ export class UserRepository implements UserRepositoryInterface {
   }
 
   async getUserRoleByTeamId(teamId: string, userId: string): Promise<TeamRole> {
-    const [teamMember] = await this.db
-      .select()
+    const [result] = await this.db
+      .select({
+        role: team_members.role,
+      })
       .from(team_members)
+      .innerJoin(teams, eq(team_members.team_id, teams.id))
       .where(
-        and(eq(team_members.team_id, teamId), eq(team_members.user_id, userId)),
+        and(eq(teams.readable_id, teamId), eq(team_members.user_id, userId)),
       );
 
-    if (!teamMember) {
+    if (!result) {
       throw new BadRequestException(
         'User is not a member of the specified team',
       );
     }
 
-    return teamMember.role as TeamRole;
+    return result.role as TeamRole;
   }
 
   async getUserRoleByBoardId(
@@ -65,7 +68,9 @@ export class UserRepository implements UserRepositoryInterface {
       .from(team_members)
       .innerJoin(teams, eq(team_members.team_id, teams.id))
       .innerJoin(boards, eq(boards.team_id, teams.id))
-      .where(and(eq(boards.id, boardId), eq(team_members.user_id, userId)));
+      .where(
+        and(eq(boards.readable_id, boardId), eq(team_members.user_id, userId)),
+      );
 
     if (!teamMember) {
       throw new BadRequestException(
@@ -131,7 +136,7 @@ export class UserRepository implements UserRepositoryInterface {
       .innerJoin(team_members, eq(users.id, team_members.user_id))
       .innerJoin(teams, eq(team_members.team_id, teams.id))
       .innerJoin(boards, eq(boards.team_id, teams.id))
-      .where(eq(boards.id, boardId));
+      .where(eq(boards.readable_id, boardId));
 
     return usersOnBoard.map(({ users }) => {
       return UserMapper.toDomain(users);
@@ -158,7 +163,7 @@ export class UserRepository implements UserRepositoryInterface {
       .innerJoin(team_members, eq(users.id, team_members.user_id))
       .innerJoin(teams, eq(team_members.team_id, teams.id))
       .innerJoin(boards, eq(boards.team_id, teams.id))
-      .where(and(eq(boards.id, boardId), eq(users.id, userId)));
+      .where(and(eq(boards.readable_id, boardId), eq(users.id, userId)));
 
     return Boolean(userInTeam);
   }

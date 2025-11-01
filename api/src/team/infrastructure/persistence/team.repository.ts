@@ -23,7 +23,8 @@ export class TeamRepository implements TeamRepositoryInterface {
 
     const userTeams = rawResult.map((row) => {
       return {
-        ...row.teams,
+        name: row.teams.name,
+        readable_id: row.teams.readable_id,
         created_at: row.teams.created_at,
         description: row.teams.description || '',
       };

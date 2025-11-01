@@ -49,15 +49,35 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
 
     if (exception instanceof DrizzleQueryError) {
       stack = exception.stack;
-      message = 'Drizzle Query Error';
       subErrors.push(exception.message);
       exception.params.forEach((param: string) => subErrors.push(param));
+
+      let drizzleStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+      let drizzleMessage = 'Database query failed';
+
+      const msg = exception.message.toLowerCase();
+
+      if (
+        msg.includes('constraint') ||
+        msg.includes('foreign key') ||
+        msg.includes('not null') ||
+        msg.includes('unique') ||
+        msg.includes('invalid input') ||
+        msg.includes('syntax error at or near')
+      ) {
+        drizzleStatus = HttpStatus.BAD_REQUEST;
+        drizzleMessage = 'Invalid data or constraint violation';
+      }
+
+      message = drizzleMessage;
+
+      if (status === 500) {
+        (status as number) = drizzleStatus;
+      }
 
       if (process.env.NODE_ENV !== 'production') {
         console.error('DrizzleQueryError:', exception);
       }
-    } else if (exception instanceof Error) {
-      stack = exception.stack;
     }
 
     if (status >= 400 && status < 500) {

@@ -5,7 +5,9 @@ type BoardProps = {
   name: string;
   description: string | null;
   teamId: string;
+  readableTeamId: string;
   createdAt: Date | null;
+  readableId: string;
   columns?: ColumnEntity[];
 };
 
@@ -14,7 +16,9 @@ export class BoardAggregate {
   readonly name: string;
   readonly description: string | null;
   readonly teamId: string;
+  readonly readableTeamId: string;
   readonly createdAt: Date | null;
+  readonly readableId: string;
   columns?: ColumnEntity[];
 
   constructor(props: BoardProps) {
@@ -28,6 +32,8 @@ export class BoardAggregate {
     this.teamId = props.teamId;
     this.createdAt = props.createdAt;
     this.columns = props.columns;
+    this.readableId = props.readableId;
+    this.readableTeamId = props.readableTeamId;
   }
 
   addColumn(column: ColumnEntity): void {

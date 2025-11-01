@@ -1,24 +1,13 @@
 'use client'
 
-import { AddTaskCardModal } from '@/features/board/components/add-task-card-modal'
-import { TaskCard } from '@/features/board/components/task-card'
 import { ColumnInfoModal } from '@/features/column/components/column-info-modal'
-import {
-  draggable,
-  dropTargetForElements,
-} from '@atlaskit/pragmatic-drag-and-drop/element/adapter'
 import { Card, Group, ScrollAreaAutosize, Stack, Title } from '@mantine/core'
-import { useEffect, useRef, useState } from 'react'
-import invariant from 'tiny-invariant'
-import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine'
-import {
-  attachClosestEdge,
-  Edge,
-  extractClosestEdge,
-} from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge'
 import { DropIndicator } from '@/components/drop-indicator'
 import { useBoardContext } from '@/features/board/components/board-context'
 import { useDraggedOver } from '@/hooks/use-dragged-over'
+import { TaskCard } from '@/features/card/components/task-card'
+import { AddTaskCardModal } from '@/features/card/components/add-task-card-modal'
+import { useColumnDrag } from '@/features/column/hooks/use-column-drag'
 
 export const Column = ({
   name,
@@ -41,61 +30,13 @@ export const Column = ({
     dueDate?: string
   }>
 }) => {
-  const { isDraggingColumn, setIsDraggingColumn, isDraggingCard } =
-    useBoardContext()
-
-  const [closestEdge, setClosestEdge] = useState<Edge | null>(null)
-  const columnRef = useRef(null)
+  const { isDraggingColumn, isDraggingCard } = useBoardContext()
   const { isDraggedOver, ref: cardStackRef } = useDraggedOver({
     columnId,
     type: 'card-stack',
   })
 
-  useEffect(() => {
-    const columnEl = columnRef.current
-    invariant(columnEl)
-
-    return combine(
-      draggable({
-        element: columnEl,
-        getInitialData: () => ({ type: 'column', columnId: columnId }),
-        onDragStart: () => {
-          if (!isDraggingCard) {
-            setIsDraggingColumn(true)
-          }
-        },
-        onDrop: () => setIsDraggingColumn(false),
-      }),
-      dropTargetForElements({
-        getIsSticky: () => true,
-        element: columnEl,
-        getData: ({ input, element }) => {
-          const data = { type: 'column', columnId: columnId }
-          return attachClosestEdge(data, {
-            input,
-            element,
-            allowedEdges: ['left', 'right'],
-          })
-        },
-        onDrag: (args) => {
-          if (args.source.data.columnId !== columnId) {
-            setClosestEdge(extractClosestEdge(args.self.data))
-          }
-        },
-        onDragEnter: (args) => {
-          if (args.source.data.columnId !== columnId) {
-            setClosestEdge(extractClosestEdge(args.self.data))
-          }
-        },
-        onDragLeave: () => {
-          setClosestEdge(null)
-        },
-        onDrop: () => {
-          setClosestEdge(null)
-        },
-      }),
-    )
-  }, [columnId, isDraggingCard, setIsDraggingColumn])
+  const { columnRef, closestEdge } = useColumnDrag({ columnId, teamId })
 
   return (
     <Card
@@ -109,8 +50,17 @@ export const Column = ({
         marginRight: '1rem',
       }}>
       {!isDraggingCard && closestEdge && <DropIndicator edge={closestEdge} />}
-      <Group justify="space-between">
-        <Title order={2}>{name}</Title>
+      <Group justify="space-between" wrap="nowrap">
+        <Title
+          order={2}
+          maw="80%"
+          style={{
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}>
+          {name}
+        </Title>
         <ColumnInfoModal
           columnId={columnId}
           name={name}

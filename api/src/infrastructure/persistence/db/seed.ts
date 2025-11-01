@@ -5,6 +5,8 @@ import { userFixture } from 'src/__tests__/fixtures/user.fixture';
 import { hash } from '@node-rs/argon2';
 import { v7 } from 'uuid';
 import { teamRoles } from 'src/team/domain/types/team.types';
+import { nanoid } from 'nanoid';
+import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
 
 const connectionString = process.env.DATABASE_URL!;
 
@@ -49,11 +51,13 @@ export async function seed(pool?: Pool) {
       id: teamId,
       name: 'Awesome Team',
       description: 'This is an awesome team working on great projects.',
+      readable_id: nanoid(8),
     },
     {
       id: teamId2,
       name: 'Developers',
       description: 'Team of software developers.',
+      readable_id: nanoid(8),
     },
   ]);
 
@@ -86,24 +90,28 @@ export async function seed(pool?: Pool) {
       team_id: teamId,
       description: 'Team Board',
       name: 'Project Alpha',
+      readable_id: generateReadableId(),
     },
     {
       id: boardId2,
       team_id: teamId,
       description: 'Dev Board',
       name: 'Backend Development',
+      readable_id: generateReadableId(),
     },
     {
       id: boardId3,
       team_id: teamId2,
       description: 'Frontend tasks and bugs',
       name: 'Frontend Development',
+      readable_id: generateReadableId(),
     },
     {
       id: boardId4,
       team_id: teamId2,
       description: 'Marketing strategies and plans',
       name: 'Marketing Board',
+      readable_id: generateReadableId(),
     },
   ]);
 

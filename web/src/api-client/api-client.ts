@@ -51,6 +51,12 @@ const jwtMiddleware: Middleware = {
     }
 
     if (response.status === 401) {
+      const isMutation = request.method.toLowerCase() !== 'get'
+
+      if (isMutation) {
+        return response
+      }
+
       await rotateToken()
       const retryResponse = await fetch(request)
 

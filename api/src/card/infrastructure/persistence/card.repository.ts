@@ -8,6 +8,7 @@ import {
   boards,
   cards,
   columns,
+  comments,
 } from 'src/infrastructure/persistence/db/schema';
 
 type NewCardRecord = {
@@ -129,7 +130,10 @@ export class CardRepository implements CardRepositoryInterface {
   }
 
   async deleteCard(cardId: string): Promise<void> {
-    await this.db.delete(cards).where(eq(cards.id, cardId));
+    await this.db.transaction(async (tx) => {
+      await tx.delete(comments).where(eq(comments.card_id, cardId));
+      await tx.delete(cards).where(eq(cards.id, cardId));
+    });
   }
 
   async findAllByColumnId(columnId: string): Promise<CardEntity[]> {

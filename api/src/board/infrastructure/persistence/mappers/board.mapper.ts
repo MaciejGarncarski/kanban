@@ -19,6 +19,7 @@ export type NewCardRecord = InferInsertModel<typeof cards>;
 export class BoardMapper {
   static toDomain(
     board: BoardRecord,
+    boardReadableTeamId: string,
     boardColumns: ColumnRecord[] = [],
     boardCards: CardRecord[] = [],
   ): BoardAggregate {
@@ -51,12 +52,14 @@ export class BoardMapper {
     });
 
     return new BoardAggregate({
-      id: board.id,
+      readableId: board.readable_id,
       name: board.name,
       description: board.description ?? null,
       teamId: board.team_id,
       createdAt: board.created_at ? new Date(board.created_at) : null,
       columns: columnsWithCards,
+      id: board.id,
+      readableTeamId: boardReadableTeamId,
     });
   }
 
@@ -67,6 +70,7 @@ export class BoardMapper {
       name: board.name,
       description: board.description ?? null,
       created_at: board.createdAt ?? new Date(),
+      readable_id: board.readableId,
     };
   }
 

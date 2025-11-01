@@ -362,8 +362,8 @@ export interface components {
             message: string;
         };
         TeamDto: {
-            /** @example 019a2a86-2c15-77a7-84a2-55e02cdf0d5f */
-            id: string;
+            /** @example nanoid */
+            readable_id: string;
             /** @example Awesome Team */
             name: string;
             /** @example This is an awesome team working on great projects. */
@@ -379,10 +379,11 @@ export interface components {
             teams: components["schemas"]["TeamDto"][];
         };
         BoardSummaryDto: {
-            id: string;
+            readableId: string;
             name: string;
             description?: string;
             teamId: string;
+            readableTeamId: string;
             createdAt?: string;
         };
         GetBoardsByTeamResponseDto: {
@@ -414,10 +415,11 @@ export interface components {
             cards: components["schemas"]["CardDto"][];
         };
         BoardDetailDto: {
-            id: string;
+            readableId: string;
             name: string;
             description?: string;
             teamId: string;
+            readableTeamId: string;
             createdAt?: string;
             /** @description List of columns with their cards */
             columns: components["schemas"]["ColumnDto"][];

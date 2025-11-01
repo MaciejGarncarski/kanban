@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsString, MaxLength } from 'class-validator';
 
 export class CreateColumnRequestDto {
   @ApiProperty({ example: 'To Do', description: 'Title of the column' })
   @IsString()
+  @MaxLength(20)
   title: string;
 
   @ApiProperty({

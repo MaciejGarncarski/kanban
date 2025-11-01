@@ -11,6 +11,7 @@ import {
   boards,
   cards,
   columns,
+  teams,
 } from 'src/infrastructure/persistence/db/schema';
 
 @Injectable()
@@ -19,11 +20,17 @@ export class BoardRepository implements BoardRepositoryInterface {
 
   async findByTeamId(teamId: string): Promise<BoardAggregate[]> {
     const boardRecords = await this.db
-      .select()
+      .select({
+        board: boards,
+        teams: teams,
+      })
       .from(boards)
-      .where(eq(boards.team_id, teamId));
+      .innerJoin(teams, eq(boards.team_id, teams.id))
+      .where(eq(teams.readable_id, teamId));
 
-    return boardRecords.map((record) => BoardMapper.toDomain(record));
+    return boardRecords.map((record) =>
+      BoardMapper.toDomain(record.board, record.teams.readable_id),
+    );
   }
 
   async findById(boardId: string): Promise<BoardAggregate | null> {
@@ -32,16 +39,23 @@ export class BoardRepository implements BoardRepositoryInterface {
         board: boards,
         column: columns,
         card: cards,
+        teams: teams,
       })
       .from(boards)
-      .where(eq(boards.id, boardId))
+      .where(eq(boards.readable_id, boardId))
+      .innerJoin(teams, eq(boards.team_id, teams.id))
       .leftJoin(columns, eq(columns.board_id, boards.id))
       .leftJoin(cards, eq(cards.column_id, columns.id));
 
     if (rows.length === 0) return null;
 
     const boardRecord = rows[0].board;
-    const boardAggregate = BoardMapper.toDomain(boardRecord, [], []);
+    const boardAggregate = BoardMapper.toDomain(
+      boardRecord,
+      rows[0].teams.readable_id,
+      [],
+      [],
+    );
 
     const columnMap = new Map<string, ColumnEntity>();
 
@@ -129,10 +143,12 @@ export class BoardRepository implements BoardRepositoryInterface {
       {
         created_at: result.board.created_at,
         description: result.board.description,
-        id: result.board.id,
         name: result.board.name,
         team_id: result.board.team_id,
+        readable_id: result.board.readable_id,
+        id: result.board.id,
       },
+      board.readableTeamId,
       result.columns,
       result.cards,
     );

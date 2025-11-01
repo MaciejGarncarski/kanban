@@ -21,10 +21,10 @@ export function BoardSwitchOptions({ teamId, boardId }: Props) {
     return null
   }
 
-  return data.boards.map(({ description, id, name }) => (
-    <Combobox.Option value={id} key={id}>
+  return data.boards.map(({ description, readableId, name }) => (
+    <Combobox.Option value={readableId} key={readableId}>
       <Group gap="sm" wrap="nowrap">
-        {id === boardId && (
+        {readableId === boardId && (
           <CheckIcon size={12} style={{ flexGrow: 0, flexShrink: 0 }} />
         )}
         <Flex direction={'column'}>

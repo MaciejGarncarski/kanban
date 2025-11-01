@@ -9,18 +9,24 @@ import {
   InputBase,
   useCombobox,
 } from '@mantine/core'
-import { useQueryState } from 'nuqs'
+import { useRouter } from 'next/navigation'
 
-export function BoardSwitch() {
+type Props = {
+  teamId: string | null
+  boardId: string | null
+}
+
+export function BoardSwitch({ teamId, boardId }: Props) {
+  const router = useRouter()
+
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   })
-  const [boardId, setBoardId] = useQueryState('boardId')
-  const [teamId] = useQueryState('teamId')
 
   const setBoard = (val: string | null) => {
     if (!val) return
-    setBoardId(val)
+
+    router.push(`/teams/${teamId}/boards/${val}`)
   }
 
   return (
@@ -86,8 +92,9 @@ const BoardSwitchInput = ({
   )
 
   const boardName = data?.boards.find((board) => {
-    return board.id === boardId
+    return board.readableId === boardId
   })?.name
+
   return (
     <Combobox.Target>
       <Input.Wrapper label="Board">
@@ -99,8 +106,10 @@ const BoardSwitchInput = ({
           rightSection={<Combobox.Chevron />}
           rightSectionPointerEvents="none"
           onClick={() => combobox.toggleDropdown()}>
-          {boardName && boardName}
-          {!boardName && <Input.Placeholder>Select board</Input.Placeholder>}
+          <>
+            {boardId && boardName}
+            {!boardId && <Input.Placeholder>Select board</Input.Placeholder>}
+          </>
         </InputBase>
       </Input.Wrapper>
     </Combobox.Target>

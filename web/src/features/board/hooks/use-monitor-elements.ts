@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { extractClosestEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge'
 import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter'
 import { appQuery } from '@/api-client/api-client'
+import { notifications } from '@mantine/notifications'
 
 export function useMonitorElements({ boardId }: { boardId: string }) {
   const { data: boardData } = appQuery.useSuspenseQuery(
@@ -21,6 +22,13 @@ export function useMonitorElements({ boardId }: { boardId: string }) {
           queryKey: ['get', '/v1/boards/{boardId}'],
         })
       },
+      onError: (error) => {
+        notifications.show({
+          title: 'Error',
+          message: error.message,
+          color: 'red',
+        })
+      },
     },
   )
 
@@ -28,6 +36,13 @@ export function useMonitorElements({ boardId }: { boardId: string }) {
     onSuccess: (_, __, ___, ctx) => {
       ctx.client.invalidateQueries({
         queryKey: ['get', '/v1/boards/{boardId}'],
+      })
+    },
+    onError: (error) => {
+      notifications.show({
+        title: 'Error',
+        message: error.message,
+        color: 'red',
       })
     },
   })

@@ -12,46 +12,22 @@ import {
   ComboboxStore,
   CheckIcon,
 } from '@mantine/core'
-import { useQueryState } from 'nuqs'
-import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
-export function TeamSwitch() {
+type Props = {
+  teamId: string | null
+}
+
+export function TeamSwitch({ teamId }: Props) {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   })
-  const [teamId, setTeamId] = useQueryState('teamId')
-  const [, setBoardId] = useQueryState('boardId')
-
-  const boards = appQuery.useSuspenseQuery(
-    'get',
-    '/v1/teams/{teamId}/boards',
-    {
-      params: { path: { teamId: teamId ?? '' } },
-    },
-    {
-      initialData: { boards: [] },
-    },
-  )
-
-  useEffect(() => {
-    if (!teamId) return
-
-    const fetchBoards = async () => {
-      const updatedBoards = await boards.refetch()
-      if (!updatedBoards?.data?.boards) {
-        setBoardId(null)
-      } else {
-        setBoardId(updatedBoards.data.boards[0]?.id ?? null)
-      }
-    }
-
-    fetchBoards()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [teamId])
+  const router = useRouter()
 
   const setTeam = async (val: string | null) => {
     if (!val) return
-    setTeamId(val)
+
+    router.replace('/teams/' + val)
   }
 
   return (
@@ -115,7 +91,8 @@ const TeamSwitchInput = ({
           rightSectionPointerEvents="none"
           onClick={() => combobox.toggleDropdown()}>
           <>
-            {teamId && data.teams.find((team) => team.id === teamId)?.name}
+            {teamId &&
+              data.teams.find((team) => team.readable_id === teamId)?.name}
             {!teamId && <Input.Placeholder>Select team</Input.Placeholder>}
           </>
         </InputBase>
@@ -127,10 +104,10 @@ const TeamSwitchInput = ({
 const TeamSwitchOptions = ({ teamId }: { teamId: string | null }) => {
   const { data } = appQuery.useSuspenseQuery('get', '/v1/teams')
 
-  return data.teams.map(({ description, id, name }) => (
-    <Combobox.Option value={id} key={id}>
+  return data.teams.map(({ description, readable_id, name }) => (
+    <Combobox.Option value={readable_id} key={readable_id}>
       <Group gap="sm" wrap="nowrap">
-        {id === teamId && (
+        {readable_id === teamId && (
           <CheckIcon size={12} style={{ flexGrow: 0, flexShrink: 0 }} />
         )}
         <Flex direction={'column'}>

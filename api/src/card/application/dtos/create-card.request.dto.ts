@@ -6,7 +6,7 @@ export class CreateCardRequestDto {
   @ApiProperty({ example: 'Title' })
   @IsString()
   @Expose()
-  @MaxLength(50)
+  @MaxLength(32)
   readonly title: string;
 
   @ApiProperty({ example: 'column-uuid' })

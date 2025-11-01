@@ -12,9 +12,9 @@ import { ColumnDto } from 'src/column/application/dtos/column.dto';
 
 export class BoardDetailDto {
   @ApiProperty()
-  @IsUUID()
+  @IsString()
   @Expose()
-  id: string;
+  readableId: string;
 
   @ApiProperty()
   @IsString()
@@ -31,6 +31,11 @@ export class BoardDetailDto {
   @IsUUID()
   @Expose()
   teamId: string;
+
+  @ApiProperty()
+  @IsString()
+  @Expose()
+  readableTeamId: string;
 
   @ApiProperty({ required: false })
   @IsOptional()

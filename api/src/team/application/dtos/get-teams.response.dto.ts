@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Type } from 'class-transformer';
+import { Exclude, Expose, Type } from 'class-transformer';
 import { IsArray, IsString, ValidateNested } from 'class-validator';
 
 export class TeamDto {
-  @ApiProperty({ example: '019a2a86-2c15-77a7-84a2-55e02cdf0d5f' })
+  @ApiProperty({ example: 'nanoid' })
   @IsString()
   @Expose()
-  id: string;
+  readable_id: string;
 
   @ApiProperty({ example: 'Awesome Team' })
   @IsString()

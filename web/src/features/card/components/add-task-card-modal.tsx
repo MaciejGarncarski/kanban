@@ -25,6 +25,8 @@ type Props = {
   columnId: string
 }
 
+// TODO: refactor to smaller components
+
 export function AddTaskCardModal({ boardId, columnId }: Props) {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),

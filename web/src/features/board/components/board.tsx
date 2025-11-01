@@ -10,7 +10,7 @@ import {
   Flex,
   Group,
   ScrollAreaAutosize,
-  Text,
+  Title,
 } from '@mantine/core'
 import { useDraggedOver } from '@/hooks/use-dragged-over'
 import { useMonitorElements } from '@/features/board/hooks/use-monitor-elements'
@@ -24,13 +24,14 @@ export const Board = ({ boardId }: { boardId: string }) => {
       params: { path: { boardId } },
     },
   )
+
   const { isDraggedOver, ref } = useDraggedOver({})
 
   return (
     <Flex direction="column" gap="md">
-      <Text>
+      <Title order={2}>
         {boardData?.description || 'No description provided for this board.'}
-      </Text>
+      </Title>
 
       <ScrollAreaAutosize scrollbars="x" offsetScrollbars>
         <Group justify="flex-start" wrap="nowrap" gap="lg" ref={ref}>
@@ -43,7 +44,7 @@ export const Board = ({ boardId }: { boardId: string }) => {
                   name={name}
                   columnId={columnId}
                   createdAt={createdAt}
-                  teamId={boardData.teamId}
+                  teamId={boardData.readableTeamId}
                   cards={cards}
                 />
               )

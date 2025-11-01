@@ -2,12 +2,13 @@
 
 import { Board } from '@/features/board/components/board'
 import { BoardProvider } from '@/features/board/components/board-context'
-import { useQueryState } from 'nuqs'
 
-export function BoardContainer() {
-  const [teamId] = useQueryState('teamId')
-  const [boardId] = useQueryState('boardId')
+type Props = {
+  teamId: string | null
+  boardId: string | null
+}
 
+export function BoardContainer({ teamId, boardId }: Props) {
   if (!teamId) {
     return <div>Please select a team to view the board.</div>
   }

@@ -4,9 +4,9 @@ import { IsString, IsUUID, IsOptional, IsDate } from 'class-validator';
 
 export class BoardSummaryDto {
   @ApiProperty()
-  @IsUUID()
+  @IsString()
   @Expose()
-  id: string;
+  readableId: string;
 
   @ApiProperty()
   @IsString()
@@ -23,6 +23,11 @@ export class BoardSummaryDto {
   @IsUUID()
   @Expose()
   teamId: string;
+
+  @ApiProperty()
+  @IsString()
+  @Expose()
+  readableTeamId: string;
 
   @ApiProperty({ required: false })
   @IsOptional()

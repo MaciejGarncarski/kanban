@@ -38,6 +38,7 @@ export const teams = pgTable('teams', {
     .primaryKey(),
   name: varchar({ length: 255 }).notNull(),
   description: text('description'),
+  readable_id: varchar({ length: 100 }).notNull().unique(),
   created_at: timestamp('created_at', { mode: 'string' })
     .notNull()
     .default(sql`now()`),
@@ -74,6 +75,7 @@ export const boards = pgTable('boards', {
   team_id: uuid('team_id')
     .references(() => teams.id)
     .notNull(),
+  readable_id: varchar({ length: 100 }).notNull().unique(),
   name: varchar('name', { length: 255 }).notNull(),
   description: text('description'),
   created_at: timestamp('created_at').defaultNow(),
