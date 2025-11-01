@@ -1,5 +1,5 @@
 import { paths } from '@/api-client/api'
-import { rotateToken } from '@/api/rotate-token'
+import { rotateToken } from '@/features/auth/api/rotate-token'
 import createFetchClient, { Middleware } from 'openapi-fetch'
 import createQuery from 'openapi-react-query'
 import { v7 } from 'uuid'

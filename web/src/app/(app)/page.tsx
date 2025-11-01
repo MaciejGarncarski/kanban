@@ -1,18 +1,15 @@
 import { fetchServer } from '@/api-client/api-client'
 import { attachCookies } from '@/features/auth/utils/attach-cookies'
-import { BoardSwitch } from '@/features/board/components/board-switch'
 import { CreateTeamLink } from '@/features/layout/components/create-team-link'
-import { TeamSwitch } from '@/features/team-switch/components/team-switch'
-import { TeamSwitchPlaceholder } from '@/features/team-switch/components/team-switch-placeholder'
 import { getQueryClient } from '@/utils/get-query-client'
-import { Box, Group } from '@mantine/core'
-import { Suspense } from 'react'
-import { ErrorBoundary } from 'react-error-boundary'
+import { Box } from '@mantine/core'
+import { redirect } from 'next/navigation'
 
 export default async function Home() {
   const queryClient = getQueryClient()
+  const cookies = await attachCookies()
 
-  void queryClient.prefetchQuery({
+  const teams = await queryClient.fetchQuery({
     queryKey: ['get', '/v1/teams'],
 
     queryFn: async () => {
@@ -20,7 +17,7 @@ export default async function Home() {
         const res = await fetchServer.GET('/v1/teams', {
           headers: {
             'x-skip-jwt-middleware': 'true',
-            cookie: await attachCookies(),
+            cookie: cookies,
           },
         })
 
@@ -31,23 +28,47 @@ export default async function Home() {
     },
   })
 
-  return (
-    <main>
-      <Group justify="flex-start" align="flex-end">
-        <Suspense fallback={<TeamSwitchPlaceholder />}>
-          <ErrorBoundary fallback={<TeamSwitchPlaceholder />}>
-            <TeamSwitch teamId={null} />
-          </ErrorBoundary>
-        </Suspense>
-        <Suspense fallback={<TeamSwitchPlaceholder />}>
-          <ErrorBoundary fallback={<TeamSwitchPlaceholder />}>
-            <BoardSwitch teamId={null} boardId={null} />
-          </ErrorBoundary>
-        </Suspense>
-        <Box ml={'auto'}>
+  const firstTeamId = teams?.teams[0]?.readable_id
+
+  if (!teams || teams?.teams.length === 0 || !firstTeamId) {
+    return (
+      <main>
+        <Box mt="md">
+          You are not a member of any team. Create a team to get started.
+        </Box>
+        <Box>
           <CreateTeamLink />
         </Box>
-      </Group>
-    </main>
-  )
+      </main>
+    )
+  }
+
+  const paramsTeamId = { params: { path: { teamId: firstTeamId } } }
+
+  const boards = await queryClient.fetchQuery({
+    queryKey: ['get', `/v1/teams/{teamId}/boards`, paramsTeamId],
+    queryFn: async () => {
+      try {
+        const res = await fetchServer.GET(`/v1/teams/{teamId}/boards`, {
+          ...paramsTeamId,
+          headers: {
+            'x-skip-jwt-middleware': 'true',
+            cookie: cookies,
+          },
+        })
+
+        return res.data
+      } catch {
+        return { boards: [] }
+      }
+    },
+  })
+
+  const firstBoardId = boards?.boards[0]?.readableId
+
+  if (firstBoardId) {
+    redirect(`/teams/${firstTeamId}/boards/${firstBoardId}`)
+  }
+
+  redirect(`/teams/${firstTeamId}`)
 }

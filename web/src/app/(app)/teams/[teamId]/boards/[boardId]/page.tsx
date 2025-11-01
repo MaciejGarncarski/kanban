@@ -1,21 +1,23 @@
 import { fetchServer } from '@/api-client/api-client'
+import { READABLE_ID_LENGTH } from '@/constants/column'
 import { attachCookies } from '@/features/auth/utils/attach-cookies'
-import { BoardContainer } from '@/features/board/components/board-container'
-import { BoardPlaceholder } from '@/features/board/components/board-placeholder'
-import { BoardSwitch } from '@/features/board/components/board-switch'
+import { BoardContainer } from '@/features/boards/components/board-container'
+import { BoardPlaceholder } from '@/features/boards/components/board-placeholder'
+import { BoardSwitch } from '@/features/boards/components/board-switch'
 import { CreateTeamLink } from '@/features/layout/components/create-team-link'
-import { TeamSwitch } from '@/features/team-switch/components/team-switch'
-import { TeamSwitchPlaceholder } from '@/features/team-switch/components/team-switch-placeholder'
+import { TeamRoleBadge } from '@/features/teams/components/team-role-badge'
+import { TeamSwitch } from '@/features/teams/components/team-switch'
+import { TeamRole } from '@/types/team.types'
 import { getQueryClient } from '@/utils/get-query-client'
-import { Badge, Box, Group, Stack } from '@mantine/core'
+import { Box, Group, Stack } from '@mantine/core'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { Suspense } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import * as z from 'zod/v4'
 
 const paramsSchema = z.object({
-  teamId: z.string().length(8),
-  boardId: z.string().length(8),
+  teamId: z.string().length(READABLE_ID_LENGTH),
+  boardId: z.string().length(READABLE_ID_LENGTH),
 })
 
 export default async function Page({
@@ -132,17 +134,9 @@ export default async function Page({
     <HydrationBoundary state={dehydrate(queryClient)}>
       <main>
         <Group justify="flex-start" align="flex-end">
-          <Suspense fallback={<TeamSwitchPlaceholder />}>
-            <ErrorBoundary fallback={<TeamSwitchPlaceholder />}>
-              <TeamSwitch teamId={teamId} />
-            </ErrorBoundary>
-          </Suspense>
-          <Suspense fallback={<TeamSwitchPlaceholder />}>
-            <ErrorBoundary fallback={<TeamSwitchPlaceholder />}>
-              <BoardSwitch teamId={teamId} boardId={boardId} />
-            </ErrorBoundary>
-          </Suspense>
-          <Badge size="lg">Role: {role?.role ?? 'member'}</Badge>
+          <TeamSwitch teamId={teamId} />
+          <BoardSwitch teamId={teamId} boardId={boardId} />
+          <TeamRoleBadge role={role?.role as TeamRole} />
           <Box ml={'auto'}>
             <CreateTeamLink />
           </Box>
