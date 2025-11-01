@@ -7,7 +7,7 @@ import { CreateTeamLink } from '@/features/layout/components/create-team-link'
 import { TeamSwitch } from '@/features/team-switch/components/team-switch'
 import { TeamSwitchPlaceholder } from '@/features/team-switch/components/team-switch-placeholder'
 import { getQueryClient } from '@/utils/get-query-client'
-import { Box, Group, Stack } from '@mantine/core'
+import { Badge, Box, Group, Stack } from '@mantine/core'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { Suspense } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -36,45 +36,7 @@ export default async function Page({
   const paramsBoardId = { params: { path: { boardId } } }
   const paramsTeamId = { params: { path: { teamId } } }
 
-  void queryClient.prefetchQuery({
-    queryKey: ['get', '/v1/teams'],
-
-    queryFn: async () => {
-      try {
-        const res = await fetchServer.GET('/v1/teams', {
-          headers: {
-            'x-skip-jwt-middleware': 'true',
-            cookie: await attachCookies(),
-          },
-        })
-
-        return res.data
-      } catch {
-        return { teams: [] }
-      }
-    },
-  })
-
-  void queryClient.prefetchQuery({
-    queryKey: ['get', `/v1/teams/{teamId}/boards`, paramsTeamId],
-    queryFn: async () => {
-      try {
-        const res = await fetchServer.GET(`/v1/teams/{teamId}/boards`, {
-          ...paramsTeamId,
-          headers: {
-            'x-skip-jwt-middleware': 'true',
-            cookie: cookies,
-          },
-        })
-
-        return res.data
-      } catch {
-        return { boards: [] }
-      }
-    },
-  })
-
-  void queryClient.prefetchQuery({
+  const role = await queryClient.fetchQuery({
     queryKey: ['get', `/v1/user/{teamId}/role`, paramsTeamId],
     queryFn: async () => {
       try {
@@ -93,41 +55,78 @@ export default async function Page({
     },
   })
 
-  void queryClient.prefetchQuery({
-    queryKey: ['get', `/v1/boards/{boardId}/users`, paramsBoardId],
-    queryFn: async () => {
-      try {
-        const res = await fetchServer.GET('/v1/boards/{boardId}/users', {
-          ...paramsBoardId,
-          headers: {
-            'x-skip-jwt-middleware': 'true',
-            cookie: cookies,
-          },
-        })
-        return res.data
-      } catch {
-        return { users: [] }
-      }
-    },
-  })
+  await Promise.all([
+    queryClient.prefetchQuery({
+      queryKey: ['get', '/v1/teams'],
 
-  void queryClient.prefetchQuery({
-    queryKey: ['get', `/v1/boards/{boardId}`, paramsBoardId],
-    queryFn: async () => {
-      try {
-        const res = await fetchServer.GET(`/v1/boards/{boardId}`, {
-          ...paramsBoardId,
-          headers: {
-            'x-skip-jwt-middleware': 'true',
-            cookie: cookies,
-          },
-        })
-        return res.data
-      } catch {
-        return null
-      }
-    },
-  })
+      queryFn: async () => {
+        try {
+          const res = await fetchServer.GET('/v1/teams', {
+            headers: {
+              'x-skip-jwt-middleware': 'true',
+              cookie: await attachCookies(),
+            },
+          })
+
+          return res.data
+        } catch {
+          return { teams: [] }
+        }
+      },
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ['get', `/v1/teams/{teamId}/boards`, paramsTeamId],
+      queryFn: async () => {
+        try {
+          const res = await fetchServer.GET(`/v1/teams/{teamId}/boards`, {
+            ...paramsTeamId,
+            headers: {
+              'x-skip-jwt-middleware': 'true',
+              cookie: cookies,
+            },
+          })
+
+          return res.data
+        } catch {
+          return { boards: [] }
+        }
+      },
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ['get', `/v1/boards/{boardId}/users`, paramsBoardId],
+      queryFn: async () => {
+        try {
+          const res = await fetchServer.GET('/v1/boards/{boardId}/users', {
+            ...paramsBoardId,
+            headers: {
+              'x-skip-jwt-middleware': 'true',
+              cookie: cookies,
+            },
+          })
+          return res.data
+        } catch {
+          return { users: [] }
+        }
+      },
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ['get', `/v1/boards/{boardId}`, paramsBoardId],
+      queryFn: async () => {
+        try {
+          const res = await fetchServer.GET(`/v1/boards/{boardId}`, {
+            ...paramsBoardId,
+            headers: {
+              'x-skip-jwt-middleware': 'true',
+              cookie: cookies,
+            },
+          })
+          return res.data
+        } catch {
+          return null
+        }
+      },
+    }),
+  ])
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -143,6 +142,7 @@ export default async function Page({
               <BoardSwitch teamId={teamId} boardId={boardId} />
             </ErrorBoundary>
           </Suspense>
+          <Badge size="lg">Role: {role?.role ?? 'member'}</Badge>
           <Box ml={'auto'}>
             <CreateTeamLink />
           </Box>

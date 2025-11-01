@@ -26,7 +26,6 @@ export function TeamSwitch({ teamId }: Props) {
 
   const setTeam = async (val: string | null) => {
     if (!val) return
-
     router.replace('/teams/' + val)
   }
 

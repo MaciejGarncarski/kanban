@@ -19,7 +19,7 @@ export function BoardContainer({ teamId, boardId }: Props) {
 
   return (
     <BoardProvider>
-      <Board boardId={boardId} />
+      <Board boardId={boardId} teamId={teamId} />
     </BoardProvider>
   )
 }

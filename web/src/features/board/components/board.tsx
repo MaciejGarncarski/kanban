@@ -15,7 +15,13 @@ import {
 import { useDraggedOver } from '@/hooks/use-dragged-over'
 import { useMonitorElements } from '@/features/board/hooks/use-monitor-elements'
 
-export const Board = ({ boardId }: { boardId: string }) => {
+export const Board = ({
+  teamId,
+  boardId,
+}: {
+  teamId: string
+  boardId: string
+}) => {
   useMonitorElements({ boardId })
   const { data: boardData } = appQuery.useSuspenseQuery(
     'get',
@@ -26,6 +32,14 @@ export const Board = ({ boardId }: { boardId: string }) => {
   )
 
   const { isDraggedOver, ref } = useDraggedOver({})
+  const { data: roleData } = appQuery.useSuspenseQuery(
+    'get',
+    '/v1/user/{teamId}/role',
+    {
+      params: { path: { teamId } },
+    },
+  )
+  const isAdmin = roleData?.role === 'admin'
 
   return (
     <Flex direction="column" gap="md">
@@ -51,7 +65,8 @@ export const Board = ({ boardId }: { boardId: string }) => {
             },
           )}
 
-          {MAX_COLUMN_COUNT > (boardData?.columns.length || 0) &&
+          {isAdmin &&
+            MAX_COLUMN_COUNT > (boardData?.columns.length || 0) &&
             !isDraggedOver && (
               <Card
                 withBorder

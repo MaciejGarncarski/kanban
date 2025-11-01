@@ -79,9 +79,10 @@ export const Column = ({
           ref={cardStackRef}
           style={{
             opacity: isDraggedOver ? 0.8 : 1,
-            border: isDraggedOver
-              ? '2px dashed #228be6'
-              : '2px solid transparent',
+            border:
+              !isDraggingColumn && isDraggedOver
+                ? '2px dashed #228be6'
+                : '2px solid transparent',
           }}>
           {cards.map(({ id, title, assignedTo, description, dueDate }) => (
             <TaskCard

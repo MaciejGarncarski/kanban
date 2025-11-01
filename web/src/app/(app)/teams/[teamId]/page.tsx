@@ -5,7 +5,7 @@ import { CreateTeamLink } from '@/features/layout/components/create-team-link'
 import { TeamSwitch } from '@/features/team-switch/components/team-switch'
 import { TeamSwitchPlaceholder } from '@/features/team-switch/components/team-switch-placeholder'
 import { getQueryClient } from '@/utils/get-query-client'
-import { Box, Group } from '@mantine/core'
+import { Badge, Box, Group } from '@mantine/core'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { Suspense } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -32,45 +32,46 @@ export default async function Page({
   const queryClient = getQueryClient()
   const paramsTeamId = { params: { path: { teamId } } }
 
-  void queryClient.prefetchQuery({
-    queryKey: ['get', '/v1/teams'],
+  await Promise.all([
+    queryClient.prefetchQuery({
+      queryKey: ['get', '/v1/teams'],
 
-    queryFn: async () => {
-      try {
-        const res = await fetchServer.GET('/v1/teams', {
-          headers: {
-            'x-skip-jwt-middleware': 'true',
-            cookie: cookies,
-          },
-        })
+      queryFn: async () => {
+        try {
+          const res = await fetchServer.GET('/v1/teams', {
+            headers: {
+              'x-skip-jwt-middleware': 'true',
+              cookie: cookies,
+            },
+          })
 
-        return res.data
-      } catch {
-        return { teams: [] }
-      }
-    },
-  })
+          return res.data
+        } catch {
+          return { teams: [] }
+        }
+      },
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ['get', `/v1/teams/{teamId}/boards`, paramsTeamId],
+      queryFn: async () => {
+        try {
+          const res = await fetchServer.GET(`/v1/teams/{teamId}/boards`, {
+            ...paramsTeamId,
+            headers: {
+              'x-skip-jwt-middleware': 'true',
+              cookie: cookies,
+            },
+          })
 
-  void queryClient.prefetchQuery({
-    queryKey: ['get', `/v1/teams/{teamId}/boards`, paramsTeamId],
-    queryFn: async () => {
-      try {
-        const res = await fetchServer.GET(`/v1/teams/{teamId}/boards`, {
-          ...paramsTeamId,
-          headers: {
-            'x-skip-jwt-middleware': 'true',
-            cookie: cookies,
-          },
-        })
+          return res.data
+        } catch {
+          return { boards: [] }
+        }
+      },
+    }),
+  ])
 
-        return res.data
-      } catch {
-        return { boards: [] }
-      }
-    },
-  })
-
-  void queryClient.prefetchQuery({
+  const role = await queryClient.fetchQuery({
     queryKey: ['get', `/v1/user/{teamId}/role`, paramsTeamId],
     queryFn: async () => {
       try {
@@ -103,6 +104,7 @@ export default async function Page({
               <BoardSwitch teamId={teamId} boardId={null} />
             </ErrorBoundary>
           </Suspense>
+          <Badge size="lg">Role: {role?.role ?? 'member'}</Badge>
           <Box ml={'auto'}>
             <CreateTeamLink />
           </Box>
