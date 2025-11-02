@@ -2,12 +2,12 @@ import { fetchServer } from '@/api-client/api-client'
 import { READABLE_ID_LENGTH } from '@/constants/column'
 import { attachCookies } from '@/features/auth/utils/attach-cookies'
 import { BoardSwitch } from '@/features/boards/components/board-switch'
-import { CreateTeamLink } from '@/features/layout/components/create-team-link'
+import { SettingsModal } from '@/features/layout/components/settings-modal'
 import { TeamRoleBadge } from '@/features/teams/components/team-role-badge'
 import { TeamSwitch } from '@/features/teams/components/team-switch'
 import { TeamRole } from '@/types/team.types'
 import { getQueryClient } from '@/utils/get-query-client'
-import { Box, Group } from '@mantine/core'
+import { Box, Group, Stack, Text } from '@mantine/core'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { redirect } from 'next/navigation'
 import * as z from 'zod/v4'
@@ -91,7 +91,7 @@ export default async function Page({
     }),
   ])
 
-  if (boards?.boards) {
+  if (boards?.boards && boards.boards.length > 0) {
     redirect(`/teams/${teamId}/boards/${boards.boards[0]?.readableId}`)
   }
 
@@ -103,9 +103,14 @@ export default async function Page({
           <BoardSwitch teamId={teamId} boardId={null} />
           <TeamRoleBadge role={role?.role as TeamRole} />
           <Box ml={'auto'}>
-            <CreateTeamLink />
+            <SettingsModal teamId={teamId} />
           </Box>
         </Group>
+        <Stack mt="md">
+          {role?.role === 'admin' && (
+            <Text>No boards found. Create a board to get started.</Text>
+          )}
+        </Stack>
       </div>
     </HydrationBoundary>
   )

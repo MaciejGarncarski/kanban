@@ -6,6 +6,9 @@ const prefix = `/${v1}/`;
 
 export const routesV1 = {
   version: v1,
+  healthcheck: {
+    root: `${prefix}healthcheck`,
+  },
   auth: {
     root: `${prefix}auth`,
     signIn: `${prefix}auth/sign-in`,
@@ -20,6 +23,7 @@ export const routesV1 = {
   },
   user: {
     root: `${prefix}user`,
+    getAllUsers: `${prefix}user/all`,
     getUserById: `${prefix}user/:userId`,
     getRoleByTeamId: `${prefix}user/:teamId/role`,
     getUsersByBoardId: `${prefix}boards/:boardId/users`,

@@ -84,7 +84,8 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
       this.logger.warn(
         `[${correlationId}] [Client ${request.path}] [User: ${request.userId ? request.userId : 'Not authenticated'}] error (${status}): ${message}`,
       );
-    } else {
+    } else if (exception instanceof Error) {
+      stack = exception.stack;
       this.logger.error(
         `[${correlationId}] [Server ${request.path}] [User: ${request.userId ? request.userId : 'Not authenticated'}] error (${status}): ${message}`,
         stack,

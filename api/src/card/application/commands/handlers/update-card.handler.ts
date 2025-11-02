@@ -40,7 +40,6 @@ export class UpdateCardHandler {
         const allCards = await this.cardRepo.findAllByColumnId(columnId);
         const filtered = allCards.filter((c) => c.id !== cardId);
         const insertIndex = position > 0 ? position - 1 : 0;
-        console.log({ insertIndex });
 
         filtered.splice(insertIndex, 0, cardToMove);
 

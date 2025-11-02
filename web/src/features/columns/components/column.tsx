@@ -96,7 +96,7 @@ export const Column = ({
               dueDate={dueDate ? new Date(dueDate) : null}
             />
           ))}
-          {isDraggedOver ? null : (
+          {isDraggingCard ? null : (
             <AddTaskCardModal boardId={boardId} columnId={columnId} />
           )}
         </Stack>

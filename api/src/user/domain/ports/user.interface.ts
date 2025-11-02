@@ -4,6 +4,7 @@ import { NewUserRecord } from 'src/user/infrastructure/persistence/mappers/user.
 
 export interface UserRepositoryInterface {
   find(id: string): Promise<UserEntity | null>;
+  findAll(): Promise<UserEntity[]>;
   findByEmail(email: string): Promise<UserEntity | null>;
   all(): Promise<UserEntity[]>;
   lastTen(): Promise<UserEntity[]>;

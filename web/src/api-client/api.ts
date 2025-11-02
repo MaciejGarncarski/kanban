@@ -4,6 +4,39 @@
  */
 
 export interface paths {
+    "/v1/healthcheck": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** App health check */
+        get: operations["AppController_healthCheck"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/user/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["UserController_getAllUsers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/boards/{boardId}/users": {
         parameters: {
             query?: never;
@@ -131,7 +164,8 @@ export interface paths {
         /** Get all teams for the authenticated user */
         get: operations["TeamController_getTeams"];
         put?: never;
-        post?: never;
+        /** Get all teams for the authenticated user */
+        post: operations["TeamController_createTeam"];
         delete?: never;
         options?: never;
         head?: never;
@@ -363,7 +397,7 @@ export interface components {
         };
         TeamDto: {
             /** @example nanoid */
-            readable_id: string;
+            readableId: string;
             /** @example Awesome Team */
             name: string;
             /** @example This is an awesome team working on great projects. */
@@ -372,11 +406,19 @@ export interface components {
              * @description User account creation date
              * @example 2025-10-17T15:42:05.351Z
              */
-            created_at: string;
+            createdAt: string;
         };
         GetTeamsResponseDto: {
             /** @description List of teams for the user */
             teams: components["schemas"]["TeamDto"][];
+        };
+        CreateTeamRequestDto: {
+            /** @description Name of the team */
+            name: string;
+            /** @description Description of the team */
+            description?: string;
+            /** @description Array of member user IDs */
+            members?: string[];
         };
         BoardSummaryDto: {
             readableId: string;
@@ -492,6 +534,54 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    AppController_healthCheck: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description App is healthy */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UserController_getAllUsers: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserArrayResponseDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
     UserController_getUsers: {
         parameters: {
             query?: never;
@@ -734,6 +824,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GetTeamsResponseDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    TeamController_createTeam: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateTeamRequestDto"];
+            };
+        };
+        responses: {
+            /** @description Returns a list of teams associated with the authenticated user. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeamDto"];
                 };
             };
             400: {

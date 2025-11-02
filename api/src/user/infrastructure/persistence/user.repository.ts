@@ -18,6 +18,11 @@ import { UserMapper } from 'src/user/infrastructure/persistence/mappers/user.map
 export class UserRepository implements UserRepositoryInterface {
   constructor(@InjectDb() private readonly db: DB) {}
 
+  async findAll() {
+    const allUsers = await this.db.select().from(users);
+    return allUsers.map((user) => UserMapper.toDomain(user));
+  }
+
   async getUserRoleByColumnId(
     columnId: string,
     userId: string,

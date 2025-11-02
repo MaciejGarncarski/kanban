@@ -17,8 +17,8 @@ export function BoardSwitchOptions({ teamId, boardId }: Props) {
     },
   )
 
-  if (!data.boards) {
-    return null
+  if (!data.boards || data.boards.length === 0) {
+    return <Text>No boards found</Text>
   }
 
   return data.boards.map(({ description, readableId, name }) => (

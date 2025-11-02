@@ -1,12 +1,51 @@
+# Kanban app
+
+Kanban App is a simple and intuitive task management tool that helps teams and individuals organize work using the Kanban method.
+
+## Live demo
+
+[https://kanban.maciej-garncarski.pl](https://kanban.maciej-garncarski.pl)
+
+## Tech Used
+
+- next.js
+- NestJS with Hexagonal, CQRS, DDD
+- Mantine UI
+- Docker
+- Postgres
+- OpenAPI / Swagger
+- Github Actions CI/CD
+
+## Local development
+
+### ENV
+
+Fill .env in /web and /api based on .env.example in each folder
+
+### Prepare database
+
+`docker compose -f ./docker/compose.dev.yml up --build`
+
+then in /api run
+
+`pnpm db:reset`
+
+### Start dev servers
+
+Run separately in /web and /api
+
+`pnpm dev`
+
 # Run production locally
 
-set .env.production based on .env.production.example
+Set .env.production based on .env.production.example
 
 then run
 
 `docker compose --env-file .env.production -f ./docker/compose.prod.yml up --build --pull never`
 
-# Reset DB Prod
+### Reset DB Prod
 
 `docker exec -it kanban-api-prod sh`
+
 `pnpm dlx tsx ./src/infrastructure/persistence/db/reset`

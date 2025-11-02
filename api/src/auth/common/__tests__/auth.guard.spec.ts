@@ -2,16 +2,29 @@ import { JwtService } from '@nestjs/jwt';
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthGuard } from 'src/core/application/guards/auth.guard';
+import { CommandBus } from '@nestjs/cqrs';
+import { refreshTokenConfigTest } from 'src/infrastructure/configs/refresh-token-cookie.config';
+import { accessTokenConfigTest } from 'src/infrastructure/configs/access-token-cookie.config';
 
 describe('AuthGuard', () => {
   let guard: AuthGuard;
   let jwtService: JwtService;
   let mockContext: ExecutionContext;
   let mockRequest: Partial<Request>;
+  let commandBus: CommandBus;
 
   beforeEach(() => {
     jwtService = new JwtService({ secret: 'test' });
-    guard = new AuthGuard(jwtService);
+    commandBus = {
+      execute: jest.fn(),
+    } as unknown as CommandBus;
+
+    guard = new AuthGuard(
+      jwtService,
+      commandBus,
+      refreshTokenConfigTest(),
+      accessTokenConfigTest(),
+    );
 
     mockRequest = {
       cookies: {},

@@ -14,7 +14,7 @@ export default registerAs(ACCESS_TOKEN_COOKIE_CONFIG_KEY, (): CookieConfig => {
     httpOnly: true,
     secure: env.COOKIE_SECURE === true,
     maxAge: ACCESS_TOKEN_MAX_AGE,
-    signed: true,
+    signed: false,
     sameSite: 'lax',
     domain: env.WEB_DOMAIN,
   };
@@ -31,7 +31,7 @@ export const accessTokenConfigTest = registerAs(
       httpOnly: true,
       secure: env.COOKIE_SECURE === true,
       maxAge: ACCESS_TOKEN_MAX_AGE,
-      signed: true,
+      signed: false,
       sameSite: 'lax',
       domain: env.WEB_DOMAIN,
     };

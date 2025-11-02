@@ -28,7 +28,7 @@ export default async function Home() {
     },
   })
 
-  const firstTeamId = teams?.teams[0]?.readable_id
+  const firstTeamId = teams?.teams[0]?.readableId
 
   if (!teams || teams?.teams.length === 0 || !firstTeamId) {
     return (
@@ -64,7 +64,8 @@ export default async function Home() {
     },
   })
 
-  const firstBoardId = boards?.boards[0]?.readableId
+  const firstBoardId =
+    (boards?.boards?.length || 0) > 0 ? boards?.boards[0]?.readableId : null
 
   if (firstBoardId) {
     redirect(`/teams/${firstTeamId}/boards/${firstBoardId}`)

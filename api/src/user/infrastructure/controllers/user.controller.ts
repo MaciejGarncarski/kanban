@@ -8,6 +8,7 @@ import { ApiErrorResponse } from 'src/core/application/dtos/api-error.response.d
 import { routesV1 } from 'src/infrastructure/configs/app.routes.config';
 import { RoleResponseDto } from 'src/user/application/dtos/role.response.dto';
 import { UserArrayResponseDto } from 'src/user/application/dtos/user-array.response.dto';
+import { GetAllUsersQuery } from 'src/user/application/queries/get-all-users.query';
 import { GetRoleByTeamIdQuery } from 'src/user/application/queries/get-role-by-team-id.query';
 import { GetUsersByBoardQuery } from 'src/user/application/queries/get-users-by-board.query';
 import { UserEntity } from 'src/user/domain/user.entity';
@@ -15,6 +16,30 @@ import { UserEntity } from 'src/user/domain/user.entity';
 @Controller()
 export class UserController {
   constructor(private readonly queryBus: QueryBus) {}
+
+  @Auth()
+  @Get(routesV1.user.getAllUsers)
+  @ApiOkResponse({
+    type: UserArrayResponseDto,
+  })
+  @ApiBadRequestResponse({
+    type: ApiErrorResponse,
+  })
+  async getAllUsers() {
+    const result = await this.queryBus.execute<GetAllUsersQuery, UserEntity[]>(
+      new GetAllUsersQuery(),
+    );
+
+    const usersDto = plainToInstance(
+      UserArrayResponseDto,
+      { users: result },
+      {
+        excludeExtraneousValues: true,
+      },
+    );
+
+    return usersDto;
+  }
 
   @Auth()
   @Get(routesV1.user.getUsersByBoardId)

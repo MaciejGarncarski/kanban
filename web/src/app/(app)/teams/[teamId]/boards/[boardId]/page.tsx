@@ -4,7 +4,7 @@ import { attachCookies } from '@/features/auth/utils/attach-cookies'
 import { BoardContainer } from '@/features/boards/components/board-container'
 import { BoardPlaceholder } from '@/features/boards/components/board-placeholder'
 import { BoardSwitch } from '@/features/boards/components/board-switch'
-import { CreateTeamLink } from '@/features/layout/components/create-team-link'
+import { SettingsModal } from '@/features/layout/components/settings-modal'
 import { TeamRoleBadge } from '@/features/teams/components/team-role-badge'
 import { TeamSwitch } from '@/features/teams/components/team-switch'
 import { TeamRole } from '@/types/team.types'
@@ -138,7 +138,7 @@ export default async function Page({
           <BoardSwitch teamId={teamId} boardId={boardId} />
           <TeamRoleBadge role={role?.role as TeamRole} />
           <Box ml={'auto'}>
-            <CreateTeamLink />
+            <SettingsModal teamId={teamId} />
           </Box>
         </Group>
         <Stack mt="md">

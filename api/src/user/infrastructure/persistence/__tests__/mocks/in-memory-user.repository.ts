@@ -9,6 +9,10 @@ import { v7 } from 'uuid';
 export class InMemoryUserRepository implements UserRepositoryInterface {
   private users: UserEntity[] = [];
 
+  findAll(): Promise<UserEntity[]> {
+    return Promise.resolve(this.users);
+  }
+
   async getUserRoleByBoardId(boardId: string, userId: string) {
     return 'member' as TeamRole;
   }

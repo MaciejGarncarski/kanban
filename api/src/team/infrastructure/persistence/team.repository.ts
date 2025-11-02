@@ -8,7 +8,8 @@ import {
   InsertTeamDto,
   TeamRepositoryInterface,
 } from 'src/team/domain/ports/team.interface';
-import { TeamRole } from 'src/team/domain/types/team.types';
+import { TeamEntity } from 'src/team/domain/team.entity';
+import { TeamRole, teamRoles } from 'src/team/domain/types/team.types';
 
 @Injectable()
 export class TeamRepository implements TeamRepositoryInterface {
@@ -24,8 +25,8 @@ export class TeamRepository implements TeamRepositoryInterface {
     const userTeams = rawResult.map((row) => {
       return {
         name: row.teams.name,
-        readable_id: row.teams.readable_id,
-        created_at: row.teams.created_at,
+        readableId: row.teams.readable_id,
+        createdAt: row.teams.created_at,
         description: row.teams.description || '',
       };
     });
@@ -33,17 +34,38 @@ export class TeamRepository implements TeamRepositoryInterface {
     return { teams: userTeams };
   }
 
-  async createTeam(userId: string, teamData: InsertTeamDto): Promise<void> {
-    const [createdTeam] = await this.db
-      .insert(teams)
-      .values(teamData)
-      .returning();
+  async createTeam(
+    userId: string,
+    teamData: InsertTeamDto,
+    teamMembersIds: string[],
+  ): Promise<TeamEntity> {
+    const team = await this.db.transaction(async (tx): Promise<TeamEntity> => {
+      const [createdTeam] = await tx.insert(teams).values(teamData).returning();
 
-    await this.db.insert(team_members).values({
-      team_id: createdTeam.id,
-      user_id: userId,
-      role: 'owner',
+      await tx.insert(team_members).values({
+        team_id: createdTeam.id,
+        user_id: userId,
+        role: teamRoles.ADMIN,
+      });
+
+      await tx.insert(team_members).values(
+        teamMembersIds.map((memberId) => ({
+          team_id: createdTeam.id,
+          user_id: memberId,
+          role: teamRoles.MEMBER,
+        })),
+      );
+
+      return new TeamEntity({
+        id: createdTeam.id,
+        name: createdTeam.name,
+        readableId: createdTeam.readable_id,
+        description: createdTeam.description,
+        createdAt: new Date(createdTeam.created_at),
+      });
     });
+
+    return team;
   }
 
   async deleteTeam(teamId: string): Promise<void> {

@@ -1,5 +1,4 @@
 import { paths } from '@/api-client/api'
-import { rotateToken } from '@/features/auth/api/rotate-token'
 import createFetchClient, { Middleware } from 'openapi-fetch'
 import createQuery from 'openapi-react-query'
 import { v7 } from 'uuid'
@@ -48,23 +47,6 @@ const jwtMiddleware: Middleware = {
 
     if (response.ok) {
       return response
-    }
-
-    if (response.status === 401) {
-      const isMutation = request.method.toLowerCase() !== 'get'
-
-      if (isMutation) {
-        return response
-      }
-
-      await rotateToken()
-      const retryResponse = await fetch(request)
-
-      if (retryResponse.status === 401) {
-        throw new Error('Unauthorized after token rotation')
-      }
-
-      return retryResponse
     }
 
     return response

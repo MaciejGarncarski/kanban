@@ -3,8 +3,13 @@ import { UserRepository } from 'src/user/infrastructure/persistence/user.reposit
 import { UserController } from 'src/user/infrastructure/controllers/user.controller';
 import { GetUsersByBoardHandler } from 'src/user/application/queries/handlers/get-users-by-board.handler';
 import { GetRoleByTeamIdHandler } from 'src/user/application/queries/handlers/get-role-by-team-id.handler';
+import { GetAllUsersHandler } from 'src/user/application/queries/handlers/get-all-users.handler';
 
-const QueryHandlers = [GetUsersByBoardHandler, GetRoleByTeamIdHandler];
+const QueryHandlers = [
+  GetUsersByBoardHandler,
+  GetRoleByTeamIdHandler,
+  GetAllUsersHandler,
+];
 
 @Module({
   controllers: [UserController],

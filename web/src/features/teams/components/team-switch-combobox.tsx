@@ -85,7 +85,7 @@ const TeamSwitchInput = ({
           onClick={() => combobox.toggleDropdown()}>
           <>
             {teamId &&
-              data.teams.find((team) => team.readable_id === teamId)?.name}
+              data.teams.find((team) => team.readableId === teamId)?.name}
             {!teamId && <Input.Placeholder>Select team</Input.Placeholder>}
           </>
         </InputBase>
@@ -97,10 +97,14 @@ const TeamSwitchInput = ({
 const TeamSwitchOptions = ({ teamId }: { teamId: string | null }) => {
   const { data } = appQuery.useSuspenseQuery('get', '/v1/teams')
 
-  return data.teams.map(({ description, readable_id, name }) => (
-    <Combobox.Option value={readable_id} key={readable_id}>
+  if (!data.teams || data.teams.length === 0) {
+    return <Text>No teams found</Text>
+  }
+
+  return data.teams.map(({ description, readableId, name }) => (
+    <Combobox.Option value={readableId} key={readableId}>
       <Group gap="sm" wrap="nowrap">
-        {readable_id === teamId && (
+        {readableId === teamId && (
           <CheckIcon size={12} style={{ flexGrow: 0, flexShrink: 0 }} />
         )}
         <Flex direction={'column'}>

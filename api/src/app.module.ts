@@ -19,6 +19,7 @@ import { TeamModule } from 'src/team/team.module';
 import { BoardModule } from 'src/board/board.module';
 import { CardModule } from 'src/card/card.module';
 import { ColumnModule } from 'src/column/column.module';
+import { AppController } from 'src/infrastructure/controllers/app.controller';
 
 const API_MODULES = [
   UserModule,
@@ -71,7 +72,7 @@ const API_MODULES = [
     }),
     CqrsModule.forRoot(),
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [
     {
       provide: APP_GUARD,
