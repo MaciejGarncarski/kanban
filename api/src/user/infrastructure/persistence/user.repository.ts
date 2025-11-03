@@ -60,8 +60,6 @@ export class UserRepository implements UserRepositoryInterface {
       .innerJoin(teams, eq(team_members.team_id, teams.id))
       .where(and(condition, eq(team_members.user_id, userId)));
 
-    console.log(result);
-
     if (!result) {
       throw new BadRequestException(
         'User is not a member of the specified team',
