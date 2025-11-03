@@ -10,4 +10,4 @@ catalog:
   prettier: "^3.6.2"
   eslint: "^9.38.0"
   zod: "^4.1.12"
-  nanoid: "^5.1.6"
+  nanoid: "^3.3.11"

@@ -37,9 +37,6 @@ export class AuthGuard implements CanActivate {
     const refreshToken = this.extractRefreshToken(request);
     const accessToken = this.extractAccessToken(request);
 
-    if (!refreshToken) {
-      throw new UnauthorizedException('No token provided');
-    }
     try {
       if (!accessToken) {
         throw Error('No access token provided');
@@ -60,7 +57,7 @@ export class AuthGuard implements CanActivate {
               await this.commandBus.execute<
                 RefreshAccessTokenCommand,
                 RefreshAccessTokenReturn
-              >(new RefreshAccessTokenCommand(refreshToken));
+              >(new RefreshAccessTokenCommand(refreshToken || ''));
 
             request.userId = this.jwtService.verify<JWTPayload>(accessToken).id;
 

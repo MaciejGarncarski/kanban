@@ -64,7 +64,13 @@ export function useMonitorElements({ boardId }: { boardId: string }) {
           )
           const destinationTargetId = destinationTarget?.data.columnId as string
 
-          const closestEdgeOfTarget = extractClosestEdge({ boardId })
+          if (!destinationTarget?.data) {
+            return
+          }
+
+          const closestEdgeOfTarget = extractClosestEdge(
+            destinationTarget?.data,
+          )
 
           const indexOfTarget =
             boardData.columns.findIndex(
@@ -72,7 +78,7 @@ export function useMonitorElements({ boardId }: { boardId: string }) {
             ) + 1
 
           const destinationIndex =
-            closestEdgeOfTarget === 'bottom' ? indexOfTarget + 1 : indexOfTarget
+            closestEdgeOfTarget === 'left' ? indexOfTarget : indexOfTarget + 1
 
           columnMutation.mutate({
             body: {

@@ -25,7 +25,7 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const correlationId = CorrelationContext.getCorrelationId() ?? v7();
 
-    const status =
+    let status =
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;

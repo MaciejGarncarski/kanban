@@ -1,0 +1,197 @@
+import { appQuery } from '@/api-client/api-client'
+import {
+  Button,
+  CheckIcon,
+  Combobox,
+  Group,
+  Input,
+  InputBase,
+  Modal,
+  Stack,
+  Textarea,
+  TextInput,
+  useCombobox,
+} from '@mantine/core'
+import { DateTimePicker } from '@mantine/dates'
+import { useForm } from '@mantine/form'
+import { useDisclosure } from '@mantine/hooks'
+import { notifications } from '@mantine/notifications'
+import { EditIcon } from 'lucide-react'
+
+type Props = {
+  boardId: string
+  cardId: string
+  title: string
+  description?: string
+  dueDate?: Date | null
+  assignedToId?: string
+}
+
+export function EditTaskModal({
+  cardId,
+  boardId,
+  title,
+  description,
+  dueDate,
+  assignedToId,
+}: Props) {
+  const [opened, { open, close }] = useDisclosure(false)
+  const form = useForm({
+    initialValues: {
+      title: title,
+      description: description || '',
+      dueDate: dueDate?.toISOString() || null,
+      assignedToId: assignedToId || '',
+    },
+  })
+
+  const combobox = useCombobox({
+    onDropdownClose: () => combobox.resetSelectedOption(),
+  })
+
+  const { data } = appQuery.useSuspenseQuery(
+    'get',
+    '/v1/boards/{boardId}/users',
+    {
+      params: {
+        path: {
+          boardId,
+        },
+      },
+    },
+  )
+
+  const selectedUserData = data.users.find(
+    (user) => user.id === form.values.assignedToId,
+  )
+  const selectedUser = selectedUserData ? selectedUserData.name : null
+
+  const mutateTask = appQuery.useMutation('patch', '/v1/cards/{cardId}')
+
+  const handleSubmit = form.onSubmit((values) => {
+    mutateTask.mutate(
+      {
+        params: {
+          path: { cardId },
+        },
+        body: {
+          title: values.title,
+          description:
+            values.description.trim() === ''
+              ? undefined
+              : values.description.trim(),
+          dueDate: values.dueDate ? values.dueDate : undefined,
+          assignedTo: values.assignedToId || undefined,
+        },
+      },
+      {
+        onSuccess: (_, __, ___, { client }) => {
+          close()
+          client.invalidateQueries({
+            queryKey: ['get', '/v1/boards/{boardId}'],
+          })
+          notifications.show({
+            title: 'Success',
+            message: 'Task updated successfully',
+            color: 'green',
+          })
+          form.reset()
+        },
+      },
+    )
+  })
+
+  return (
+    <>
+      <Button mt="md" onClick={open} leftSection={<EditIcon size={20} />}>
+        Edit
+      </Button>
+
+      <Modal opened={opened} onClose={close} title="Edit Task" centered>
+        <form onSubmit={handleSubmit}>
+          <Stack gap="lg">
+            <TextInput
+              label="Title"
+              required
+              {...form.getInputProps('title')}
+            />
+            <Textarea
+              label="Task Description"
+              placeholder="Description of the task"
+              key={form.key('description')}
+              {...form.getInputProps('description')}
+            />
+            <Input.Wrapper label="Assigned To">
+              <Combobox
+                store={combobox}
+                onOptionSubmit={(val) => {
+                  combobox.closeDropdown()
+
+                  if (form.values.assignedToId === val) {
+                    form.setFieldValue('assignedTo', '')
+                    return
+                  }
+
+                  form.setFieldValue('assignedTo', val)
+                }}>
+                <Combobox.Target>
+                  <InputBase
+                    component="button"
+                    type="button"
+                    pointer
+                    w="100%"
+                    rightSection={<Combobox.Chevron />}
+                    rightSectionPointerEvents="none"
+                    onClick={() => combobox.toggleDropdown()}>
+                    {selectedUser ? (
+                      <span>{selectedUser}</span>
+                    ) : (
+                      <Input.Placeholder>Select user</Input.Placeholder>
+                    )}
+                  </InputBase>
+                </Combobox.Target>
+                <Combobox.Dropdown>
+                  <Combobox.Options>
+                    {data.users.map((user) => (
+                      <Combobox.Option key={user.id} value={user.id}>
+                        <Group>
+                          {user.id === form.values.assignedToId && (
+                            <CheckIcon size={12} />
+                          )}
+                          {user.name} - {user.email}
+                        </Group>
+                      </Combobox.Option>
+                    ))}
+                  </Combobox.Options>
+                </Combobox.Dropdown>
+              </Combobox>
+            </Input.Wrapper>
+
+            <DateTimePicker
+              label="Due Date"
+              placeholder="Date and time"
+              key={form.key('dueDate')}
+              {...form.getInputProps('dueDate')}
+            />
+
+            <Group mt="xl" justify="space-between">
+              <Button
+                type="reset"
+                bg="cyan"
+                onClick={() => form.reset()}
+                disabled={mutateTask.isPending}>
+                Reset form
+              </Button>
+              <Button
+                type="submit"
+                disabled={mutateTask.isPending}
+                loading={mutateTask.isPending}>
+                Save Changes
+              </Button>
+            </Group>
+          </Stack>
+        </form>
+      </Modal>
+    </>
+  )
+}

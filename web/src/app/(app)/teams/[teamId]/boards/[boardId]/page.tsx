@@ -138,7 +138,7 @@ export default async function Page({
           <BoardSwitch teamId={teamId} boardId={boardId} />
           <TeamRoleBadge role={role?.role as TeamRole} />
           <Box ml={'auto'}>
-            <SettingsModal teamId={teamId} />
+            <SettingsModal teamId={teamId} boardId={boardId} />
           </Box>
         </Group>
         <Stack mt="md">

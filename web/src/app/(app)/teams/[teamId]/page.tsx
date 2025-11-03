@@ -29,28 +29,8 @@ export default async function Page({
   }
 
   const { teamId } = data
-
   const queryClient = getQueryClient()
   const paramsTeamId = { params: { path: { teamId } } }
-
-  void queryClient.prefetchQuery({
-    queryKey: ['get', '/v1/teams'],
-
-    queryFn: async () => {
-      try {
-        const res = await fetchServer.GET('/v1/teams', {
-          headers: {
-            'x-skip-jwt-middleware': 'true',
-            cookie: cookies,
-          },
-        })
-
-        return res.data
-      } catch {
-        return { teams: [] }
-      }
-    },
-  })
 
   const [role, boards] = await Promise.all([
     queryClient.fetchQuery({
@@ -94,6 +74,25 @@ export default async function Page({
   if (boards?.boards && boards.boards.length > 0) {
     redirect(`/teams/${teamId}/boards/${boards.boards[0]?.readableId}`)
   }
+
+  void queryClient.prefetchQuery({
+    queryKey: ['get', '/v1/teams'],
+
+    queryFn: async () => {
+      try {
+        const res = await fetchServer.GET('/v1/teams', {
+          headers: {
+            'x-skip-jwt-middleware': 'true',
+            cookie: cookies,
+          },
+        })
+
+        return res.data
+      } catch {
+        return { teams: [] }
+      }
+    },
+  })
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

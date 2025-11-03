@@ -11,8 +11,8 @@ catalogs:
       specifier: ^9.38.0
       version: 9.38.0
     nanoid:
-      specifier: ^5.1.6
-      version: 5.1.6
+      specifier: ^3.3.11
+      version: 3.3.11
     prettier:
       specifier: ^3.6.2
       version: 3.6.2
@@ -76,7 +76,7 @@ importers:
         version: 0.3.1(drizzle-orm@0.44.6(@types/pg@8.15.5)(pg@8.16.3))
       nanoid:
         specifier: 'catalog:'
-        version: 5.1.6
+        version: 3.3.11
       nestjs-cls:
         specifier: ^6.0.1
         version: 6.0.1(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -233,7 +233,7 @@ importers:
         version: 0.548.0(react@19.2.0)
       nanoid:
         specifier: 'catalog:'
-        version: 5.1.6
+        version: 3.3.11
       next:
         specifier: ^16.0.2-canary.3
         version: 16.0.2-canary.3(@babel/core@7.28.4)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -4546,11 +4546,6 @@ packages:
   nanoid@3.3.11:
     resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
-    hasBin: true
-
-  nanoid@5.1.6:
-    resolution: {integrity: sha512-c7+7RQ+dMB5dPwwCp4ee1/iV/q2P6aK1mTZcfr1BTuVlyW9hJYiMPybJCcnBlQtuSmTIWNeazm/zqNoZSSElBg==}
-    engines: {node: ^18 || >=20}
     hasBin: true
 
   napi-postinstall@0.3.4:
@@ -10640,8 +10635,6 @@ snapshots:
     optional: true
 
   nanoid@3.3.11: {}
-
-  nanoid@5.1.6: {}
 
   napi-postinstall@0.3.4: {}
 

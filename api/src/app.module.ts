@@ -47,7 +47,7 @@ const API_MODULES = [
 
         return {
           secret: env.JWT_SECRET,
-          signOptions: { expiresIn: '5m' },
+          signOptions: { expiresIn: '10m' },
         };
       },
       inject: [ConfigService],

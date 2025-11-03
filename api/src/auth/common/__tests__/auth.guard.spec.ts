@@ -32,9 +32,14 @@ describe('AuthGuard', () => {
       headers: {},
     };
 
+    const mockResponse = {
+      json: jest.fn().mockResolvedValue({}),
+    };
+
     mockContext = {
       switchToHttp: () => ({
         getRequest: () => mockRequest,
+        getResponse: () => mockResponse,
       }),
     } as ExecutionContext;
   });

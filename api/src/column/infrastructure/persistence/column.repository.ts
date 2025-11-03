@@ -5,7 +5,11 @@ import { ColumnEntity } from 'src/column/domain/column.entity';
 import { ColumnRepositoryInterface } from 'src/column/domain/ports/column.interface';
 import { type DB } from 'src/infrastructure/persistence/db/client';
 import { InjectDb } from 'src/infrastructure/persistence/db/db.provider';
-import { cards, columns } from 'src/infrastructure/persistence/db/schema';
+import {
+  boards,
+  cards,
+  columns,
+} from 'src/infrastructure/persistence/db/schema';
 
 @Injectable()
 export class ColumnRepository implements ColumnRepositoryInterface {
@@ -78,26 +82,50 @@ export class ColumnRepository implements ColumnRepositoryInterface {
   }
 
   async checkMaxColumns(boardId: string): Promise<boolean> {
+    const boardRecord = await this.db
+      .select()
+      .from(boards)
+      .where(eq(boards.readable_id, boardId))
+      .limit(1);
+
+    if (!boardRecord || boardRecord.length === 0) {
+      throw new Error('Board not found');
+    }
+
+    const boardDbId = boardRecord[0].id;
+
     const [columnCount] = await this.db
       .select({ count: count() })
       .from(columns)
-      .where(eq(columns.board_id, boardId));
+      .where(eq(columns.board_id, boardDbId));
 
     return columnCount.count >= 6;
   }
 
   async createColumn(boardId: string, name: string): Promise<ColumnEntity> {
+    const boardRecord = await this.db
+      .select()
+      .from(boards)
+      .where(eq(boards.readable_id, boardId))
+      .limit(1);
+
+    if (!boardRecord || boardRecord.length === 0) {
+      throw new Error('Board not found');
+    }
+
+    const boardDbId = boardRecord[0].id;
+
     const [positionRecords] = await this.db
       .select()
       .from(columns)
-      .where(eq(columns.board_id, boardId))
+      .where(eq(columns.board_id, boardDbId))
       .orderBy(desc(columns.position))
       .limit(1);
 
     const [created] = await this.db
       .insert(columns)
       .values({
-        board_id: boardId,
+        board_id: boardDbId,
         name,
         position: positionRecords ? positionRecords.position + 1 : 1,
       })
@@ -119,10 +147,22 @@ export class ColumnRepository implements ColumnRepositoryInterface {
     name: string,
     boardId: string,
   ): Promise<boolean> {
+    const boardRecord = await this.db
+      .select()
+      .from(boards)
+      .where(eq(boards.readable_id, boardId))
+      .limit(1);
+
+    if (!boardRecord || boardRecord.length === 0) {
+      return false;
+    }
+
+    const foundId = boardRecord[0].id;
+
     const [result] = await this.db
       .select({ count: count() })
       .from(columns)
-      .where(and(eq(columns.name, name), eq(columns.board_id, boardId)));
+      .where(and(eq(columns.name, name), eq(columns.board_id, foundId)));
 
     return result.count > 0;
   }

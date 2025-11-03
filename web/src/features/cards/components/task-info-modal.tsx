@@ -1,4 +1,5 @@
 import { appQuery } from '@/api-client/api-client'
+import { EditTaskModal } from '@/features/cards/components/edit-task-modal'
 import { useRoleByTeamId } from '@/features/teams/hooks/use-role-by-team-id'
 import {
   ActionIcon,
@@ -11,7 +12,7 @@ import {
   Title,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import { EditIcon, Info, TrashIcon } from 'lucide-react'
+import { Info, TrashIcon } from 'lucide-react'
 
 type Props = {
   teamId: string
@@ -100,12 +101,14 @@ export function TaskInfoModal({
             </Stack>
             {isAdmin && (
               <Group justify="space-between">
-                <Button
-                  mt="md"
-                  onClick={close}
-                  leftSection={<EditIcon size={20} />}>
-                  Edit
-                </Button>
+                <EditTaskModal
+                  boardId={boardId}
+                  cardId={cardId}
+                  title={title}
+                  description={description}
+                  dueDate={dueDate}
+                  assignedToId={assignedToId}
+                />
                 <Button
                   mt="md"
                   onClick={handleDelete}

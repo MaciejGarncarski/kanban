@@ -1,38 +1,82 @@
 'use client'
 
-import { CreateBoardLink } from '@/features/layout/components/create-board-link'
-import { CreateTeamLink } from '@/features/layout/components/create-team-link'
+import { DeleteBoardModal } from '@/features/boards/components/delete-board-modal'
+import { DeleteTeamModal } from '@/features/teams/components/delete-team-modal'
 import { useRoleByTeamId } from '@/features/teams/hooks/use-role-by-team-id'
-import { Button, Group, Modal, Stack } from '@mantine/core'
+import { Button, Menu } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { SettingsIcon } from 'lucide-react'
+import Link from 'next/link'
 
 type Props = {
   teamId?: string
+  boardId?: string
 }
 
-export function SettingsModal({ teamId }: Props) {
-  const [opened, { open, close }] = useDisclosure(false)
+export function SettingsModal({ teamId, boardId }: Props) {
   const { isAdmin } = useRoleByTeamId(teamId || '')
+
+  const [
+    deleteBoardOpened,
+    { open: openDeleteBoard, close: closeDeleteBoard },
+  ] = useDisclosure(false)
+
+  const [deleteTeamOpened, { open: openDeleteTeam, close: closeDeleteTeam }] =
+    useDisclosure(false)
 
   return (
     <>
-      <Button
-        onClick={open}
-        variant="light"
-        leftSection={<SettingsIcon size={16} />}>
-        Settings
-      </Button>
+      {boardId && isAdmin && (
+        <DeleteBoardModal
+          boardId={boardId}
+          isOpen={deleteBoardOpened}
+          onClose={closeDeleteBoard}
+        />
+      )}
 
-      <Modal opened={opened} onClose={close} title="Settings" centered>
-        <Stack>
-          <Group>
-            {teamId && <CreateBoardLink teamId={teamId} />}
-            <CreateTeamLink />
-          </Group>
-        </Stack>
-        {isAdmin && <p>todo manage users form modal?</p>}
-      </Modal>
+      {teamId && isAdmin && (
+        <DeleteTeamModal
+          teamId={teamId}
+          isOpen={deleteTeamOpened}
+          onClose={closeDeleteTeam}
+        />
+      )}
+
+      <Menu shadow="md" width={200}>
+        <Menu.Target>
+          <Button variant="light" leftSection={<SettingsIcon size={16} />}>
+            Settings
+          </Button>
+        </Menu.Target>
+
+        <Menu.Dropdown>
+          <Menu.Label>Team</Menu.Label>
+
+          <Menu.Item component={Link} href={`/teams/new`}>
+            New team
+          </Menu.Item>
+          {isAdmin && <Menu.Item color="orange">Edit team</Menu.Item>}
+          {isAdmin && (
+            <Menu.Item color="red" onClick={openDeleteTeam}>
+              Delete team
+            </Menu.Item>
+          )}
+
+          {isAdmin && teamId && (
+            <>
+              <Menu.Divider />
+              <Menu.Label>Board</Menu.Label>
+              <Menu.Item component={Link} href={`/teams/${teamId}/boards/new`}>
+                New board
+              </Menu.Item>
+              <Menu.Item color="orange">Edit board</Menu.Item>
+              <Menu.Item color="red" onClick={openDeleteBoard}>
+                Delete board
+              </Menu.Item>
+            </>
+          )}
+        </Menu.Dropdown>
+      </Menu>
     </>
   )
 }
