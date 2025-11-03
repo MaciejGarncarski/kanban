@@ -1,6 +1,6 @@
 'use client'
 
-import { appQuery } from '@/api-client/api-client'
+import { useTeams } from '@/features/teams/hooks/use-teams'
 import {
   Combobox,
   Flex,
@@ -70,7 +70,7 @@ const TeamSwitchInput = ({
   combobox: ComboboxStore
   teamId: string
 }) => {
-  const { data } = appQuery.useSuspenseQuery('get', '/v1/teams')
+  const { data: teamsData } = useTeams()
 
   return (
     <Combobox.Target>
@@ -85,7 +85,7 @@ const TeamSwitchInput = ({
           onClick={() => combobox.toggleDropdown()}>
           <>
             {teamId &&
-              data.teams.find((team) => team.readableId === teamId)?.name}
+              teamsData.teams.find((team) => team.readableId === teamId)?.name}
             {!teamId && <Input.Placeholder>Select team</Input.Placeholder>}
           </>
         </InputBase>
@@ -95,13 +95,13 @@ const TeamSwitchInput = ({
 }
 
 const TeamSwitchOptions = ({ teamId }: { teamId: string | null }) => {
-  const { data } = appQuery.useSuspenseQuery('get', '/v1/teams')
+  const { data: teamsData } = useTeams()
 
-  if (!data.teams || data.teams.length === 0) {
+  if (!teamsData.teams || teamsData.teams.length === 0) {
     return <Text>No teams found</Text>
   }
 
-  return data.teams.map(({ description, readableId, name }) => (
+  return teamsData.teams.map(({ description, readableId, name }) => (
     <Combobox.Option value={readableId} key={readableId}>
       <Group gap="sm" wrap="nowrap">
         {readableId === teamId && (

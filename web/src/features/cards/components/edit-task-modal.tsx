@@ -1,4 +1,5 @@
-import { appQuery } from '@/api-client/api-client'
+import { useUpdateCard } from '@/features/cards/hooks/use-update-card'
+import { useTeamUsers } from '@/features/teams/hooks/use-team-users'
 import {
   Button,
   CheckIcon,
@@ -15,7 +16,6 @@ import {
 import { DateTimePicker } from '@mantine/dates'
 import { useForm } from '@mantine/form'
 import { useDisclosure } from '@mantine/hooks'
-import { notifications } from '@mantine/notifications'
 import { EditIcon } from 'lucide-react'
 
 type Props = {
@@ -35,6 +35,7 @@ export function EditTaskModal({
   dueDate,
   assignedToId,
 }: Props) {
+  const mutateTask = useUpdateCard()
   const [opened, { open, close }] = useDisclosure(false)
   const form = useForm({
     initialValues: {
@@ -49,24 +50,12 @@ export function EditTaskModal({
     onDropdownClose: () => combobox.resetSelectedOption(),
   })
 
-  const { data } = appQuery.useSuspenseQuery(
-    'get',
-    '/v1/teams/{teamId}/users',
-    {
-      params: {
-        path: {
-          teamId,
-        },
-      },
-    },
-  )
+  const { data } = useTeamUsers({ teamId })
 
   const selectedUserData = data.users.find(
     (user) => user.id === form.values.assignedToId,
   )
   const selectedUser = selectedUserData ? selectedUserData.name : null
-
-  const mutateTask = appQuery.useMutation('patch', '/v1/cards/{cardId}')
 
   const handleSubmit = form.onSubmit((values) => {
     mutateTask.mutate(
@@ -85,16 +74,8 @@ export function EditTaskModal({
         },
       },
       {
-        onSuccess: (_, __, ___, { client }) => {
+        onSuccess: () => {
           close()
-          client.invalidateQueries({
-            queryKey: ['get', '/v1/boards/{boardId}'],
-          })
-          notifications.show({
-            title: 'Success',
-            message: 'Task updated successfully',
-            color: 'green',
-          })
           form.reset()
         },
       },

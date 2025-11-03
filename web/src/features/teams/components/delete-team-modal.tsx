@@ -1,6 +1,7 @@
 'use client'
 
-import { appQuery } from '@/api-client/api-client'
+import { useDeleteTeam } from '@/features/teams/hooks/use-delete-team'
+import { useTeams } from '@/features/teams/hooks/use-teams'
 import { Button, Group, Modal } from '@mantine/core'
 import { useRouter } from 'next/navigation'
 
@@ -11,26 +12,27 @@ type Props = {
 }
 
 export function DeleteTeamModal({ isOpen, onClose, teamId }: Props) {
-  const { data: allTeams } = appQuery.useSuspenseQuery('get', '/v1/teams')
   const router = useRouter()
+  const { data: teamsData } = useTeams()
+  const { mutate, isPending } = useDeleteTeam()
 
-  if (!allTeams) {
+  if (!teamsData) {
     return null
   }
 
-  const currentTeam = allTeams.teams.find((team) => team.readableId === teamId)
+  const currentTeam = teamsData.teams.find((team) => team.readableId === teamId)
 
-  const { mutate, isPending } = appQuery.useMutation(
-    'delete',
-    `/v1/teams/{teamId}`,
-    {
-      onSuccess: (_, __, ___, { client }) => {
-        onClose()
-        client.invalidateQueries({ queryKey: ['get', '/v1/teams'] })
-        router.push('/')
+  const handleDelete = () => {
+    mutate(
+      { params: { path: { teamId } } },
+      {
+        onSuccess: () => {
+          onClose()
+          router.push('/teams')
+        },
       },
-    },
-  )
+    )
+  }
 
   return (
     <Modal centered opened={isOpen} onClose={onClose} title="Delete Team">
@@ -40,10 +42,7 @@ export function DeleteTeamModal({ isOpen, onClose, teamId }: Props) {
         </p>
       </div>
       <Group mt="xl" justify="space-between">
-        <Button
-          color="red"
-          loading={isPending}
-          onClick={() => mutate({ params: { path: { teamId } } })}>
+        <Button color="red" loading={isPending} onClick={handleDelete}>
           Delete
         </Button>
         <Button onClick={onClose}>Cancel</Button>

@@ -1,4 +1,5 @@
-import { appQuery } from '@/api-client/api-client'
+import { useDeleteColumn } from '@/features/columns/hooks/use-delete-column'
+import { useUpdateColumn } from '@/features/columns/hooks/use-update-column'
 import { useRoleByTeamId } from '@/features/teams/hooks/use-role-by-team-id'
 import { ActionIcon, Button, Group, Modal, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
@@ -18,6 +19,17 @@ export function ColumnInfoModal({
   teamId: string
 }) {
   const [isEditing, setIsEditing] = useState(false)
+  const deleteColumn = useDeleteColumn()
+  const mutateColumn = useUpdateColumn()
+  const { isAdmin } = useRoleByTeamId(teamId)
+  const [opened, { open, close }] = useDisclosure(false, {
+    onClose: () => {
+      setTimeout(() => {
+        setIsEditing(false)
+        form.reset()
+      }, 1000)
+    },
+  })
 
   const form = useForm({
     mode: 'uncontrolled',
@@ -29,57 +41,26 @@ export function ColumnInfoModal({
     },
   })
 
-  const mutateColumn = appQuery.useMutation('patch', '/v1/columns/{columnId}', {
-    onSuccess: (_, __, ___, ctx) => {
-      ctx.client.invalidateQueries({
-        queryKey: ['get', `/v1/boards/{teamId}/boards`],
-      })
-      ctx.client.invalidateQueries({
-        queryKey: ['get', '/v1/boards/{boardId}'],
-      })
-      form.reset()
-      setIsEditing(false)
-    },
-  })
-
-  const deleteColumn = appQuery.useMutation(
-    'delete',
-    '/v1/columns/{columnId}',
-    {
-      onSuccess: (_, __, ___, ctx) => {
-        ctx.client.invalidateQueries({
-          queryKey: ['get', `/v1/boards/{teamId}/boards`],
-        })
-        ctx.client.invalidateQueries({
-          queryKey: ['get', '/v1/boards/{boardId}'],
-        })
-      },
-    },
-  )
-
-  const [opened, { open, close }] = useDisclosure(false, {
-    onClose: () => {
-      setTimeout(() => {
-        setIsEditing(false)
-        form.reset()
-      }, 1000)
-    },
-  })
-
-  const { isAdmin } = useRoleByTeamId(teamId)
-
   const handleSave = form.onSubmit((values) => {
-    mutateColumn.mutate({
-      params: {
-        path: {
-          columnId: columnId,
+    mutateColumn.mutate(
+      {
+        params: {
+          path: {
+            columnId: columnId,
+          },
+        },
+        body: {
+          name: values.name.trim() === '' ? undefined : values.name.trim(),
+          position: undefined,
         },
       },
-      body: {
-        name: values.name.trim() === '' ? undefined : values.name.trim(),
-        position: undefined,
+      {
+        onSuccess: () => {
+          form.reset()
+          setIsEditing(false)
+        },
       },
-    })
+    )
   })
 
   const handleDelete = () => {

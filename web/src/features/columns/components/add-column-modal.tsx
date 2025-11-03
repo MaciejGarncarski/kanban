@@ -1,8 +1,7 @@
-import { appQuery } from '@/api-client/api-client'
+import { useCreateColumn } from '@/features/columns/hooks/use-create-column'
 import { Button, Flex, Modal, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { useDisclosure } from '@mantine/hooks'
-import { notifications } from '@mantine/notifications'
 import { Plus } from 'lucide-react'
 
 export function AddColumnModal({ boardId }: { boardId: string }) {
@@ -16,7 +15,7 @@ export function AddColumnModal({ boardId }: { boardId: string }) {
     },
   })
   const [opened, { open, close }] = useDisclosure(false)
-  const { mutate, isPending } = appQuery.useMutation('post', '/v1/columns')
+  const { mutate, isPending } = useCreateColumn()
 
   const onSubmit = form.onSubmit(async (values) => {
     mutate(
@@ -24,24 +23,10 @@ export function AddColumnModal({ boardId }: { boardId: string }) {
         body: { boardId, title: values.name },
       },
       {
-        onSuccess: (_, __, ___, ctx) => {
-          ctx.client.invalidateQueries({
-            queryKey: ['get', '/v1/boards/{boardId}'],
-          })
-          notifications.show({
-            title: 'Success',
-            message: 'Column created successfully',
-            color: 'green',
-          })
+        onSuccess: () => {
           close()
         },
-        onError: (error) => {
-          notifications.show({
-            title: 'Error',
-            message: error.message || 'Failed to create column',
-            color: 'red',
-          })
-        },
+
         onSettled: () => {
           form.reset()
         },

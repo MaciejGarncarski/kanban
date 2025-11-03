@@ -14,8 +14,8 @@ import {
 } from '@mantine/core'
 import { useRouter } from 'next/navigation'
 import { useForm } from '@mantine/form'
-import { appQuery } from '@/api-client/api-client'
 import Link from 'next/link'
+import { useRegister } from '@/features/auth/hooks/use-register'
 
 export function RegisterForm() {
   const form = useForm({
@@ -37,16 +37,25 @@ export function RegisterForm() {
     },
   })
   const router = useRouter()
+  const { mutate, isPending, error } = useRegister()
 
-  const { mutate, isPending, error } = appQuery.useMutation(
-    'post',
-    '/v1/auth/register',
-    {
-      onSuccess: () => {
-        router.push('/')
-        form.reset()
+  const handleRegister = form.onSubmit((values) =>
+    mutate(
+      {
+        body: {
+          email: values.email,
+          name: values.name,
+          password: values.password,
+          confirmPassword: values.confirmPassword,
+        },
       },
-    },
+      {
+        onSuccess: () => {
+          router.push('/')
+          form.reset()
+        },
+      },
+    ),
   )
 
   return (
@@ -61,18 +70,7 @@ export function RegisterForm() {
         style={{
           width: '100%',
         }}>
-        <form
-          onSubmit={form.onSubmit((values) =>
-            mutate({
-              body: {
-                email: values.email,
-                name: values.name,
-                password: values.password,
-                confirmPassword: values.confirmPassword,
-              },
-            }),
-          )}
-          style={{ width: '100%' }}>
+        <form onSubmit={handleRegister} style={{ width: '100%' }}>
           <Flex direction="column" gap="lg">
             <TextInput
               withAsterisk

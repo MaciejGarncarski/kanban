@@ -1,10 +1,14 @@
-import { fetchServer } from '@/api-client/api-client'
 import { READABLE_ID_LENGTH } from '@/constants/column'
+import { prefetchTeamRole } from '@/features/auth/api/prefetch-team-role'
 import { attachCookies } from '@/features/auth/utils/attach-cookies'
+import { prefetchBoardById } from '@/features/boards/api/prefetch-board-by-id'
+import { prefetchBoards } from '@/features/boards/api/prefetch-boards'
 import { BoardContainer } from '@/features/boards/components/board-container'
 import { BoardPlaceholder } from '@/features/boards/components/board-placeholder'
 import { BoardSwitch } from '@/features/boards/components/board-switch'
 import { SettingsModal } from '@/features/layout/components/settings-modal'
+import { prefetchTeamUsers } from '@/features/teams/api/prefetch-team-users'
+import { prefetchTeams } from '@/features/teams/api/prefetch-teams'
 import { TeamRoleBadge } from '@/features/teams/components/team-role-badge'
 import { TeamSwitch } from '@/features/teams/components/team-switch'
 import { TeamRole } from '@/types/team.types'
@@ -24,110 +28,22 @@ export default async function Page({
   params,
 }: PageProps<'/teams/[teamId]/boards/[boardId]'>) {
   const awaitedParams = await params
-  const cookies = await attachCookies()
+
   const { data, error } = paramsSchema.safeParse(awaitedParams)
 
   if (!data) {
     return <div>Invalid parameters: {error?.message}</div>
   }
-
+  const cookies = await attachCookies()
+  const { teamId, boardId } = data
   const queryClient = getQueryClient()
 
-  const { teamId, boardId } = data
-
-  const paramsBoardId = { params: { path: { boardId } } }
-  const paramsTeamId = { params: { path: { teamId } } }
-
-  const role = await queryClient.fetchQuery({
-    queryKey: ['get', `/v1/user/{teamId}/role`, paramsTeamId],
-    queryFn: async () => {
-      try {
-        const res = await fetchServer.GET(`/v1/user/{teamId}/role`, {
-          ...paramsTeamId,
-          headers: {
-            'x-skip-jwt-middleware': 'true',
-            cookie: cookies,
-          },
-        })
-
-        return res.data || { role: 'member' }
-      } catch {
-        return { role: 'member' }
-      }
-    },
-  })
-
-  await Promise.all([
-    queryClient.prefetchQuery({
-      queryKey: ['get', '/v1/teams'],
-
-      queryFn: async () => {
-        try {
-          const res = await fetchServer.GET('/v1/teams', {
-            headers: {
-              'x-skip-jwt-middleware': 'true',
-              cookie: await attachCookies(),
-            },
-          })
-
-          return res.data || { teams: [] }
-        } catch {
-          return { teams: [] }
-        }
-      },
-    }),
-    queryClient.prefetchQuery({
-      queryKey: ['get', `/v1/teams/{teamId}/boards`, paramsTeamId],
-      queryFn: async () => {
-        try {
-          const res = await fetchServer.GET(`/v1/teams/{teamId}/boards`, {
-            ...paramsTeamId,
-            headers: {
-              'x-skip-jwt-middleware': 'true',
-              cookie: cookies,
-            },
-          })
-
-          return res.data || { boards: [] }
-        } catch {
-          return { boards: [] }
-        }
-      },
-    }),
-    queryClient.prefetchQuery({
-      queryKey: ['get', `/v1/teams/{teamId}/users`, paramsBoardId],
-      queryFn: async () => {
-        try {
-          const res = await fetchServer.GET('/v1/teams/{teamId}/users', {
-            ...paramsTeamId,
-            headers: {
-              'x-skip-jwt-middleware': 'true',
-              cookie: cookies,
-            },
-          })
-          return res.data || { users: [] }
-        } catch {
-          return { users: [] }
-        }
-      },
-    }),
-    queryClient.prefetchQuery({
-      queryKey: ['get', `/v1/boards/{boardId}`, paramsBoardId],
-      queryFn: async () => {
-        try {
-          const res = await fetchServer.GET(`/v1/boards/{boardId}`, {
-            ...paramsBoardId,
-            headers: {
-              'x-skip-jwt-middleware': 'true',
-              cookie: cookies,
-            },
-          })
-          return res.data || null
-        } catch {
-          return null
-        }
-      },
-    }),
+  const [role] = await Promise.all([
+    prefetchTeamRole(queryClient, cookies, teamId),
+    prefetchTeams(queryClient, cookies),
+    prefetchBoards(queryClient, cookies, teamId),
+    prefetchTeamUsers(queryClient, cookies, teamId),
+    prefetchBoardById(queryClient, cookies, boardId),
   ])
 
   return (

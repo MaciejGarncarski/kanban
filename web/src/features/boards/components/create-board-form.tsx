@@ -1,6 +1,6 @@
 'use client'
 
-import { appQuery } from '@/api-client/api-client'
+import { useCreateBoard } from '@/features/boards/hooks/use-create-board'
 import { Button, Stack, Textarea, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { useRouter } from 'next/navigation'
@@ -10,6 +10,8 @@ type Props = {
 }
 
 export function CreateBoardForm({ teamId }: Props) {
+  const router = useRouter()
+  const { mutate, isPending } = useCreateBoard()
   const form = useForm({
     initialValues: {
       name: '',
@@ -17,8 +19,6 @@ export function CreateBoardForm({ teamId }: Props) {
     },
   })
 
-  const { mutate, isPending } = appQuery.useMutation('post', '/v1/boards')
-  const router = useRouter()
   const handleSubmit = form.onSubmit((values) => {
     mutate(
       {
@@ -38,7 +38,7 @@ export function CreateBoardForm({ teamId }: Props) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Stack>
+      <Stack gap="xl">
         <TextInput
           label="Team Name"
           placeholder="Enter team name"

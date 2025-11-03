@@ -1,10 +1,15 @@
-import { fetchServer } from '@/api-client/api-client'
 import { READABLE_ID_LENGTH } from '@/constants/column'
+import { prefetchCurrentUser } from '@/features/auth/api/prefetch-current-user'
+import { prefetchTeamRole } from '@/features/auth/api/prefetch-team-role'
 import { attachCookies } from '@/features/auth/utils/attach-cookies'
+import { prefetchBoards } from '@/features/boards/api/prefetch-boards'
 import { BoardSwitch } from '@/features/boards/components/board-switch'
 import { SettingsModal } from '@/features/layout/components/settings-modal'
+import { prefetchTeamUsers } from '@/features/teams/api/prefetch-team-users'
+import { prefetchTeams } from '@/features/teams/api/prefetch-teams'
 import { TeamRoleBadge } from '@/features/teams/components/team-role-badge'
 import { TeamSwitch } from '@/features/teams/components/team-switch'
+import { prefetchAllUsers } from '@/features/users/api/prefetch-all-users'
 import { TeamRole } from '@/types/team.types'
 import { getQueryClient } from '@/utils/get-query-client'
 import { Box, Group, Stack, Text } from '@mantine/core'
@@ -30,73 +35,19 @@ export default async function Page({
 
   const { teamId } = data
   const queryClient = getQueryClient()
-  const paramsTeamId = { params: { path: { teamId } } }
 
   const [role, boards] = await Promise.all([
-    queryClient.fetchQuery({
-      queryKey: ['get', `/v1/user/{teamId}/role`, paramsTeamId],
-      queryFn: async () => {
-        try {
-          const res = await fetchServer.GET(`/v1/user/{teamId}/role`, {
-            ...paramsTeamId,
-            headers: {
-              'x-skip-jwt-middleware': 'true',
-              cookie: cookies,
-            },
-          })
-
-          if (!res.data) {
-            return { role: 'member' }
-          }
-
-          return res.data
-        } catch {
-          return { role: 'member' }
-        }
-      },
-    }),
-    queryClient.fetchQuery({
-      queryKey: ['get', `/v1/teams/{teamId}/boards`, paramsTeamId],
-      queryFn: async () => {
-        try {
-          const res = await fetchServer.GET(`/v1/teams/{teamId}/boards`, {
-            ...paramsTeamId,
-            headers: {
-              'x-skip-jwt-middleware': 'true',
-              cookie: cookies,
-            },
-          })
-
-          return res.data
-        } catch {
-          return { boards: [] }
-        }
-      },
-    }),
+    prefetchTeamRole(queryClient, cookies, teamId),
+    prefetchBoards(queryClient, cookies, teamId),
+    prefetchTeamUsers(queryClient, cookies, teamId),
+    prefetchTeams(queryClient, cookies),
+    prefetchAllUsers(queryClient, cookies),
+    prefetchCurrentUser(queryClient, cookies),
   ])
 
   if (boards?.boards && boards.boards.length > 0) {
     redirect(`/teams/${teamId}/boards/${boards.boards[0]?.readableId}`)
   }
-
-  void queryClient.prefetchQuery({
-    queryKey: ['get', '/v1/teams'],
-
-    queryFn: async () => {
-      try {
-        const res = await fetchServer.GET('/v1/teams', {
-          headers: {
-            'x-skip-jwt-middleware': 'true',
-            cookie: cookies,
-          },
-        })
-
-        return res.data
-      } catch {
-        return { teams: [] }
-      }
-    },
-  })
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

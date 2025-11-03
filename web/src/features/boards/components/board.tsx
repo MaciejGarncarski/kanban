@@ -1,6 +1,5 @@
 'use client'
 
-import { appQuery } from '@/api-client/api-client'
 import { MAX_COLUMN_COUNT } from '@/constants/column'
 import { AddColumnModal } from '@/features/columns/components/add-column-modal'
 import { Column } from '@/features/columns/components/column'
@@ -15,6 +14,7 @@ import {
 import { useDraggedOver } from '@/hooks/use-dragged-over'
 import { useRoleByTeamId } from '@/features/teams/hooks/use-role-by-team-id'
 import { useMonitorElements } from '@/features/boards/hooks/use-monitor-elements'
+import { useBoardById } from '@/features/boards/hooks/use-board-by-id'
 
 export const Board = ({
   teamId,
@@ -24,13 +24,7 @@ export const Board = ({
   boardId: string
 }) => {
   useMonitorElements({ boardId })
-  const { data: boardData } = appQuery.useSuspenseQuery(
-    'get',
-    '/v1/boards/{boardId}',
-    {
-      params: { path: { boardId } },
-    },
-  )
+  const { data: boardData } = useBoardById({ boardId })
   const { isDraggedOver, ref } = useDraggedOver({})
   const { isAdmin } = useRoleByTeamId(teamId)
 

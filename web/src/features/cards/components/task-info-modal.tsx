@@ -1,6 +1,7 @@
-import { appQuery } from '@/api-client/api-client'
 import { EditTaskModal } from '@/features/cards/components/edit-task-modal'
+import { useDeleteCard } from '@/features/cards/hooks/use-delete-card'
 import { useRoleByTeamId } from '@/features/teams/hooks/use-role-by-team-id'
+import { useTeamUsers } from '@/features/teams/hooks/use-team-users'
 import {
   ActionIcon,
   Button,
@@ -32,39 +33,19 @@ export function TaskInfoModal({
   dueDate,
 }: Props) {
   const [opened, { open, close }] = useDisclosure(false)
-  const { data } = appQuery.useSuspenseQuery(
-    'get',
-    '/v1/teams/{teamId}/users',
-    {
-      params: {
-        path: {
-          teamId,
-        },
-      },
-    },
-  )
-
+  const { data } = useTeamUsers({ teamId })
   const { isAdmin } = useRoleByTeamId(teamId)
   const assignedToUser = data.users.find((user) => user.id === assignedToId)
-  const deleteMutation = appQuery.useMutation('delete', '/v1/cards/{cardId}')
+  const deleteMutation = useDeleteCard()
 
   const handleDelete = () => {
     if (!isAdmin) return
 
-    deleteMutation.mutate(
-      {
-        params: {
-          path: { cardId: cardId },
-        },
+    deleteMutation.mutate({
+      params: {
+        path: { cardId: cardId },
       },
-      {
-        onSuccess: (_, __, ___, context) => {
-          context.client.invalidateQueries({
-            queryKey: ['get', '/v1/boards/{boardId}'],
-          })
-        },
-      },
-    )
+    })
   }
 
   return (

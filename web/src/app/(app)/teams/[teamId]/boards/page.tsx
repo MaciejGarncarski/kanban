@@ -1,6 +1,6 @@
-import { fetchServer } from '@/api-client/api-client'
 import { READABLE_ID_LENGTH } from '@/constants/column'
 import { attachCookies } from '@/features/auth/utils/attach-cookies'
+import { prefetchBoards } from '@/features/boards/api/prefetch-boards'
 import { getQueryClient } from '@/utils/get-query-client'
 import { redirect } from 'next/navigation'
 import * as z from 'zod/v4'
@@ -20,27 +20,8 @@ export default async function Page({
   }
 
   const queryClient = getQueryClient()
-  const paramsTeamId = { params: { path: { teamId: data.teamId } } }
   const cookies = await attachCookies()
-
-  const boards = await queryClient.fetchQuery({
-    queryKey: ['get', `/v1/teams/{teamId}/boards`, paramsTeamId],
-    queryFn: async () => {
-      try {
-        const res = await fetchServer.GET(`/v1/teams/{teamId}/boards`, {
-          ...paramsTeamId,
-          headers: {
-            'x-skip-jwt-middleware': 'true',
-            cookie: cookies,
-          },
-        })
-
-        return res.data
-      } catch {
-        return { boards: [] }
-      }
-    },
-  })
+  const boards = await prefetchBoards(queryClient, cookies, data.teamId)
 
   const firstBoardId = boards?.boards[0]?.readableId
 

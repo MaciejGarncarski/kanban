@@ -1,11 +1,12 @@
 'use client'
 
-import { appQuery } from '@/api-client/api-client'
+import { useAuth } from '@/features/auth/hooks/use-auth'
+import { useCreateTeam } from '@/features/teams/hooks/use-create-team'
+import { useAllUsers } from '@/features/users/hooks/use-all-users'
 import {
   Button,
   CheckIcon,
   Combobox,
-  Container,
   Flex,
   Group,
   Input,
@@ -17,30 +18,14 @@ import {
   useCombobox,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { notifications } from '@mantine/notifications'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 export function NewTeamForm() {
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([])
   const router = useRouter()
-
-  const newTeamMutation = appQuery.useMutation('post', '/v1/teams', {
-    onError: () => {
-      notifications.show({
-        title: 'Error',
-        message: 'Failed to create team. Please try again.',
-        color: 'red',
-      })
-    },
-    onSuccess: (data) => {
-      if (data.readableId) {
-        router.push(`/teams/${data.readableId}`)
-      }
-    },
-  })
-
-  const { data: userData } = appQuery.useSuspenseQuery('get', '/v1/auth/me')
+  const { data: allUsersData } = useAllUsers()
+  const { data: userData } = useAuth()
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([])
 
   const form = useForm({
     initialValues: {
@@ -56,20 +41,26 @@ export function NewTeamForm() {
     onDropdownClose: () => combobox.resetSelectedOption(),
   })
 
-  const handleSubmit = form.onSubmit((values) => {
-    newTeamMutation.mutate({
-      body: {
-        name: values.name,
-        description: values.description,
-        members: selectedUsers || [],
-      },
-    })
-  })
+  const newTeamMutation = useCreateTeam()
 
-  const { data: allUsersData } = appQuery.useSuspenseQuery(
-    'get',
-    '/v1/user/all',
-  )
+  const handleSubmit = form.onSubmit((values) => {
+    newTeamMutation.mutate(
+      {
+        body: {
+          name: values.name,
+          description: values.description,
+          members: selectedUsers || [],
+        },
+      },
+      {
+        onSuccess: (data) => {
+          if (data.readableId) {
+            router.push(`/teams/${data.readableId}`)
+          }
+        },
+      },
+    )
+  })
 
   const filteredUsers = allUsersData.users.filter(
     (user) => user.id !== userData.id,
@@ -83,77 +74,75 @@ export function NewTeamForm() {
     .join(', ')
 
   return (
-    <Container size="sm" my="md">
-      <form onSubmit={handleSubmit}>
-        <Stack>
-          <TextInput
-            label="Team Name"
-            placeholder="Enter team name"
-            required
-            type="text"
-            key={form.key('name')}
-            {...form.getInputProps('name')}
-          />
-          <Textarea
-            label="Description"
-            placeholder="Enter team description"
-            key={form.key('description')}
-            {...form.getInputProps('description')}
-          />
+    <form onSubmit={handleSubmit}>
+      <Stack gap="xl">
+        <TextInput
+          label="Team Name"
+          placeholder="Enter team name"
+          required
+          type="text"
+          key={form.key('name')}
+          {...form.getInputProps('name')}
+        />
+        <Textarea
+          label="Description"
+          placeholder="Enter team description"
+          key={form.key('description')}
+          {...form.getInputProps('description')}
+        />
 
-          <Input.Wrapper label="Team users">
-            <Combobox
-              store={combobox}
-              onOptionSubmit={(val) => {
-                if (selectedUsers.includes(val)) {
-                  setSelectedUsers((prev) => prev.filter((id) => id !== val))
-                  return
-                }
+        <Input.Wrapper label="Team users">
+          <Combobox
+            store={combobox}
+            onOptionSubmit={(val) => {
+              if (selectedUsers.includes(val)) {
+                setSelectedUsers((prev) => prev.filter((id) => id !== val))
+                return
+              }
 
-                setSelectedUsers((prev) => [...prev, val])
-              }}>
-              <Combobox.Target>
-                <InputBase
-                  component="button"
-                  type="button"
-                  pointer
-                  w="100%"
-                  rightSection={<Combobox.Chevron />}
-                  rightSectionPointerEvents="none"
-                  onClick={() => combobox.toggleDropdown()}>
-                  {selectedUsers.length > 0 ? (
+              setSelectedUsers((prev) => [...prev, val])
+            }}>
+            <Combobox.Target>
+              <InputBase
+                component="button"
+                type="button"
+                pointer
+                w="100%"
+                rightSection={<Combobox.Chevron />}
+                rightSectionPointerEvents="none"
+                onClick={() => combobox.toggleDropdown()}>
+                {selectedUsers.length > 0 ? (
+                  <Group>
+                    <Text>{selectedUserNames}</Text>
+                  </Group>
+                ) : (
+                  <Input.Placeholder>Select users</Input.Placeholder>
+                )}
+              </InputBase>
+            </Combobox.Target>
+            <Combobox.Dropdown>
+              <Combobox.Options>
+                {filteredUsers.map((user) => (
+                  <Combobox.Option key={user.id} value={user.id}>
                     <Group>
-                      <Text>{selectedUserNames}</Text>
+                      {selectedUsers.includes(user.id) && (
+                        <CheckIcon size={12} />
+                      )}
+                      {user.name} - {user.email}
                     </Group>
-                  ) : (
-                    <Input.Placeholder>Select users</Input.Placeholder>
-                  )}
-                </InputBase>
-              </Combobox.Target>
-              <Combobox.Dropdown>
-                <Combobox.Options>
-                  {filteredUsers.map((user) => (
-                    <Combobox.Option key={user.id} value={user.id}>
-                      <Group>
-                        {selectedUsers.includes(user.id) && (
-                          <CheckIcon size={12} />
-                        )}
-                        {user.name} - {user.email}
-                      </Group>
-                    </Combobox.Option>
-                  ))}
-                </Combobox.Options>
-              </Combobox.Dropdown>
-            </Combobox>
-          </Input.Wrapper>
+                  </Combobox.Option>
+                ))}
+              </Combobox.Options>
+            </Combobox.Dropdown>
+          </Combobox>
+        </Input.Wrapper>
 
-          <Flex>
-            <Button type="submit" ml="auto">
-              Create Team
-            </Button>
-          </Flex>
-        </Stack>
-      </form>
-    </Container>
+        <Flex>
+          <Button type="submit" ml="auto">
+            Create Team
+          </Button>
+        </Flex>
+      </Stack>
+    </form>
   )
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { appQuery } from '@/api-client/api-client'
+import { useBoards } from '@/features/boards/hooks/use-boards'
 import { CheckIcon, Combobox, Flex, Group, Text } from '@mantine/core'
 
 type Props = {
@@ -9,13 +9,7 @@ type Props = {
 }
 
 export function BoardSwitchOptions({ teamId, boardId }: Props) {
-  const { data } = appQuery.useSuspenseQuery(
-    'get',
-    '/v1/teams/{teamId}/boards',
-    {
-      params: { path: { teamId: teamId } },
-    },
-  )
+  const { data } = useBoards({ teamId })
 
   if (!data.boards || data.boards.length === 0) {
     return <Text>No boards found</Text>

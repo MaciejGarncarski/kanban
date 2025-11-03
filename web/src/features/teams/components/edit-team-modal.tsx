@@ -1,6 +1,10 @@
 'use client'
 
-import { appQuery } from '@/api-client/api-client'
+import { useAuth } from '@/features/auth/hooks/use-auth'
+import { useEditTeam } from '@/features/teams/hooks/use-edit-team'
+import { useTeamUsers } from '@/features/teams/hooks/use-team-users'
+import { useTeams } from '@/features/teams/hooks/use-teams'
+import { useAllUsers } from '@/features/users/hooks/use-all-users'
 import {
   Button,
   CheckIcon,
@@ -16,7 +20,6 @@ import {
   useCombobox,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { notifications } from '@mantine/notifications'
 import { useState } from 'react'
 
 type Props = {
@@ -26,43 +29,17 @@ type Props = {
 }
 
 export function EditTeamModal({ isOpen, onClose, teamId }: Props) {
-  const { data: allTeams } = appQuery.useSuspenseQuery('get', '/v1/teams')
-  const { data: teamUsers } = appQuery.useSuspenseQuery(
-    'get',
-    `/v1/teams/{teamId}/users`,
-    { params: { path: { teamId } } },
-  )
-  const { data: userData } = appQuery.useSuspenseQuery('get', '/v1/auth/me')
-
-  const currentTeam = allTeams.teams.find((team) => team.readableId === teamId)
-
-  const defaultUserIds = teamUsers.users
-    .map((user) => user.id)
-    .filter((id) => id !== userData.id)
-
-  const [selectedUsers, setSelectedUsers] = useState<string[]>(defaultUserIds)
+  const { data: teamsData } = useTeams()
+  const { data: teamUsers } = useTeamUsers({ teamId })
+  const { data: userData } = useAuth()
+  const { data: allUsersData } = useAllUsers()
+  const { mutate, isPending } = useEditTeam()
 
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   })
 
-  const { mutate, isPending } = appQuery.useMutation(
-    'patch',
-    `/v1/teams/{teamId}`,
-    {
-      onSuccess: (_, __, ___, { client }) => {
-        onClose()
-        client.invalidateQueries({ queryKey: ['get', '/v1/teams'] })
-      },
-      onError: (error) => {
-        notifications.show({
-          title: 'Error',
-          message: error.message,
-          color: 'red',
-        })
-      },
-    },
-  )
+  const currentTeam = teamsData.teams.find((team) => team.readableId === teamId)
 
   const form = useForm({
     initialValues: {
@@ -71,10 +48,11 @@ export function EditTeamModal({ isOpen, onClose, teamId }: Props) {
     },
   })
 
-  const { data: allUsersData } = appQuery.useSuspenseQuery(
-    'get',
-    '/v1/user/all',
-  )
+  const defaultUserIds = teamUsers.users
+    .map((user) => user.id)
+    .filter((id) => id !== userData.id)
+
+  const [selectedUsers, setSelectedUsers] = useState<string[]>(defaultUserIds)
 
   const filteredUsers = allUsersData.users.filter(
     (user) => user.id !== userData.id,
@@ -87,19 +65,26 @@ export function EditTeamModal({ isOpen, onClose, teamId }: Props) {
     })
     .join(', ')
 
-  if (!allTeams) {
+  if (!teamsData) {
     return null
   }
 
   const handleSubmit = form.onSubmit(({ name, description }) => {
-    mutate({
-      body: {
-        name,
-        description: description,
-        members: [...selectedUsers, userData.id],
+    mutate(
+      {
+        body: {
+          name,
+          description: description,
+          members: [...selectedUsers, userData.id],
+        },
+        params: { path: { teamId } },
       },
-      params: { path: { teamId } },
-    })
+      {
+        onSuccess: () => {
+          close()
+        },
+      },
+    )
   })
 
   return (

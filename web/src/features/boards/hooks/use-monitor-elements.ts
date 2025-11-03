@@ -1,51 +1,14 @@
 import { useEffect } from 'react'
 import { extractClosestEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge'
 import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter'
-import { appQuery } from '@/api-client/api-client'
-import { notifications } from '@mantine/notifications'
+import { useBoardById } from '@/features/boards/hooks/use-board-by-id'
+import { useUpdateCard } from '@/features/cards/hooks/use-update-card'
+import { useUpdateColumn } from '@/features/columns/hooks/use-update-column'
 
 export function useMonitorElements({ boardId }: { boardId: string }) {
-  const { data: boardData } = appQuery.useSuspenseQuery(
-    'get',
-    '/v1/boards/{boardId}',
-    {
-      params: { path: { boardId } },
-    },
-  )
-
-  const columnMutation = appQuery.useMutation(
-    'patch',
-    '/v1/columns/{columnId}',
-    {
-      onSuccess: (_, __, ___, ctx) => {
-        ctx.client.invalidateQueries({
-          queryKey: ['get', '/v1/boards/{boardId}'],
-        })
-      },
-      onError: (error) => {
-        notifications.show({
-          title: 'Error',
-          message: error.message,
-          color: 'red',
-        })
-      },
-    },
-  )
-
-  const cardMutation = appQuery.useMutation('patch', '/v1/cards/{cardId}', {
-    onSuccess: (_, __, ___, ctx) => {
-      ctx.client.invalidateQueries({
-        queryKey: ['get', '/v1/boards/{boardId}'],
-      })
-    },
-    onError: (error) => {
-      notifications.show({
-        title: 'Error',
-        message: error.message,
-        color: 'red',
-      })
-    },
-  })
+  const { data: boardData } = useBoardById({ boardId })
+  const cardMutation = useUpdateCard()
+  const columnMutation = useUpdateColumn()
 
   useEffect(() => {
     if (!boardData) {

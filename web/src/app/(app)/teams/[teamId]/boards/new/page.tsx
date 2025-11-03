@@ -1,6 +1,7 @@
 import { READABLE_ID_LENGTH } from '@/constants/column'
 import { CreateBoardForm } from '@/features/boards/components/create-board-form'
-import { Title } from '@mantine/core'
+import { BackToTeamsLink } from '@/features/layout/components/back-to-teams-link'
+import { Container, Stack, Title } from '@mantine/core'
 import * as z from 'zod/v4'
 
 const paramsSchema = z.object({
@@ -20,8 +21,13 @@ export default async function NewBoardPage({
 
   return (
     <main>
-      <Title order={1}>Create New Board</Title>
-      <CreateBoardForm teamId={data.teamId} />
+      <Container size="sm" py="md">
+        <Stack gap="md" justify="flex-start">
+          <BackToTeamsLink />
+          <Title order={1}>Create New Board</Title>
+          <CreateBoardForm teamId={data.teamId} />
+        </Stack>
+      </Container>
     </main>
   )
 }

@@ -17,8 +17,8 @@ import { useForm } from '@mantine/form'
 import { useDisclosure } from '@mantine/hooks'
 import { Plus } from 'lucide-react'
 import { DateTimePicker } from '@mantine/dates'
-import { appQuery } from '@/api-client/api-client'
-import { notifications } from '@mantine/notifications'
+import { useTeamUsers } from '@/features/teams/hooks/use-team-users'
+import { useCreateCard } from '@/features/cards/hooks/use-create-card'
 
 type Props = {
   teamId: string
@@ -29,19 +29,8 @@ export function AddTaskCardModal({ teamId, columnId }: Props) {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   })
-
-  const { mutate, isPending } = appQuery.useMutation('post', '/v1/cards')
-  const { data } = appQuery.useSuspenseQuery(
-    'get',
-    '/v1/teams/{teamId}/users',
-    {
-      params: {
-        path: {
-          teamId,
-        },
-      },
-    },
-  )
+  const { mutate, isPending } = useCreateCard()
+  const { data } = useTeamUsers({ teamId })
 
   const [opened, { open, close }] = useDisclosure(false)
   const form = useForm({
@@ -77,23 +66,8 @@ export function AddTaskCardModal({ teamId, columnId }: Props) {
         },
       },
       {
-        onSuccess: async (_, __, ___, ctx) => {
-          await ctx.client.invalidateQueries({
-            queryKey: ['get', '/v1/boards/{boardId}'],
-          })
-          notifications.show({
-            title: 'Success',
-            message: 'Task created successfully',
-            color: 'green',
-          })
+        onSuccess: async () => {
           close()
-        },
-        onError: (error) => {
-          notifications.show({
-            title: 'Error',
-            message: error.message || 'Failed to create task',
-            color: 'red',
-          })
         },
         onSettled: () => {
           form.reset()

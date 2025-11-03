@@ -1,7 +1,7 @@
 'use client'
 
-import { appQuery } from '@/api-client/api-client'
 import { BoardSwitchOptions } from '@/features/boards/components/board-switch-options'
+import { useBoards } from '@/features/boards/hooks/use-boards'
 import {
   Combobox,
   ComboboxStore,
@@ -76,13 +76,7 @@ const BoardSwitchInput = ({
   boardId: string
   teamId: string
 }) => {
-  const { data } = appQuery.useSuspenseQuery(
-    'get',
-    '/v1/teams/{teamId}/boards',
-    {
-      params: { path: { teamId } },
-    },
-  )
+  const { data } = useBoards({ teamId })
 
   const boardName = data?.boards.find((board) => {
     return board.readableId === boardId

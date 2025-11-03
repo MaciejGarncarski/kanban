@@ -1,6 +1,7 @@
-import { fetchServer } from '@/api-client/api-client'
 import { attachCookies } from '@/features/auth/utils/attach-cookies'
+import { prefetchBoards } from '@/features/boards/api/prefetch-boards'
 import { CreateTeamLink } from '@/features/layout/components/create-team-link'
+import { prefetchTeams } from '@/features/teams/api/prefetch-teams'
 import { getQueryClient } from '@/utils/get-query-client'
 import { Box } from '@mantine/core'
 import { redirect } from 'next/navigation'
@@ -8,25 +9,7 @@ import { redirect } from 'next/navigation'
 export default async function Home() {
   const queryClient = getQueryClient()
   const cookies = await attachCookies()
-
-  const teams = await queryClient.fetchQuery({
-    queryKey: ['get', '/v1/teams'],
-
-    queryFn: async () => {
-      try {
-        const res = await fetchServer.GET('/v1/teams', {
-          headers: {
-            'x-skip-jwt-middleware': 'true',
-            cookie: cookies,
-          },
-        })
-
-        return res.data
-      } catch {
-        return { teams: [] }
-      }
-    },
-  })
+  const teams = await prefetchTeams(queryClient, cookies)
 
   const firstTeamId = teams?.teams[0]?.readableId
 
@@ -43,26 +26,7 @@ export default async function Home() {
     )
   }
 
-  const paramsTeamId = { params: { path: { teamId: firstTeamId } } }
-
-  const boards = await queryClient.fetchQuery({
-    queryKey: ['get', `/v1/teams/{teamId}/boards`, paramsTeamId],
-    queryFn: async () => {
-      try {
-        const res = await fetchServer.GET(`/v1/teams/{teamId}/boards`, {
-          ...paramsTeamId,
-          headers: {
-            'x-skip-jwt-middleware': 'true',
-            cookie: cookies,
-          },
-        })
-
-        return res.data
-      } catch {
-        return { boards: [] }
-      }
-    },
-  })
+  const boards = await prefetchBoards(queryClient, cookies, firstTeamId)
 
   const firstBoardId =
     (boards?.boards?.length || 0) > 0 ? boards?.boards[0]?.readableId : null
