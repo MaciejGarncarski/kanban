@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
+import { CreateBoardHandler } from 'src/board/application/commands/handlers/create-board.handler';
+import { DeleteBoardHandler } from 'src/board/application/commands/handlers/delete-board.handler';
 import { GetBoardByIdHandler } from 'src/board/application/queries/handlers/get-board-by-id.handler';
 import { GetBoardsByTeamHandler } from 'src/board/application/queries/handlers/get-boards-by-team.handler';
 import { BoardController } from 'src/board/infrastructure/controllers/board.controller';
 import { BoardRepository } from 'src/board/infrastructure/persistence/board.repository';
+import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
 
-const CommandHandlers = [];
+const CommandHandlers = [DeleteBoardHandler, CreateBoardHandler];
 const QueryHandlers = [GetBoardsByTeamHandler, GetBoardByIdHandler];
-const Repositories = [BoardRepository];
+const Repositories = [BoardRepository, UserRepository];
 
 @Module({
   controllers: [BoardController],

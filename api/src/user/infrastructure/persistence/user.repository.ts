@@ -45,15 +45,22 @@ export class UserRepository implements UserRepositoryInterface {
   }
 
   async getUserRoleByTeamId(teamId: string, userId: string): Promise<TeamRole> {
+    const isUuid =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+        teamId,
+      );
+
+    const condition = isUuid
+      ? eq(team_members.team_id, teamId)
+      : eq(teams.readable_id, teamId);
+
     const [result] = await this.db
-      .select({
-        role: team_members.role,
-      })
+      .select({ role: team_members.role })
       .from(team_members)
       .innerJoin(teams, eq(team_members.team_id, teams.id))
-      .where(
-        and(eq(teams.readable_id, teamId), eq(team_members.user_id, userId)),
-      );
+      .where(and(condition, eq(team_members.user_id, userId)));
+
+    console.log(result);
 
     if (!result) {
       throw new BadRequestException(
@@ -171,5 +178,29 @@ export class UserRepository implements UserRepositoryInterface {
       .where(and(eq(boards.readable_id, boardId), eq(users.id, userId)));
 
     return Boolean(userInTeam);
+  }
+
+  async isUserInTeamByTeam(userId: string, teamId: string) {
+    const [userInTeam] = await this.db
+      .select()
+      .from(users)
+      .innerJoin(team_members, eq(users.id, team_members.user_id))
+      .innerJoin(teams, eq(team_members.team_id, teams.id))
+      .where(and(eq(teams.readable_id, teamId), eq(users.id, userId)));
+
+    return Boolean(userInTeam);
+  }
+
+  async findAllByTeamId(teamId: string) {
+    const usersInTeam = await this.db
+      .select()
+      .from(users)
+      .innerJoin(team_members, eq(users.id, team_members.user_id))
+      .innerJoin(teams, eq(team_members.team_id, teams.id))
+      .where(eq(teams.readable_id, teamId));
+
+    return usersInTeam.map(({ users }) => {
+      return UserMapper.toDomain(users);
+    });
   }
 }

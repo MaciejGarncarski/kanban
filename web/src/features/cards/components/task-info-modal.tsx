@@ -17,7 +17,6 @@ import { Info, TrashIcon } from 'lucide-react'
 type Props = {
   teamId: string
   cardId: string
-  boardId: string
   assignedToId?: string
   title: string
   description: string | undefined
@@ -27,7 +26,6 @@ type Props = {
 export function TaskInfoModal({
   teamId,
   cardId,
-  boardId,
   assignedToId,
   title,
   description,
@@ -36,11 +34,11 @@ export function TaskInfoModal({
   const [opened, { open, close }] = useDisclosure(false)
   const { data } = appQuery.useSuspenseQuery(
     'get',
-    '/v1/boards/{boardId}/users',
+    '/v1/teams/{teamId}/users',
     {
       params: {
         path: {
-          boardId,
+          teamId,
         },
       },
     },
@@ -102,7 +100,7 @@ export function TaskInfoModal({
             {isAdmin && (
               <Group justify="space-between">
                 <EditTaskModal
-                  boardId={boardId}
+                  teamId={teamId}
                   cardId={cardId}
                   title={title}
                   description={description}

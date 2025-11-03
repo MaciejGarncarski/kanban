@@ -46,7 +46,6 @@ export function TaskCard({
           <TaskInfoModal
             teamId={teamId}
             cardId={cardId}
-            boardId={boardId}
             assignedToId={assignedToId}
             title={title}
             dueDate={dueDate}

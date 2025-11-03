@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
+import { CreateBoardCommand } from 'src/board/application/commands/create-board.command';
 import { BoardAggregate } from 'src/board/domain/board.entity';
 import { BoardRepositoryInterface } from 'src/board/domain/ports/board.interface';
 import { BoardMapper } from 'src/board/infrastructure/persistence/mappers/board.mapper';
@@ -11,12 +12,18 @@ import {
   boards,
   cards,
   columns,
+  comments,
   teams,
 } from 'src/infrastructure/persistence/db/schema';
+import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
+import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
 
 @Injectable()
 export class BoardRepository implements BoardRepositoryInterface {
-  constructor(@InjectDb() private readonly db: DB) {}
+  constructor(
+    @InjectDb() private readonly db: DB,
+    private readonly userRepository: UserRepository,
+  ) {}
 
   async findByTeamId(teamId: string): Promise<BoardAggregate[]> {
     const boardRecords = await this.db
@@ -97,60 +104,88 @@ export class BoardRepository implements BoardRepositoryInterface {
     return boardAggregate;
   }
 
-  async createBoard(board: BoardAggregate): Promise<BoardAggregate> {
-    const boardRecord = BoardMapper.toPersistence(board);
-    const columnRecords = BoardMapper.toPersistenceColumns(board);
-    const cardRecords = BoardMapper.toPersistenceCards(board);
+  async createBoard({ userId, teamId, name, description }: CreateBoardCommand) {
+    const [team] = await this.db
+      .select({ id: teams.id })
+      .from(teams)
+      .where(eq(teams.readable_id, teamId));
 
-    const result = await this.db.transaction(async (tx) => {
-      const boardRow = await tx.insert(boards).values(boardRecord).returning();
-      let columnRows: {
-        name: string;
-        id: string;
-        created_at: Date | null;
-        board_id: string;
-        position: number;
-      }[] = [];
+    if (!team) {
+      throw new Error(`Team not found for readable_id: ${teamId}`);
+    }
 
-      let cardRows: {
-        id: string;
-        column_id: string;
-        title: string;
-        description: string | null;
-        assigned_to: string | null;
-        position: number;
-        created_at: Date | null;
-        updated_at: Date | null;
-        due_date: Date | null;
-      }[] = [];
-
-      if (columnRecords.length > 0) {
-        columnRows = await tx.insert(columns).values(columnRecords).returning();
-      }
-
-      if (cardRecords.length > 0) {
-        cardRows = await tx.insert(cards).values(cardRecords).returning();
-      }
-
-      return {
-        board: boardRow[0],
-        columns: columnRows,
-        cards: cardRows,
-      };
-    });
-
-    return BoardMapper.toDomain(
-      {
-        created_at: result.board.created_at,
-        description: result.board.description,
-        name: result.board.name,
-        team_id: result.board.team_id,
-        readable_id: result.board.readable_id,
-        id: result.board.id,
-      },
-      board.readableTeamId,
-      result.columns,
-      result.cards,
+    const userRole = await this.userRepository.getUserRoleByTeamId(
+      team.id,
+      userId,
     );
+
+    if (userRole !== 'admin') {
+      throw new Error(
+        `User does not have permission to create a board in team: ${teamId}`,
+      );
+    }
+
+    await this.db.transaction(async (tx) => {
+      const created = await tx
+        .insert(boards)
+        .values({
+          name,
+          description,
+          team_id: team.id,
+          readable_id: generateReadableId(),
+        })
+        .returning({ id: boards.id, readableId: boards.readable_id });
+
+      if (!created[0]) {
+        throw new Error('Failed to create board');
+      }
+    });
+  }
+
+  async deleteBoardById(readableId: string): Promise<void> {
+    await this.db.transaction(async (tx) => {
+      const [board] = await tx
+        .select({ id: boards.id })
+        .from(boards)
+        .where(eq(boards.readable_id, readableId));
+
+      if (!board) {
+        throw new Error(`Board not found for readable_id: ${readableId}`);
+      }
+
+      await tx.delete(comments).where(
+        inArray(
+          comments.card_id,
+          tx
+            .select({ id: cards.id })
+            .from(cards)
+            .where(
+              inArray(
+                cards.column_id,
+                tx
+                  .select({ id: columns.id })
+                  .from(columns)
+                  .where(eq(columns.board_id, board.id)),
+              ),
+            ),
+        ),
+      );
+
+      await tx
+        .delete(cards)
+        .where(
+          inArray(
+            cards.column_id,
+            tx
+              .select({ id: columns.id })
+              .from(columns)
+              .where(eq(columns.board_id, board.id)),
+          ),
+        );
+
+      await tx.delete(columns).where(eq(columns.board_id, board.id));
+
+      await tx.delete(boards).where(eq(boards.id, board.id));
+    });
   }
 }

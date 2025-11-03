@@ -48,6 +48,10 @@ export function useMonitorElements({ boardId }: { boardId: string }) {
   })
 
   useEffect(() => {
+    if (!boardData) {
+      return
+    }
+
     return monitorForElements({
       onDrop: ({ source, location }) => {
         const destination = location.current.dropTargets.length
@@ -179,5 +183,5 @@ export function useMonitorElements({ boardId }: { boardId: string }) {
         }
       },
     })
-  }, [cardMutation, boardData.columns, boardId, columnMutation])
+  }, [cardMutation, boardData, boardId, columnMutation])
 }

@@ -2,6 +2,7 @@
 
 import { DeleteBoardModal } from '@/features/boards/components/delete-board-modal'
 import { DeleteTeamModal } from '@/features/teams/components/delete-team-modal'
+import { EditTeamModal } from '@/features/teams/components/edit-team-modal'
 import { useRoleByTeamId } from '@/features/teams/hooks/use-role-by-team-id'
 import { Button, Menu } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
@@ -24,6 +25,9 @@ export function SettingsModal({ teamId, boardId }: Props) {
   const [deleteTeamOpened, { open: openDeleteTeam, close: closeDeleteTeam }] =
     useDisclosure(false)
 
+  const [editTeamOpened, { open: openEditTeam, close: closeEditTeam }] =
+    useDisclosure(false)
+
   return (
     <>
       {boardId && isAdmin && (
@@ -42,6 +46,14 @@ export function SettingsModal({ teamId, boardId }: Props) {
         />
       )}
 
+      {teamId && isAdmin && (
+        <EditTeamModal
+          teamId={teamId}
+          isOpen={editTeamOpened}
+          onClose={closeEditTeam}
+        />
+      )}
+
       <Menu shadow="md" width={200}>
         <Menu.Target>
           <Button variant="light" leftSection={<SettingsIcon size={16} />}>
@@ -55,7 +67,11 @@ export function SettingsModal({ teamId, boardId }: Props) {
           <Menu.Item component={Link} href={`/teams/new`}>
             New team
           </Menu.Item>
-          {isAdmin && <Menu.Item color="orange">Edit team</Menu.Item>}
+          {isAdmin && (
+            <Menu.Item color="orange" onClick={openEditTeam}>
+              Edit team
+            </Menu.Item>
+          )}
           {isAdmin && (
             <Menu.Item color="red" onClick={openDeleteTeam}>
               Delete team
@@ -69,10 +85,14 @@ export function SettingsModal({ teamId, boardId }: Props) {
               <Menu.Item component={Link} href={`/teams/${teamId}/boards/new`}>
                 New board
               </Menu.Item>
-              <Menu.Item color="orange">Edit board</Menu.Item>
-              <Menu.Item color="red" onClick={openDeleteBoard}>
-                Delete board
-              </Menu.Item>
+              {boardId && (
+                <>
+                  <Menu.Item color="orange">Edit board</Menu.Item>
+                  <Menu.Item color="red" onClick={openDeleteBoard}>
+                    Delete board
+                  </Menu.Item>
+                </>
+              )}
             </>
           )}
         </Menu.Dropdown>

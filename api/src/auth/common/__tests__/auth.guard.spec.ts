@@ -1,6 +1,6 @@
 import { JwtService } from '@nestjs/jwt';
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { AuthGuard } from 'src/core/application/guards/auth.guard';
 import { CommandBus } from '@nestjs/cqrs';
 import { refreshTokenConfigTest } from 'src/infrastructure/configs/refresh-token-cookie.config';
@@ -12,6 +12,7 @@ describe('AuthGuard', () => {
   let mockContext: ExecutionContext;
   let mockRequest: Partial<Request>;
   let commandBus: CommandBus;
+  let mockResponse: Partial<Response>;
 
   beforeEach(() => {
     jwtService = new JwtService({ secret: 'test' });
@@ -32,61 +33,61 @@ describe('AuthGuard', () => {
       headers: {},
     };
 
-    const mockResponse = {
-      json: jest.fn().mockResolvedValue({}),
+    mockResponse = {
+      json: jest.fn(),
     };
 
     mockContext = {
       switchToHttp: () => ({
-        getRequest: () => mockRequest,
-        getResponse: () => mockResponse,
+        getRequest: () => mockRequest as Request,
+        getResponse: () => mockResponse as Response,
       }),
     } as ExecutionContext;
   });
 
-  it('should throw if no token is provided', () => {
-    expect(() => guard.canActivate(mockContext)).toThrow(
-      new UnauthorizedException('No token provided'),
+  it('should throw UnauthorizedException if no token is provided', async () => {
+    await expect(guard.canActivate(mockContext)).rejects.toThrow(
+      new UnauthorizedException('Invalid or expired token'),
     );
   });
 
-  it('should extract token from signed cookies and verify successfully', () => {
+  it('should extract token from signed cookies and verify successfully', async () => {
     const token = 'signed-token';
     mockRequest.signedCookies = { accessToken: token };
 
     const payload = { id: 'user123' };
     jest.spyOn(jwtService, 'verify').mockReturnValue(payload);
 
-    const result = guard.canActivate(mockContext);
+    const result = await guard.canActivate(mockContext);
     expect(result).toBe(true);
     expect(mockRequest.userId).toBe(payload.id);
   });
 
-  it('should extract token from cookies if signed cookies are empty', () => {
+  it('should extract token from cookies if signed cookies are empty', async () => {
     const token = 'cookie-token';
     mockRequest.cookies = { accessToken: token };
 
     const payload = { id: 'user456' };
     jest.spyOn(jwtService, 'verify').mockReturnValue(payload);
 
-    const result = guard.canActivate(mockContext);
+    const result = await guard.canActivate(mockContext);
     expect(result).toBe(true);
     expect(mockRequest.userId).toBe(payload.id);
   });
 
-  it('should extract token from Authorization header', () => {
+  it('should extract token from Authorization header', async () => {
     const token = 'header-token';
     mockRequest.headers = { authorization: `Bearer ${token}` };
 
     const payload = { id: 'user789' };
     jest.spyOn(jwtService, 'verify').mockReturnValue(payload);
 
-    const result = guard.canActivate(mockContext);
+    const result = await guard.canActivate(mockContext);
     expect(result).toBe(true);
     expect(mockRequest.userId).toBe(payload.id);
   });
 
-  it('should throw UnauthorizedException if token is invalid', () => {
+  it('should throw UnauthorizedException if token is invalid', async () => {
     const token = 'bad-token';
     mockRequest.headers = { authorization: `Bearer ${token}` };
 
@@ -94,16 +95,16 @@ describe('AuthGuard', () => {
       throw new Error('invalid');
     });
 
-    expect(() => guard.canActivate(mockContext)).toThrow(
+    await expect(guard.canActivate(mockContext)).rejects.toThrow(
       new UnauthorizedException('Invalid or expired token'),
     );
   });
 
-  it('should return null if Authorization header is malformed', () => {
+  it('should handle malformed Authorization header gracefully', async () => {
     mockRequest.headers = { authorization: 'BadHeader' };
 
-    expect(() => guard.canActivate(mockContext)).toThrow(
-      new UnauthorizedException('No token provided'),
+    await expect(guard.canActivate(mockContext)).rejects.toThrow(
+      new UnauthorizedException('Invalid or expired token'),
     );
   });
 });

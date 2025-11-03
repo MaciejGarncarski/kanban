@@ -49,6 +49,7 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
 
     if (exception instanceof DrizzleQueryError) {
       stack = exception.stack;
+      message = 'Drizzle Query Error';
       subErrors.push(exception.message);
       exception.params.forEach((param: string) => subErrors.push(param));
 

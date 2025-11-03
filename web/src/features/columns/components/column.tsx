@@ -97,7 +97,7 @@ export const Column = ({
             />
           ))}
           {isDraggingCard ? null : (
-            <AddTaskCardModal boardId={boardId} columnId={columnId} />
+            <AddTaskCardModal teamId={teamId} columnId={columnId} />
           )}
         </Stack>
       </ScrollAreaAutosize>

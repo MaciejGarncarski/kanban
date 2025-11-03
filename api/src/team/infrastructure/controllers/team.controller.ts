@@ -1,9 +1,12 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
+  Param,
+  Patch,
   Post,
   Req,
 } from '@nestjs/common';
@@ -20,9 +23,16 @@ import { Auth } from 'src/auth/common/decorators/auth.decorator';
 import { ApiErrorResponse } from 'src/core/application/dtos/api-error.response.dto';
 import { routesV1 } from 'src/infrastructure/configs/app.routes.config';
 import { CreateTeamCommand } from 'src/team/application/commands/create-team.command';
+import { DeleteTeamCommand } from 'src/team/application/commands/delete-team.command';
+import { UpdateTeamCommand } from 'src/team/application/commands/update-team.command';
 import { CreateTeamRequestDto } from 'src/team/application/dtos/create-team.request.dto';
+import { DeleteTeamRequestDto } from 'src/team/application/dtos/delete-team.request.dto';
 import { GetTeamsResponseDto } from 'src/team/application/dtos/get-teams.response.dto';
 import { TeamDto } from 'src/team/application/dtos/team.dto';
+import {
+  UpdateTeamParamsDto,
+  UpdateTeamRequestDto,
+} from 'src/team/application/dtos/update-team.request.dto';
 import { GetTeamsQuery } from 'src/team/application/queries/get-teams.query';
 
 @Controller()
@@ -79,5 +89,49 @@ export class TeamController {
     );
 
     return result;
+  }
+
+  @Auth()
+  @Delete(routesV1.teams.deleteTeam)
+  @ApiOperation({
+    summary: 'Delete a team by ID',
+  })
+  @ApiOkResponse({
+    description: 'Successfully deleted the team.',
+  })
+  @ApiBadRequestResponse({
+    type: ApiErrorResponse,
+  })
+  async deleteTeam(@Req() req: Request, @Param() params: DeleteTeamRequestDto) {
+    await this.commandBus.execute<DeleteTeamCommand, void>(
+      new DeleteTeamCommand(req.userId, params.teamId),
+    );
+  }
+
+  @Auth()
+  @Patch(routesV1.teams.updateTeam)
+  @ApiOperation({
+    summary: 'Update a team by ID',
+  })
+  @ApiOkResponse({
+    description: 'Successfully updated the team.',
+  })
+  @ApiBadRequestResponse({
+    type: ApiErrorResponse,
+  })
+  async updateTeam(
+    @Req() req: Request,
+    @Param() params: UpdateTeamParamsDto,
+    @Body() body: UpdateTeamRequestDto,
+  ) {
+    await this.commandBus.execute<UpdateTeamCommand, void>(
+      new UpdateTeamCommand(
+        params.teamId,
+        req.userId,
+        body.name,
+        body.description,
+        body.members,
+      ),
+    );
   }
 }

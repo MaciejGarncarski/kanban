@@ -37,7 +37,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/boards/{boardId}/users": {
+    "/v1/teams/{teamId}/users": {
         parameters: {
             query?: never;
             header?: never;
@@ -172,6 +172,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/teams/{teamId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete a team by ID */
+        delete: operations["TeamController_deleteTeam"];
+        options?: never;
+        head?: never;
+        /** Update a team by ID */
+        patch: operations["TeamController_updateTeam"];
+        trace?: never;
+    };
     "/v1/teams/{teamId}/boards": {
         parameters: {
             query?: never;
@@ -200,6 +218,24 @@ export interface paths {
         get: operations["BoardController_getBoardById"];
         put?: never;
         post?: never;
+        /** Delete board by ID */
+        delete: operations["BoardController_deleteBoardById"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/boards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a new board */
+        post: operations["BoardController_createBoard"];
         delete?: never;
         options?: never;
         head?: never;
@@ -420,6 +456,14 @@ export interface components {
             /** @description Array of member user IDs */
             members?: string[];
         };
+        UpdateTeamRequestDto: {
+            /** @description Name of the team */
+            name: string;
+            /** @description Description of the team */
+            description?: string;
+            /** @description Array of member user IDs */
+            members?: string[];
+        };
         BoardSummaryDto: {
             readableId: string;
             name: string;
@@ -465,6 +509,23 @@ export interface components {
             createdAt?: string;
             /** @description List of columns with their cards */
             columns: components["schemas"]["ColumnDto"][];
+        };
+        CreateBoardRequestDto: {
+            /**
+             * @description Name of the board
+             * @example Project Roadmap
+             */
+            name: string;
+            /**
+             * @description Description of the board
+             * @example A detailed description of the project roadmap
+             */
+            description: string;
+            /**
+             * @description ID of the team to which the board belongs
+             * @example team-12345
+             */
+            teamId: string;
         };
         CreateCardRequestDto: {
             /** @example Title */
@@ -590,7 +651,7 @@ export interface operations {
                 Authorization?: string;
             };
             path: {
-                boardId: string;
+                teamId: string;
             };
             cookie?: never;
         };
@@ -871,6 +932,74 @@ export interface operations {
             };
         };
     };
+    TeamController_deleteTeam: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path: {
+                /** @description The ID of the team to be deleted */
+                teamId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully deleted the team. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    TeamController_updateTeam: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path: {
+                /** @description ID of the team */
+                teamId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTeamRequestDto"];
+            };
+        };
+        responses: {
+            /** @description Successfully updated the team. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
     BoardController_getAllBoardsByTeamId: {
         parameters: {
             query?: never;
@@ -928,6 +1057,71 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["BoardDetailDto"];
                 };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    BoardController_deleteBoardById: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path: {
+                /** @description The ID of the board to delete */
+                boardId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully deleted board */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    BoardController_createBoard: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateBoardRequestDto"];
+            };
+        };
+        responses: {
+            /** @description Successfully created board */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             400: {
                 headers: {

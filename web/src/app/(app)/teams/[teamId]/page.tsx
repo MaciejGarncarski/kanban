@@ -45,6 +45,10 @@ export default async function Page({
             },
           })
 
+          if (!res.data) {
+            return { role: 'member' }
+          }
+
           return res.data
         } catch {
           return { role: 'member' }

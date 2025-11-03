@@ -10,7 +10,7 @@ import { RoleResponseDto } from 'src/user/application/dtos/role.response.dto';
 import { UserArrayResponseDto } from 'src/user/application/dtos/user-array.response.dto';
 import { GetAllUsersQuery } from 'src/user/application/queries/get-all-users.query';
 import { GetRoleByTeamIdQuery } from 'src/user/application/queries/get-role-by-team-id.query';
-import { GetUsersByBoardQuery } from 'src/user/application/queries/get-users-by-board.query';
+import { GetUsersByTeamIdQuery } from 'src/user/application/queries/get-users-by-team-id.query';
 import { UserEntity } from 'src/user/domain/user.entity';
 
 @Controller()
@@ -42,18 +42,18 @@ export class UserController {
   }
 
   @Auth()
-  @Get(routesV1.user.getUsersByBoardId)
+  @Get(routesV1.user.getUsersByTeamId)
   @ApiOkResponse({
     type: UserArrayResponseDto,
   })
   @ApiBadRequestResponse({
     type: ApiErrorResponse,
   })
-  async getUsers(@Param('boardId') boardId: string, @Req() req: Request) {
+  async getUsers(@Param('teamId') teamId: string, @Req() req: Request) {
     const result = await this.queryBus.execute<
-      GetUsersByBoardQuery,
+      GetUsersByTeamIdQuery,
       UserEntity[]
-    >(new GetUsersByBoardQuery(boardId, req.userId));
+    >(new GetUsersByTeamIdQuery(teamId, req.userId));
 
     const usersDto = plainToInstance(
       UserArrayResponseDto,

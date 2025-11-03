@@ -50,7 +50,7 @@ export default async function Page({
           },
         })
 
-        return res.data
+        return res.data || { role: 'member' }
       } catch {
         return { role: 'member' }
       }
@@ -70,7 +70,7 @@ export default async function Page({
             },
           })
 
-          return res.data
+          return res.data || { teams: [] }
         } catch {
           return { teams: [] }
         }
@@ -88,24 +88,24 @@ export default async function Page({
             },
           })
 
-          return res.data
+          return res.data || { boards: [] }
         } catch {
           return { boards: [] }
         }
       },
     }),
     queryClient.prefetchQuery({
-      queryKey: ['get', `/v1/boards/{boardId}/users`, paramsBoardId],
+      queryKey: ['get', `/v1/teams/{teamId}/users`, paramsBoardId],
       queryFn: async () => {
         try {
-          const res = await fetchServer.GET('/v1/boards/{boardId}/users', {
-            ...paramsBoardId,
+          const res = await fetchServer.GET('/v1/teams/{teamId}/users', {
+            ...paramsTeamId,
             headers: {
               'x-skip-jwt-middleware': 'true',
               cookie: cookies,
             },
           })
-          return res.data
+          return res.data || { users: [] }
         } catch {
           return { users: [] }
         }
@@ -122,7 +122,7 @@ export default async function Page({
               cookie: cookies,
             },
           })
-          return res.data
+          return res.data || null
         } catch {
           return null
         }

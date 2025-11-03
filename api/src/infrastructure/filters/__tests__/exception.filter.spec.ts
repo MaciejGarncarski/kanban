@@ -104,7 +104,7 @@ describe('GlobalHttpExceptionFilter', () => {
     );
     expect(mockResponse.json).toHaveBeenCalledWith(
       expect.objectContaining({
-        message: 'Drizzle Query Error',
+        message: 'Database query failed',
         error: 'InternalServerError',
       }),
     );

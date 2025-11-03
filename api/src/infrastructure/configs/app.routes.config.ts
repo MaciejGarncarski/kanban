@@ -20,13 +20,15 @@ export const routesV1 = {
   teams: {
     root: `${prefix}teams`,
     createTeam: `${prefix}teams`,
+    deleteTeam: `${prefix}teams/:teamId`,
+    updateTeam: `${prefix}teams/:teamId`,
   },
   user: {
     root: `${prefix}user`,
     getAllUsers: `${prefix}user/all`,
     getUserById: `${prefix}user/:userId`,
     getRoleByTeamId: `${prefix}user/:teamId/role`,
-    getUsersByBoardId: `${prefix}boards/:boardId/users`,
+    getUsersByTeamId: `${prefix}teams/:teamId/users`,
   },
   board: {
     getBoardsByTeamId: `${prefix}teams/:teamId/boards`,

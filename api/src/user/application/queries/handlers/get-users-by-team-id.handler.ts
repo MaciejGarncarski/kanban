@@ -1,16 +1,16 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { QueryHandler } from '@nestjs/cqrs';
-import { GetUsersByBoardQuery } from 'src/user/application/queries/get-users-by-board.query';
+import { GetUsersByTeamIdQuery } from 'src/user/application/queries/get-users-by-team-id.query';
 import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
 
-@QueryHandler(GetUsersByBoardQuery)
-export class GetUsersByBoardHandler {
+@QueryHandler(GetUsersByTeamIdQuery)
+export class GetUsersByTeamIdHandler {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async execute(query: GetUsersByBoardQuery) {
-    const userIsInTeam = await this.userRepository.isUserInTeamByBoard(
+  async execute(query: GetUsersByTeamIdQuery) {
+    const userIsInTeam = await this.userRepository.isUserInTeamByTeam(
       query.userId,
-      query.boardId,
+      query.teamId,
     );
 
     if (!userIsInTeam) {
@@ -19,6 +19,6 @@ export class GetUsersByBoardHandler {
       );
     }
 
-    return this.userRepository.findAllByBoardId(query.boardId);
+    return this.userRepository.findAllByTeamId(query.teamId);
   }
 }

@@ -34,6 +34,10 @@ export const Board = ({
   const { isDraggedOver, ref } = useDraggedOver({})
   const { isAdmin } = useRoleByTeamId(teamId)
 
+  if (!boardData) {
+    return <div>Board not found</div>
+  }
+
   return (
     <Flex direction="column" gap="md">
       <Title order={2}>

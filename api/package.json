@@ -107,6 +107,7 @@
       "!**/*.config.(t|j)s",
       "!**/*.schema.(t|j)s",
       "!**/*.routes.(t|j)s",
+      "!**/*.entity.(t|j)s",
       "!db/**/*",
       "!**/__tests__/**"
     ],

@@ -13,6 +13,14 @@ export class InMemoryUserRepository implements UserRepositoryInterface {
     return Promise.resolve(this.users);
   }
 
+  findAllByTeamId(teamId: string): Promise<UserEntity[]> {
+    return Promise.resolve(this.users);
+  }
+
+  isUserInTeamByTeam(userId: string, teamId: string): Promise<boolean> {
+    return Promise.resolve(true);
+  }
+
   async getUserRoleByBoardId(boardId: string, userId: string) {
     return 'member' as TeamRole;
   }

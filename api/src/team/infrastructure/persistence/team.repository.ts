@@ -2,11 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import { type DB } from 'src/infrastructure/persistence/db/client';
 import { InjectDb } from 'src/infrastructure/persistence/db/db.provider';
-import { team_members, teams } from 'src/infrastructure/persistence/db/schema';
+import {
+  boards,
+  team_members,
+  teams,
+} from 'src/infrastructure/persistence/db/schema';
 import { GetTeamsResponseDto } from 'src/team/application/dtos/get-teams.response.dto';
 import {
   InsertTeamDto,
   TeamRepositoryInterface,
+  UpdateTeamDto,
 } from 'src/team/domain/ports/team.interface';
 import { TeamEntity } from 'src/team/domain/team.entity';
 import { TeamRole, teamRoles } from 'src/team/domain/types/team.types';
@@ -69,11 +74,61 @@ export class TeamRepository implements TeamRepositoryInterface {
   }
 
   async deleteTeam(teamId: string): Promise<void> {
-    await this.db.delete(teams).where(eq(teams.id, teamId));
+    const foundTeam = await this.db
+      .select()
+      .from(teams)
+      .where(eq(teams.readable_id, teamId))
+      .limit(1)
+      .then((rows) => rows[0]);
+
+    if (!foundTeam) {
+      return;
+    }
+
+    await this.db
+      .delete(team_members)
+      .where(eq(team_members.team_id, foundTeam.id));
+
+    await this.db.delete(boards).where(eq(boards.team_id, foundTeam.id));
+
+    await this.db.delete(teams).where(eq(teams.readable_id, teamId));
   }
 
-  async updateTeam(teamId: string, teamData: InsertTeamDto): Promise<void> {
-    await this.db.update(teams).set(teamData).where(eq(teams.id, teamId));
+  async updateTeam(
+    userId: string,
+    teamId: string,
+    teamData: UpdateTeamDto,
+    members?: string[],
+  ): Promise<void> {
+    await this.db.transaction(async (tx) => {
+      if (members) {
+        const foundTeam = await tx
+          .select()
+          .from(teams)
+          .where(eq(teams.readable_id, teamId))
+          .limit(1)
+          .then((rows) => rows[0]);
+
+        if (foundTeam) {
+          await tx
+            .delete(team_members)
+            .where(eq(team_members.team_id, foundTeam.id));
+
+          await tx.insert(team_members).values(
+            members.map((memberId) => ({
+              team_id: foundTeam.id,
+              user_id: memberId,
+              role: memberId === userId ? teamRoles.ADMIN : teamRoles.MEMBER,
+            })),
+          );
+        }
+      }
+
+      await this.db
+        .update(teams)
+        .set(teamData)
+        .where(eq(teams.readable_id, teamId));
+    });
   }
 
   async getUserRole(boardId: string, userId: string): Promise<TeamRole | null> {
@@ -93,5 +148,26 @@ export class TeamRepository implements TeamRepositoryInterface {
     }
 
     return result[0].role as TeamRole;
+  }
+
+  async findById(teamId: string): Promise<TeamEntity | null> {
+    const team = await this.db
+      .select()
+      .from(teams)
+      .where(eq(teams.readable_id, teamId))
+      .limit(1)
+      .then((rows) => rows[0]);
+
+    if (!team) {
+      return null;
+    }
+
+    return new TeamEntity({
+      id: team.id,
+      name: team.name,
+      readableId: team.readable_id,
+      description: team.description,
+      createdAt: new Date(team.created_at),
+    });
   }
 }

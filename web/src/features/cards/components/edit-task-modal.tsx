@@ -19,7 +19,7 @@ import { notifications } from '@mantine/notifications'
 import { EditIcon } from 'lucide-react'
 
 type Props = {
-  boardId: string
+  teamId: string
   cardId: string
   title: string
   description?: string
@@ -29,7 +29,7 @@ type Props = {
 
 export function EditTaskModal({
   cardId,
-  boardId,
+  teamId,
   title,
   description,
   dueDate,
@@ -51,11 +51,11 @@ export function EditTaskModal({
 
   const { data } = appQuery.useSuspenseQuery(
     'get',
-    '/v1/boards/{boardId}/users',
+    '/v1/teams/{teamId}/users',
     {
       params: {
         path: {
-          boardId,
+          teamId,
         },
       },
     },

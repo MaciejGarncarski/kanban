@@ -21,11 +21,11 @@ import { appQuery } from '@/api-client/api-client'
 import { notifications } from '@mantine/notifications'
 
 type Props = {
-  boardId: string
+  teamId: string
   columnId: string
 }
 
-export function AddTaskCardModal({ boardId, columnId }: Props) {
+export function AddTaskCardModal({ teamId, columnId }: Props) {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   })
@@ -33,11 +33,11 @@ export function AddTaskCardModal({ boardId, columnId }: Props) {
   const { mutate, isPending } = appQuery.useMutation('post', '/v1/cards')
   const { data } = appQuery.useSuspenseQuery(
     'get',
-    '/v1/boards/{boardId}/users',
+    '/v1/teams/{teamId}/users',
     {
       params: {
         path: {
-          boardId,
+          teamId,
         },
       },
     },
