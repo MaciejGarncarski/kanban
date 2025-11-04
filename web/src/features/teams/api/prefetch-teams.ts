@@ -14,7 +14,7 @@ export function prefetchTeams(queryClient: QueryClient, cookies: string) {
           },
         })
 
-        return res.data
+        return res.data || { teams: [] }
       } catch {
         return { teams: [] }
       }

@@ -4,1321 +4,1368 @@
  */
 
 export interface paths {
-  '/v1/healthcheck': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** App health check */
-    get: operations['AppController_healthCheck']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/v1/user/all': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get: operations['UserController_getAllUsers']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/v1/teams/{teamId}/users': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get: operations['UserController_getUsers']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/v1/user/{teamId}/role': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get: operations['UserController_getRoleByTeamId']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/v1/auth/sign-in': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Login a user and get access and refresh tokens */
-    post: operations['AuthController_signInUser']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/v1/auth/register': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Register a new user */
-    post: operations['AuthController_registerUser']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/v1/auth/me': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Gets the current logged-in user */
-    get: operations['AuthController_checkCurrentSession']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/v1/auth/refresh-token': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Refresh access token */
-    post: operations['AuthController_refreshAccessToken']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/v1/auth/logout': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post?: never
-    /** Logout user */
-    delete: operations['AuthController_logout']
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/v1/teams': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get all teams for the authenticated user */
-    get: operations['TeamController_getTeams']
-    put?: never
-    /** Get all teams for the authenticated user */
-    post: operations['TeamController_createTeam']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/v1/teams/{teamId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post?: never
-    /** Delete a team by ID */
-    delete: operations['TeamController_deleteTeam']
-    options?: never
-    head?: never
-    /** Update a team by ID */
-    patch: operations['TeamController_updateTeam']
-    trace?: never
-  }
-  '/v1/teams/{teamId}/boards': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get all boards by team ID */
-    get: operations['BoardController_getAllBoardsByTeamId']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/v1/boards/{boardId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get board by ID */
-    get: operations['BoardController_getBoardById']
-    put?: never
-    post?: never
-    /** Delete board by ID */
-    delete: operations['BoardController_deleteBoardById']
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/v1/boards': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Create a new board */
-    post: operations['BoardController_createBoard']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/v1/cards': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post: operations['CardController_createCard']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/v1/cards/{cardId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post?: never
-    delete: operations['CardController_deleteCard']
-    options?: never
-    head?: never
-    patch: operations['CardController_updateCard']
-    trace?: never
-  }
-  '/v1/columns': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post: operations['ColumnController_createColumn']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/v1/columns/{columnId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post?: never
-    delete: operations['ColumnController_deleteColumn']
-    options?: never
-    head?: never
-    patch: operations['ColumnController_updateColumn']
-    trace?: never
-  }
+    "/v1/healthcheck": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** App health check */
+        get: operations["AppController_healthCheck"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/user/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["UserController_getAllUsers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/teams/{teamId}/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["UserController_getUsers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/user/{teamId}/role": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["UserController_getRoleByTeamId"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/auth/sign-in": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Login a user and get access and refresh tokens */
+        post: operations["AuthController_signInUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/auth/register": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Register a new user */
+        post: operations["AuthController_registerUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/auth/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Gets the current logged-in user */
+        get: operations["AuthController_checkCurrentSession"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/auth/refresh-token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Refresh access token */
+        post: operations["AuthController_refreshAccessToken"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/auth/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Logout user */
+        delete: operations["AuthController_logout"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/teams": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all teams for the authenticated user */
+        get: operations["TeamController_getTeams"];
+        put?: never;
+        /** Get all teams for the authenticated user */
+        post: operations["TeamController_createTeam"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/teams/{teamId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete a team by ID */
+        delete: operations["TeamController_deleteTeam"];
+        options?: never;
+        head?: never;
+        /** Update a team by ID */
+        patch: operations["TeamController_updateTeam"];
+        trace?: never;
+    };
+    "/v1/teams/{teamId}/boards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all boards by team ID */
+        get: operations["BoardController_getAllBoardsByTeamId"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/boards/{boardId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get board by ID */
+        get: operations["BoardController_getBoardById"];
+        put?: never;
+        post?: never;
+        /** Delete board by ID */
+        delete: operations["BoardController_deleteBoardById"];
+        options?: never;
+        head?: never;
+        /** Update board */
+        patch: operations["BoardController_updateBoard"];
+        trace?: never;
+    };
+    "/v1/boards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a new board */
+        post: operations["BoardController_createBoard"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/cards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CardController_createCard"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/cards/{cardId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["CardController_deleteCard"];
+        options?: never;
+        head?: never;
+        patch: operations["CardController_updateCard"];
+        trace?: never;
+    };
+    "/v1/columns": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ColumnController_createColumn"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/columns/{columnId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["ColumnController_deleteColumn"];
+        options?: never;
+        head?: never;
+        patch: operations["ColumnController_updateColumn"];
+        trace?: never;
+    };
 }
-export type webhooks = Record<string, never>
+export type webhooks = Record<string, never>;
 export interface components {
-  schemas: {
-    UserResponseDto: {
-      /**
-       * @description User ID
-       * @example 0199f343-b727-7971-a165-2c495b512976
-       */
-      id: string
-      /**
-       * @description User name
-       * @example Alice
-       */
-      name: string
-      /**
-       * @description User email address
-       * @example alice@example.com
-       */
-      email: string
-      /**
-       * @description User account creation date
-       * @example 2025-10-17T15:42:05.351Z
-       */
-      createdAt: string
-    }
-    UserArrayResponseDto: {
-      /** @description Array of users */
-      users: components['schemas']['UserResponseDto'][]
-    }
-    ApiErrorResponse: {
-      /** @example 400 */
-      statusCode: number
-      /** @example Validation Error */
-      message: string
-      /** @example Bad Request */
-      error: string
-      /** @example YevPQs */
-      correlationId: string
-      /**
-       * @description Optional list of sub-errors
-       * @example [
-       *       "incorrect email"
-       *     ]
-       */
-      subErrors?: string[] | null
-      /**
-       * @description Validation error details
-       * @example [
-       *       {
-       *         "field": "email",
-       *         "message": "incorrect email"
-       *       }
-       *     ]
-       */
-      validationErrors?: string[] | null
-    }
-    RoleResponseDto: {
-      /** @enum {string} */
-      role: 'admin' | 'member'
-    }
-    SignInBodyDto: {
-      /**
-       * @description User email
-       * @example alice@example.com
-       */
-      email: string
-      /**
-       * @description User password
-       * @example Abcd123
-       */
-      password: string
-    }
-    SignInResponseDto: {
-      /**
-       * @description JWT access token
-       * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-       */
-      accessToken: string
-    }
-    RegisterBodyDto: {
-      /**
-       * @description User email
-       * @example alice@example.com
-       */
-      email: string
-      /**
-       * @description User name
-       * @example John Doe
-       */
-      name: string
-      /**
-       * @description User password
-       * @example Abcd123
-       */
-      password: string
-      /**
-       * @description Password confirmation
-       * @example Abcd123
-       */
-      confirmPassword: string
-    }
-    RegisterResponseDto: {
-      /**
-       * @description JWT access token
-       * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-       */
-      accessToken: string
-      /** @description Registered user information */
-      user: components['schemas']['UserResponseDto']
-    }
-    RefreshTokenResponseDto: {
-      /**
-       * @description JWT access token
-       * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-       */
-      accessToken: string
-    }
-    LogoutResponseDto: {
-      /**
-       * @description Logout confirmation message
-       * @example Logged out
-       */
-      message: string
-    }
-    TeamDto: {
-      /** @example nanoid */
-      readableId: string
-      /** @example Awesome Team */
-      name: string
-      /** @example This is an awesome team working on great projects. */
-      description?: string
-      /**
-       * @description User account creation date
-       * @example 2025-10-17T15:42:05.351Z
-       */
-      createdAt: string
-    }
-    GetTeamsResponseDto: {
-      /** @description List of teams for the user */
-      teams: components['schemas']['TeamDto'][]
-    }
-    CreateTeamRequestDto: {
-      /** @description Name of the team */
-      name: string
-      /** @description Description of the team */
-      description?: string
-      /** @description Array of member user IDs */
-      members?: string[]
-    }
-    UpdateTeamRequestDto: {
-      /** @description Name of the team */
-      name: string
-      /** @description Description of the team */
-      description?: string
-      /** @description Array of member user IDs */
-      members?: string[]
-    }
-    BoardSummaryDto: {
-      readableId: string
-      name: string
-      description?: string
-      teamId: string
-      readableTeamId: string
-      createdAt?: string
-    }
-    GetBoardsByTeamResponseDto: {
-      /** @description List of boards for the team */
-      boards: components['schemas']['BoardSummaryDto'][]
-    }
-    CardDto: {
-      id: string
-      title: string
-      description?: string
-      position: number
-      assignedTo?: string
-      columnId: string
-      createdAt?: string
-      updatedAt?: string
-      /** Format: date-time */
-      dueDate?: string
-    }
-    ColumnDto: {
-      id: string
-      boardId: string
-      name: string
-      position: number
-      /**
-       * @description User account creation date
-       * @example 2025-10-17T15:42:05.351Z
-       */
-      createdAt: string
-      cards: components['schemas']['CardDto'][]
-    }
-    BoardDetailDto: {
-      readableId: string
-      name: string
-      description?: string
-      teamId: string
-      readableTeamId: string
-      createdAt?: string
-      /** @description List of columns with their cards */
-      columns: components['schemas']['ColumnDto'][]
-    }
-    CreateBoardRequestDto: {
-      /**
-       * @description Name of the board
-       * @example Project Roadmap
-       */
-      name: string
-      /**
-       * @description Description of the board
-       * @example A detailed description of the project roadmap
-       */
-      description: string
-      /**
-       * @description ID of the team to which the board belongs
-       * @example team-12345
-       */
-      teamId: string
-    }
-    CreateCardRequestDto: {
-      /** @example Title */
-      title: string
-      /** @example column-uuid */
-      columnId: string
-      /** @example Description */
-      description?: string
-      /** @example 2023-01-01 */
-      dueDate?: string
-      /** @example user-uuid */
-      assignedTo?: string
-    }
-    UpdateCardRequestDto: {
-      /** @example New Title */
-      title?: string
-      /** @example New Description */
-      description?: string
-      /** @example 2024-12-31 */
-      dueDate?: string
-      /** @example user-uuid */
-      assignedTo?: string
-      /** @example 3 */
-      position?: number
-      /** @example column-uuid */
-      columnId?: string
-    }
-    CreateColumnRequestDto: {
-      /**
-       * @description Title of the column
-       * @example To Do
-       */
-      title: string
-      /**
-       * @description ID of the board the column belongs to
-       * @example 123e4567-e89b-12d3-a456-426614174000
-       */
-      boardId: string
-    }
-    CreateColumnResponseDto: {
-      /** @example a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6 */
-      id: string
-      /** @example To Do */
-      name: string
-      /** @example a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6 */
-      boardId: string
-      /**
-       * @description User account creation date
-       * @example 2025-10-17T15:42:05.351Z
-       */
-      createdAt: string
-      /** @example 1 */
-      position: number
-    }
-    UpdateColumnRequestDto: {
-      /** @example New Column Name */
-      name?: string
-      /** @example 2 */
-      position?: number
-    }
-  }
-  responses: never
-  parameters: never
-  requestBodies: never
-  headers: never
-  pathItems: never
+    schemas: {
+        UserResponseDto: {
+            /**
+             * @description User ID
+             * @example 0199f343-b727-7971-a165-2c495b512976
+             */
+            id: string;
+            /**
+             * @description User name
+             * @example Alice
+             */
+            name: string;
+            /**
+             * @description User email address
+             * @example alice@example.com
+             */
+            email: string;
+            /**
+             * @description User account creation date
+             * @example 2025-10-17T15:42:05.351Z
+             */
+            createdAt: string;
+        };
+        UserArrayResponseDto: {
+            /** @description Array of users */
+            users: components["schemas"]["UserResponseDto"][];
+        };
+        ApiErrorResponse: {
+            /** @example 400 */
+            statusCode: number;
+            /** @example Validation Error */
+            message: string;
+            /** @example Bad Request */
+            error: string;
+            /** @example YevPQs */
+            correlationId: string;
+            /**
+             * @description Optional list of sub-errors
+             * @example [
+             *       "incorrect email"
+             *     ]
+             */
+            subErrors?: string[] | null;
+            /**
+             * @description Validation error details
+             * @example [
+             *       {
+             *         "field": "email",
+             *         "message": "incorrect email"
+             *       }
+             *     ]
+             */
+            validationErrors?: string[] | null;
+        };
+        RoleResponseDto: {
+            /** @enum {string} */
+            role: "admin" | "member";
+        };
+        SignInBodyDto: {
+            /**
+             * @description User email
+             * @example alice@example.com
+             */
+            email: string;
+            /**
+             * @description User password
+             * @example Abcd123
+             */
+            password: string;
+        };
+        SignInResponseDto: {
+            /**
+             * @description JWT access token
+             * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+             */
+            accessToken: string;
+        };
+        RegisterBodyDto: {
+            /**
+             * @description User email
+             * @example alice@example.com
+             */
+            email: string;
+            /**
+             * @description User name
+             * @example John Doe
+             */
+            name: string;
+            /**
+             * @description User password
+             * @example Abcd123
+             */
+            password: string;
+            /**
+             * @description Password confirmation
+             * @example Abcd123
+             */
+            confirmPassword: string;
+        };
+        RegisterResponseDto: {
+            /**
+             * @description JWT access token
+             * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+             */
+            accessToken: string;
+            /** @description Registered user information */
+            user: components["schemas"]["UserResponseDto"];
+        };
+        RefreshTokenResponseDto: {
+            /**
+             * @description JWT access token
+             * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+             */
+            accessToken: string;
+        };
+        LogoutResponseDto: {
+            /**
+             * @description Logout confirmation message
+             * @example Logged out
+             */
+            message: string;
+        };
+        TeamDto: {
+            /** @example nanoid */
+            readableId: string;
+            /** @example Awesome Team */
+            name: string;
+            /** @example This is an awesome team working on great projects. */
+            description?: string;
+            /**
+             * @description User account creation date
+             * @example 2025-10-17T15:42:05.351Z
+             */
+            createdAt: string;
+        };
+        GetTeamsResponseDto: {
+            /** @description List of teams for the user */
+            teams: components["schemas"]["TeamDto"][];
+        };
+        CreateTeamRequestDto: {
+            /** @description Name of the team */
+            name: string;
+            /** @description Description of the team */
+            description?: string;
+            /** @description Array of member user IDs */
+            members?: string[];
+        };
+        UpdateTeamRequestDto: {
+            /** @description Name of the team */
+            name: string;
+            /** @description Description of the team */
+            description?: string;
+            /** @description Array of member user IDs */
+            members?: string[];
+        };
+        BoardSummaryDto: {
+            readableId: string;
+            name: string;
+            description?: string;
+            teamId: string;
+            readableTeamId: string;
+            createdAt?: string;
+        };
+        GetBoardsByTeamResponseDto: {
+            /** @description List of boards for the team */
+            boards: components["schemas"]["BoardSummaryDto"][];
+        };
+        CardDto: {
+            id: string;
+            title: string;
+            description?: string;
+            position: number;
+            assignedTo?: string;
+            columnId: string;
+            createdAt?: string;
+            updatedAt?: string;
+            /** Format: date-time */
+            dueDate?: string;
+        };
+        ColumnDto: {
+            id: string;
+            boardId: string;
+            name: string;
+            position: number;
+            /**
+             * @description User account creation date
+             * @example 2025-10-17T15:42:05.351Z
+             */
+            createdAt: string;
+            cards: components["schemas"]["CardDto"][];
+        };
+        BoardDetailDto: {
+            readableId: string;
+            name: string;
+            description?: string;
+            teamId: string;
+            readableTeamId: string;
+            createdAt?: string;
+            /** @description List of columns with their cards */
+            columns: components["schemas"]["ColumnDto"][];
+        };
+        CreateBoardRequestDto: {
+            /**
+             * @description Name of the board
+             * @example Project Roadmap
+             */
+            name: string;
+            /**
+             * @description Description of the board
+             * @example A detailed description of the project roadmap
+             */
+            description: string;
+            /**
+             * @description ID of the team to which the board belongs
+             * @example team-12345
+             */
+            teamId: string;
+        };
+        UpdateBoardRequestDto: {
+            /** @example name */
+            name: string;
+            /** @example description */
+            description: string;
+        };
+        CreateCardRequestDto: {
+            /** @example Title */
+            title: string;
+            /** @example column-uuid */
+            columnId: string;
+            /** @example Description */
+            description?: string;
+            /** @example 2023-01-01 */
+            dueDate?: string;
+            /** @example user-uuid */
+            assignedTo?: string;
+        };
+        UpdateCardRequestDto: {
+            /** @example New Title */
+            title?: string;
+            /** @example New Description */
+            description?: string;
+            /** @example 2024-12-31 */
+            dueDate?: string;
+            /** @example user-uuid */
+            assignedTo?: string;
+            /** @example 3 */
+            position?: number;
+            /** @example column-uuid */
+            columnId?: string;
+        };
+        CreateColumnRequestDto: {
+            /**
+             * @description Title of the column
+             * @example To Do
+             */
+            title: string;
+            /**
+             * @description ID of the board the column belongs to
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            boardId: string;
+        };
+        CreateColumnResponseDto: {
+            /** @example a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6 */
+            id: string;
+            /** @example To Do */
+            name: string;
+            /** @example a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6 */
+            boardId: string;
+            /**
+             * @description User account creation date
+             * @example 2025-10-17T15:42:05.351Z
+             */
+            createdAt: string;
+            /** @example 1 */
+            position: number;
+        };
+        UpdateColumnRequestDto: {
+            /** @example New Column Name */
+            name?: string;
+            /** @example 2 */
+            position?: number;
+        };
+    };
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
-export type $defs = Record<string, never>
+export type $defs = Record<string, never>;
 export interface operations {
-  AppController_healthCheck: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description App is healthy */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content?: never
-      }
-    }
-  }
-  UserController_getAllUsers: {
-    parameters: {
-      query?: never
-      header?: {
-        /** @description Bearer access token */
-        Authorization?: string
-      }
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['UserArrayResponseDto']
-        }
-      }
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-    }
-  }
-  UserController_getUsers: {
-    parameters: {
-      query?: never
-      header?: {
-        /** @description Bearer access token */
-        Authorization?: string
-      }
-      path: {
-        teamId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['UserArrayResponseDto']
-        }
-      }
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-    }
-  }
-  UserController_getRoleByTeamId: {
-    parameters: {
-      query?: never
-      header?: {
-        /** @description Bearer access token */
-        Authorization?: string
-      }
-      path: {
-        teamId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['RoleResponseDto']
-        }
-      }
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-    }
-  }
-  AuthController_signInUser: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['SignInBodyDto']
-      }
-    }
-    responses: {
-      /** @description Access token and refresh token set in HttpOnly cookie */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['SignInResponseDto']
-        }
-      }
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-    }
-  }
-  AuthController_registerUser: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['RegisterBodyDto']
-      }
-    }
-    responses: {
-      /** @description Registered user */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['RegisterResponseDto']
-        }
-      }
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-    }
-  }
-  AuthController_checkCurrentSession: {
-    parameters: {
-      query?: never
-      header?: {
-        /** @description Bearer access token */
-        Authorization?: string
-      }
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Signed in user */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['UserResponseDto']
-        }
-      }
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-    }
-  }
-  AuthController_refreshAccessToken: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Refresh access token */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['RefreshTokenResponseDto']
-        }
-      }
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-    }
-  }
-  AuthController_logout: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Logged out */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['LogoutResponseDto']
-        }
-      }
-    }
-  }
-  TeamController_getTeams: {
-    parameters: {
-      query?: never
-      header?: {
-        /** @description Bearer access token */
-        Authorization?: string
-      }
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Returns a list of teams associated with the authenticated user. */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['GetTeamsResponseDto']
-        }
-      }
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-    }
-  }
-  TeamController_createTeam: {
-    parameters: {
-      query?: never
-      header?: {
-        /** @description Bearer access token */
-        Authorization?: string
-      }
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateTeamRequestDto']
-      }
-    }
-    responses: {
-      /** @description Returns a list of teams associated with the authenticated user. */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['TeamDto']
-        }
-      }
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-    }
-  }
-  TeamController_deleteTeam: {
-    parameters: {
-      query?: never
-      header?: {
-        /** @description Bearer access token */
-        Authorization?: string
-      }
-      path: {
-        /** @description The ID of the team to be deleted */
-        teamId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Successfully deleted the team. */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content?: never
-      }
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-    }
-  }
-  TeamController_updateTeam: {
-    parameters: {
-      query?: never
-      header?: {
-        /** @description Bearer access token */
-        Authorization?: string
-      }
-      path: {
-        /** @description ID of the team */
-        teamId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateTeamRequestDto']
-      }
-    }
-    responses: {
-      /** @description Successfully updated the team. */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content?: never
-      }
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-    }
-  }
-  BoardController_getAllBoardsByTeamId: {
-    parameters: {
-      query?: never
-      header?: {
-        /** @description Bearer access token */
-        Authorization?: string
-      }
-      path: {
-        /** @description Team ID */
-        teamId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Successfully retrieved boards for the team */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['GetBoardsByTeamResponseDto']
-        }
-      }
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-    }
-  }
-  BoardController_getBoardById: {
-    parameters: {
-      query?: never
-      header?: {
-        /** @description Bearer access token */
-        Authorization?: string
-      }
-      path: {
-        /** @description Board ID */
-        boardId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Successfully retrieved board */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['BoardDetailDto']
-        }
-      }
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-    }
-  }
-  BoardController_deleteBoardById: {
-    parameters: {
-      query?: never
-      header?: {
-        /** @description Bearer access token */
-        Authorization?: string
-      }
-      path: {
-        /** @description The ID of the board to delete */
-        boardId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Successfully deleted board */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content?: never
-      }
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-    }
-  }
-  BoardController_createBoard: {
-    parameters: {
-      query?: never
-      header?: {
-        /** @description Bearer access token */
-        Authorization?: string
-      }
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateBoardRequestDto']
-      }
-    }
-    responses: {
-      /** @description Successfully created board */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content?: never
-      }
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-    }
-  }
-  CardController_createCard: {
-    parameters: {
-      query?: never
-      header?: {
-        /** @description Bearer access token */
-        Authorization?: string
-      }
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateCardRequestDto']
-      }
-    }
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['CardDto']
-        }
-      }
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-    }
-  }
-  CardController_deleteCard: {
-    parameters: {
-      query?: never
-      header?: {
-        /** @description Bearer access token */
-        Authorization?: string
-      }
-      path: {
-        cardId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['CardDto']
-        }
-      }
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-    }
-  }
-  CardController_updateCard: {
-    parameters: {
-      query?: never
-      header?: {
-        /** @description Bearer access token */
-        Authorization?: string
-      }
-      path: {
-        cardId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateCardRequestDto']
-      }
-    }
-    responses: {
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-    }
-  }
-  ColumnController_createColumn: {
-    parameters: {
-      query?: never
-      header?: {
-        /** @description Bearer access token */
-        Authorization?: string
-      }
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateColumnRequestDto']
-      }
-    }
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['CreateColumnResponseDto']
-        }
-      }
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-    }
-  }
-  ColumnController_deleteColumn: {
-    parameters: {
-      query?: never
-      header?: {
-        /** @description Bearer access token */
-        Authorization?: string
-      }
-      path: {
-        columnId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-    }
-  }
-  ColumnController_updateColumn: {
-    parameters: {
-      query?: never
-      header?: {
-        /** @description Bearer access token */
-        Authorization?: string
-      }
-      path: {
-        columnId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateColumnRequestDto']
-      }
-    }
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['CreateColumnResponseDto']
-        }
-      }
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ApiErrorResponse']
-        }
-      }
-    }
-  }
+    AppController_healthCheck: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description App is healthy */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UserController_getAllUsers: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserArrayResponseDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    UserController_getUsers: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path: {
+                teamId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserArrayResponseDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    UserController_getRoleByTeamId: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path: {
+                teamId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoleResponseDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    AuthController_signInUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SignInBodyDto"];
+            };
+        };
+        responses: {
+            /** @description Access token and refresh token set in HttpOnly cookie */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SignInResponseDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    AuthController_registerUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegisterBodyDto"];
+            };
+        };
+        responses: {
+            /** @description Registered user */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegisterResponseDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    AuthController_checkCurrentSession: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Signed in user */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserResponseDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    AuthController_refreshAccessToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Refresh access token */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RefreshTokenResponseDto"];
+                };
+            };
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    AuthController_logout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Logged out */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LogoutResponseDto"];
+                };
+            };
+        };
+    };
+    TeamController_getTeams: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Returns a list of teams associated with the authenticated user. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetTeamsResponseDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    TeamController_createTeam: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateTeamRequestDto"];
+            };
+        };
+        responses: {
+            /** @description Returns a list of teams associated with the authenticated user. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeamDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    TeamController_deleteTeam: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path: {
+                /** @description The ID of the team to be deleted */
+                teamId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully deleted the team. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    TeamController_updateTeam: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path: {
+                /** @description ID of the team */
+                teamId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTeamRequestDto"];
+            };
+        };
+        responses: {
+            /** @description Successfully updated the team. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    BoardController_getAllBoardsByTeamId: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path: {
+                /** @description Team ID */
+                teamId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully retrieved boards for the team */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetBoardsByTeamResponseDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    BoardController_getBoardById: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path: {
+                /** @description Board ID */
+                boardId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully retrieved board */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BoardDetailDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    BoardController_deleteBoardById: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path: {
+                /** @description The ID of the board to delete */
+                boardId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully deleted board */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    BoardController_updateBoard: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path: {
+                /** @description Board ID */
+                boardId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateBoardRequestDto"];
+            };
+        };
+        responses: {
+            /** @description Successfully updated board */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BoardSummaryDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    BoardController_createBoard: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateBoardRequestDto"];
+            };
+        };
+        responses: {
+            /** @description Successfully created board */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BoardSummaryDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    CardController_createCard: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateCardRequestDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CardDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    CardController_deleteCard: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path: {
+                cardId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CardDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    CardController_updateCard: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path: {
+                cardId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCardRequestDto"];
+            };
+        };
+        responses: {
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    ColumnController_createColumn: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateColumnRequestDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateColumnResponseDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    ColumnController_deleteColumn: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path: {
+                columnId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    ColumnController_updateColumn: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Bearer access token */
+                Authorization?: string;
+            };
+            path: {
+                columnId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateColumnRequestDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateColumnResponseDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
 }

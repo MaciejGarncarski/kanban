@@ -6,10 +6,10 @@ export function useCreateTeam() {
   const router = useRouter()
 
   return appQuery.useMutation('post', '/v1/teams', {
-    onError: () => {
+    onError: (err) => {
       notifications.show({
         title: 'Error',
-        message: 'Failed to create team. Please try again.',
+        message: err.message,
         color: 'red',
       })
     },

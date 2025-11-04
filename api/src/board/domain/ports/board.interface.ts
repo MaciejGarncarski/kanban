@@ -6,7 +6,12 @@ export interface BoardRepositoryInterface {
   createBoard(board: {
     userId: string;
     name: string;
-    description: string;
-  }): Promise<void>;
+    description?: string;
+  }): Promise<BoardAggregate>;
   deleteBoardById(boardId: string): Promise<void>;
+  updateBoard(boardData: {
+    boardId: string;
+    name: string;
+    description: string;
+  }): Promise<BoardAggregate>;
 }

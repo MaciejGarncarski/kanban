@@ -1,6 +1,7 @@
 'use client'
 
 import { DeleteBoardModal } from '@/features/boards/components/delete-board-modal'
+import { EditBoardModal } from '@/features/boards/components/edit-board-modal'
 import { DeleteTeamModal } from '@/features/teams/components/delete-team-modal'
 import { EditTeamModal } from '@/features/teams/components/edit-team-modal'
 import { useRoleByTeamId } from '@/features/teams/hooks/use-role-by-team-id'
@@ -28,6 +29,9 @@ export function SettingsModal({ teamId, boardId }: Props) {
   const [editTeamOpened, { open: openEditTeam, close: closeEditTeam }] =
     useDisclosure(false)
 
+  const [editBoardOpened, { open: openEditBoard, close: closeEditBoard }] =
+    useDisclosure(false)
+
   return (
     <>
       {boardId && isAdmin && (
@@ -51,6 +55,14 @@ export function SettingsModal({ teamId, boardId }: Props) {
           teamId={teamId}
           isOpen={editTeamOpened}
           onClose={closeEditTeam}
+        />
+      )}
+
+      {teamId && boardId && isAdmin && (
+        <EditBoardModal
+          boardId={boardId}
+          isOpen={editBoardOpened}
+          onClose={closeEditBoard}
         />
       )}
 
@@ -87,7 +99,9 @@ export function SettingsModal({ teamId, boardId }: Props) {
               </Menu.Item>
               {boardId && (
                 <>
-                  <Menu.Item color="orange">Edit board</Menu.Item>
+                  <Menu.Item color="orange" onClick={openEditBoard}>
+                    Edit board
+                  </Menu.Item>
                   <Menu.Item color="red" onClick={openDeleteBoard}>
                     Delete board
                   </Menu.Item>

@@ -19,6 +19,7 @@ export function prefetchTeamUsers(
             cookie: cookies,
           },
         })
+
         return res.data || { users: [] }
       } catch {
         return { users: [] }

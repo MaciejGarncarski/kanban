@@ -24,6 +24,10 @@ export function NewTeamForm() {
   const { data: allUsersData } = useAllUsers()
   const { data: userData } = useAuth()
   const [selectedUsers, setSelectedUsers] = useState<string[]>([])
+  const newTeamMutation = useCreateTeam()
+  const combobox = useCombobox({
+    onDropdownClose: () => combobox.resetSelectedOption(),
+  })
 
   const form = useForm({
     initialValues: {
@@ -34,12 +38,6 @@ export function NewTeamForm() {
       name: (value) => (value.length < 1 ? 'Name is required' : null),
     },
   })
-
-  const combobox = useCombobox({
-    onDropdownClose: () => combobox.resetSelectedOption(),
-  })
-
-  const newTeamMutation = useCreateTeam()
 
   const handleSubmit = form.onSubmit((values) => {
     newTeamMutation.mutate({

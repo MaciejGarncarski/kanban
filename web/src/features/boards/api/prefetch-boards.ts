@@ -20,7 +20,7 @@ export function prefetchBoards(
           },
         })
 
-        return res.data
+        return res.data || { boards: [] }
       } catch {
         return { boards: [] }
       }

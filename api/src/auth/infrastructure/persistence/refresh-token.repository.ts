@@ -63,8 +63,8 @@ export class RefreshTokenRepository implements RefreshTokenRepositoryInterface {
 
   async rotate(refreshToken: RefreshTokenEntity) {
     const created = await this.create(refreshToken.userId);
-
     await this.revoke(refreshToken.id, created.entity.id);
+
     return {
       tokenPlain: created.tokenPlain,
       tokenHash: created.tokenHash,

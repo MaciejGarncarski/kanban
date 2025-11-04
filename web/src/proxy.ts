@@ -73,12 +73,12 @@ export async function proxy(request: NextRequest) {
         return redirectRes
       }
 
-      const refreshTokenCookie = getCookieValue(
+      const newRefreshToken = getCookieValue(
         refreshResponse.response.headers.get('set-cookie') || '',
         'refreshToken',
       )
 
-      if (!refreshTokenCookie) {
+      if (!newRefreshToken) {
         const redirectRes = NextResponse.redirect(
           new URL('/auth/sign-in', request.url),
           {
@@ -101,19 +101,12 @@ export async function proxy(request: NextRequest) {
         newAccessTokenCookie || refreshResponse.data.accessToken
       const res = NextResponse.next()
 
-      // This is workaround for fucking stupid Next.js behavior, that does not allow NOT to encode cookie values
-      // So if we have signed cookie from backend, and we would set it in cookie here, it would get encoded, breaking the signature
-      // So we manually construct the Set-Cookie header here
-      const accessTokenCookie = `${'accessToken'}=${newAccessToken}; Path=${cookieConfigAccessToken.path}; HttpOnly; SameSite=${cookieConfigAccessToken.sameSite}${
-        cookieConfigAccessToken.secure ? '; Secure' : ''
-      }${cookieConfigAccessToken.domain ? `; Domain=${cookieConfigAccessToken.domain}` : ''}; Max-Age=${cookieConfigAccessToken.maxAge}`
-
-      const refreshCookieString = `${'refreshToken'}=${refreshTokenCookie}; Path=${cookieConfigRefreshToken.path}; HttpOnly; SameSite=${cookieConfigRefreshToken.sameSite}${
-        cookieConfigRefreshToken.secure ? '; Secure' : ''
-      }${cookieConfigRefreshToken.domain ? `; Domain=${cookieConfigRefreshToken.domain}` : ''}; Max-Age=${cookieConfigRefreshToken.maxAge}`
-
-      res.headers.append('Set-Cookie', accessTokenCookie)
-      res.headers.append('Set-Cookie', refreshCookieString)
+      res.cookies.set('accessToken', newAccessToken, cookieConfigAccessToken)
+      res.cookies.set(
+        'refreshToken',
+        decodeURIComponent(newRefreshToken),
+        cookieConfigRefreshToken,
+      )
 
       return res
     } catch {

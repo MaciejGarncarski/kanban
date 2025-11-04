@@ -4,7 +4,6 @@ import {
   ExecutionContext,
   UnauthorizedException,
   Inject,
-  Logger,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
@@ -38,10 +37,6 @@ export class AuthGuard implements CanActivate {
     const refreshToken = this.extractRefreshToken(request);
     const accessToken = this.extractAccessToken(request);
 
-    Logger.log('AuthGuard: Checking access token');
-    Logger.debug(`Access Token: ${accessToken}`);
-    Logger.debug(`Refresh Token: ${refreshToken}`);
-
     try {
       if (!accessToken) {
         throw Error('No access token provided');
@@ -52,6 +47,10 @@ export class AuthGuard implements CanActivate {
 
       return true;
     } catch (error) {
+      if (!refreshToken) {
+        throw new UnauthorizedException('No refresh token provided');
+      }
+
       if (error instanceof Error) {
         if (
           error.name === 'TokenExpiredError' ||
@@ -62,20 +61,21 @@ export class AuthGuard implements CanActivate {
               await this.commandBus.execute<
                 RefreshAccessTokenCommand,
                 RefreshAccessTokenReturn
-              >(new RefreshAccessTokenCommand(refreshToken || ''));
+              >(new RefreshAccessTokenCommand(refreshToken));
 
-            request.userId = this.jwtService.verify<JWTPayload>(accessToken).id;
+            const verifiedToken =
+              this.jwtService.verify<JWTPayload>(accessToken);
 
             setTokenCookie(response, this.refreshTokenConf, newRefreshToken);
             setTokenCookie(response, this.accessTokenConf, accessToken);
+            request.userId = verifiedToken.id;
+
             return true;
-          } catch (e) {
-            Logger.warn('Failed to refresh access token', e);
+          } catch {
             throw new UnauthorizedException('Could not refresh access token');
           }
         }
       }
-      Logger.warn('Access token verification failed', error);
       throw new UnauthorizedException('Invalid or expired token');
     }
   }

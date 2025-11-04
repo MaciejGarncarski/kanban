@@ -1,5 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { eq, inArray } from 'drizzle-orm';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
+import { and, eq, inArray } from 'drizzle-orm';
 import { CreateBoardCommand } from 'src/board/application/commands/create-board.command';
 import { BoardAggregate } from 'src/board/domain/board.entity';
 import { BoardRepositoryInterface } from 'src/board/domain/ports/board.interface';
@@ -24,6 +28,49 @@ export class BoardRepository implements BoardRepositoryInterface {
     @InjectDb() private readonly db: DB,
     private readonly userRepository: UserRepository,
   ) {}
+
+  async updateBoard(boardData: {
+    boardId: string;
+    name: string;
+    description?: string;
+  }): Promise<BoardAggregate> {
+    const [prevData] = await this.db
+      .select()
+      .from(boards)
+      .where(eq(boards.readable_id, boardData.boardId))
+      .limit(1);
+
+    if (!prevData) {
+      throw new BadRequestException('Board not found');
+    }
+
+    const [teamData] = await this.db
+      .select({ readableId: teams.readable_id })
+      .from(teams)
+      .where(eq(teams.id, prevData.team_id));
+
+    const [updated] = await this.db
+      .update(boards)
+      .set({
+        name: boardData.name,
+        description: boardData.description
+          ? boardData.description
+          : prevData.description,
+      })
+      .where(eq(boards.readable_id, boardData.boardId))
+      .returning();
+
+    return new BoardAggregate({
+      createdAt: updated.created_at,
+      description: updated.description,
+      id: updated.id,
+      name: updated.name,
+      readableId: updated.readable_id,
+      readableTeamId: teamData.readableId,
+      teamId: updated.team_id,
+      columns: [],
+    });
+  }
 
   async findByTeamId(teamId: string): Promise<BoardAggregate[]> {
     const boardRecords = await this.db
@@ -111,7 +158,21 @@ export class BoardRepository implements BoardRepositoryInterface {
       .where(eq(teams.readable_id, teamId));
 
     if (!team) {
-      throw new Error(`Team not found for readable_id: ${teamId}`);
+      throw new BadRequestException(
+        `Team not found for readable_id: ${teamId}`,
+      );
+    }
+
+    const boardNameExists = await this.db
+      .select()
+      .from(boards)
+      .where(and(eq(boards.team_id, team.id), eq(boards.name, name)))
+      .limit(1);
+
+    if (boardNameExists.length > 0) {
+      throw new BadRequestException(
+        `Board with name "${name}" already exists in team: ${teamId}`,
+      );
     }
 
     const userRole = await this.userRepository.getUserRoleByTeamId(
@@ -120,12 +181,12 @@ export class BoardRepository implements BoardRepositoryInterface {
     );
 
     if (userRole !== 'admin') {
-      throw new Error(
+      throw new ForbiddenException(
         `User does not have permission to create a board in team: ${teamId}`,
       );
     }
 
-    await this.db.transaction(async (tx) => {
+    const board = await this.db.transaction(async (tx) => {
       const created = await tx
         .insert(boards)
         .values({
@@ -134,11 +195,24 @@ export class BoardRepository implements BoardRepositoryInterface {
           team_id: team.id,
           readable_id: generateReadableId(),
         })
-        .returning({ id: boards.id, readableId: boards.readable_id });
+        .returning();
 
       if (!created[0]) {
         throw new Error('Failed to create board');
       }
+
+      return created[0];
+    });
+
+    return new BoardAggregate({
+      id: board.id,
+      name,
+      description,
+      teamId: team.id,
+      readableId: board.readable_id,
+      columns: [],
+      readableTeamId: teamId,
+      createdAt: board.created_at,
     });
   }
 

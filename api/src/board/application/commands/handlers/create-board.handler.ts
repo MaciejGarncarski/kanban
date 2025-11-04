@@ -1,19 +1,26 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreateBoardCommand } from 'src/board/application/commands/create-board.command';
+import { BoardAggregate } from 'src/board/domain/board.entity';
 import { BoardRepository } from 'src/board/infrastructure/persistence/board.repository';
 
 @CommandHandler(CreateBoardCommand)
 export class CreateBoardHandler implements ICommandHandler<CreateBoardCommand> {
   constructor(private readonly boardRepository: BoardRepository) {}
 
-  async execute(command: CreateBoardCommand): Promise<void> {
+  async execute(command: CreateBoardCommand): Promise<BoardAggregate> {
     const { userId, description, name, teamId } = command;
 
-    await this.boardRepository.createBoard({
+    const created = await this.boardRepository.createBoard({
       description,
       name,
       teamId,
       userId,
     });
+
+    if (!created) {
+      throw new Error('Failed to create board');
+    }
+
+    return created;
   }
 }

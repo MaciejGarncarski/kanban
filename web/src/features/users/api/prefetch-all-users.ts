@@ -13,7 +13,7 @@ export function prefetchAllUsers(queryClient: QueryClient, cookies: string) {
           },
         })
 
-        return res.data
+        return res.data || { users: [] }
       } catch {
         return { users: [] }
       }
