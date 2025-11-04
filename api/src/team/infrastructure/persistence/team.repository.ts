@@ -53,13 +53,15 @@ export class TeamRepository implements TeamRepositoryInterface {
         role: teamRoles.ADMIN,
       });
 
-      await tx.insert(team_members).values(
-        teamMembersIds.map((memberId) => ({
-          team_id: createdTeam.id,
-          user_id: memberId,
-          role: teamRoles.MEMBER,
-        })),
-      );
+      if (teamMembersIds.length > 0) {
+        await tx.insert(team_members).values(
+          teamMembersIds.map((memberId) => ({
+            team_id: createdTeam.id,
+            user_id: memberId,
+            role: teamRoles.MEMBER,
+          })),
+        );
+      }
 
       return new TeamEntity({
         id: createdTeam.id,

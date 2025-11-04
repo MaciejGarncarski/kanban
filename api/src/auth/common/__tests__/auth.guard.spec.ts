@@ -47,7 +47,7 @@ describe('AuthGuard', () => {
 
   it('should throw UnauthorizedException if no token is provided', async () => {
     await expect(guard.canActivate(mockContext)).rejects.toThrow(
-      new UnauthorizedException('Invalid or expired token'),
+      new UnauthorizedException('No refresh token provided'),
     );
   });
 
@@ -96,7 +96,7 @@ describe('AuthGuard', () => {
     });
 
     await expect(guard.canActivate(mockContext)).rejects.toThrow(
-      new UnauthorizedException('Invalid or expired token'),
+      new UnauthorizedException('No refresh token provided'),
     );
   });
 
@@ -104,7 +104,7 @@ describe('AuthGuard', () => {
     mockRequest.headers = { authorization: 'BadHeader' };
 
     await expect(guard.canActivate(mockContext)).rejects.toThrow(
-      new UnauthorizedException('Invalid or expired token'),
+      new UnauthorizedException('No refresh token provided'),
     );
   });
 });

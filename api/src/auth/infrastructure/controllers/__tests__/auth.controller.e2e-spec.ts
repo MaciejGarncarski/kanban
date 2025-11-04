@@ -16,6 +16,7 @@ import { DB } from 'src/infrastructure/persistence/db/client';
 import { DbModule } from 'src/infrastructure/persistence/db/db.module';
 import { DB_PROVIDER } from 'src/infrastructure/persistence/db/db.provider';
 import { routesV1 } from 'src/infrastructure/configs/app.routes.config';
+import { AppModule } from 'src/app.module';
 
 describe('AuthController e2e', () => {
   let container: StartedPostgreSqlContainer;
@@ -36,8 +37,7 @@ describe('AuthController e2e', () => {
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [TestConfigModule, AuthModule, DbModule],
-      providers: [createJWTService(), { provide: DB_PROVIDER, useValue: db }],
+      imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();

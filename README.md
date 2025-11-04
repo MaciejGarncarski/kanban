@@ -17,7 +17,8 @@ Kanban App is a simple and intuitive task management tool that helps teams and i
 - Mantine UI
 - Docker
 - Postgres
-- OpenAPI / Swagger
+- OpenAPI, Swagger
+- Drizzle ORM
 - Github Actions CI/CD
 
 ## Local development
@@ -40,7 +41,7 @@ Run separately in /web and /api
 
 `pnpm dev`
 
-# Run production locally
+## Run production locally
 
 Set .env.production based on .env.production.example
 
@@ -53,3 +54,7 @@ then run
 `docker exec -it kanban-api-prod sh`
 
 `pnpm dlx tsx ./src/infrastructure/persistence/db/reset`
+
+## Running tests
+
+`pnpm test`
