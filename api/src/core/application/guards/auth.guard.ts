@@ -38,6 +38,10 @@ export class AuthGuard implements CanActivate {
     const refreshToken = this.extractRefreshToken(request);
     const accessToken = this.extractAccessToken(request);
 
+    Logger.log('AuthGuard: Checking access token');
+    Logger.debug(`Access Token: ${accessToken}`);
+    Logger.debug(`Refresh Token: ${refreshToken}`);
+
     try {
       if (!accessToken) {
         throw Error('No access token provided');
