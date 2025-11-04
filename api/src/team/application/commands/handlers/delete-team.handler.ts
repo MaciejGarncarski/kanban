@@ -21,8 +21,10 @@ export class DeleteTeamHandler implements ICommandHandler<DeleteTeamCommand> {
     }
 
     const isAdmin =
-      (await this.userRepository.getUserRoleByTeamId(teamId, userId)) ===
-      'admin';
+      (await this.userRepository.getUserRolebyReadableTeamId(
+        teamId,
+        userId,
+      )) === 'admin';
 
     if (!isAdmin) {
       throw new ForbiddenException('Only admins can delete the team');

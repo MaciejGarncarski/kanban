@@ -28,7 +28,7 @@ export function DeleteTeamModal({ isOpen, onClose, teamId }: Props) {
       {
         onSuccess: () => {
           onClose()
-          router.push('/teams')
+          router.push('/')
         },
       },
     )

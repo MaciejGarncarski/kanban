@@ -1,4 +1,5 @@
 import { READABLE_ID_LENGTH } from '@/constants/column'
+import { prefetchCurrentUser } from '@/features/auth/api/prefetch-current-user'
 import { prefetchTeamRole } from '@/features/auth/api/prefetch-team-role'
 import { attachCookies } from '@/features/auth/utils/attach-cookies'
 import { prefetchBoardById } from '@/features/boards/api/prefetch-board-by-id'
@@ -11,6 +12,7 @@ import { prefetchTeamUsers } from '@/features/teams/api/prefetch-team-users'
 import { prefetchTeams } from '@/features/teams/api/prefetch-teams'
 import { TeamRoleBadge } from '@/features/teams/components/team-role-badge'
 import { TeamSwitch } from '@/features/teams/components/team-switch'
+import { prefetchAllUsers } from '@/features/users/api/prefetch-all-users'
 import { TeamRole } from '@/types/team.types'
 import { getQueryClient } from '@/utils/get-query-client'
 import { Box, Group, Stack } from '@mantine/core'
@@ -44,6 +46,8 @@ export default async function Page({
     prefetchBoards(queryClient, cookies, teamId),
     prefetchTeamUsers(queryClient, cookies, teamId),
     prefetchBoardById(queryClient, cookies, boardId),
+    prefetchAllUsers(queryClient, cookies),
+    prefetchCurrentUser(queryClient, cookies),
   ])
 
   return (

@@ -4,6 +4,7 @@ import {
   ExecutionContext,
   UnauthorizedException,
   Inject,
+  Logger,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
@@ -64,11 +65,13 @@ export class AuthGuard implements CanActivate {
             setTokenCookie(response, this.refreshTokenConf, newRefreshToken);
             setTokenCookie(response, this.accessTokenConf, accessToken);
             return true;
-          } catch {
-            throw new UnauthorizedException('Invalid or expired token');
+          } catch (e) {
+            Logger.warn('Failed to refresh access token', e);
+            throw new UnauthorizedException('Could not refresh access token');
           }
         }
       }
+      Logger.warn('Access token verification failed', error);
       throw new UnauthorizedException('Invalid or expired token');
     }
   }

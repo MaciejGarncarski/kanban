@@ -44,29 +44,44 @@ export class UserRepository implements UserRepositoryInterface {
     return teamMember.team_members.role as TeamRole;
   }
 
-  async getUserRoleByTeamId(teamId: string, userId: string): Promise<TeamRole> {
-    const isUuid =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-        teamId,
-      );
-
-    const condition = isUuid
-      ? eq(team_members.team_id, teamId)
-      : eq(teams.readable_id, teamId);
-
-    const [result] = await this.db
-      .select({ role: team_members.role })
+  async getUserRoleByTeamId(
+    teamUUID: string,
+    userId: string,
+  ): Promise<TeamRole> {
+    const [teamMember] = await this.db
+      .select()
       .from(team_members)
       .innerJoin(teams, eq(team_members.team_id, teams.id))
-      .where(and(condition, eq(team_members.user_id, userId)));
+      .where(and(eq(teams.id, teamUUID), eq(team_members.user_id, userId)));
 
-    if (!result) {
+    if (!teamMember) {
       throw new BadRequestException(
         'User is not a member of the specified team',
       );
     }
 
-    return result.role as TeamRole;
+    return teamMember.team_members.role as TeamRole;
+  }
+
+  async getUserRolebyReadableTeamId(
+    teamId: string,
+    userId: string,
+  ): Promise<TeamRole> {
+    const [teamMember] = await this.db
+      .select()
+      .from(team_members)
+      .innerJoin(teams, eq(team_members.team_id, teams.id))
+      .where(
+        and(eq(teams.readable_id, teamId), eq(team_members.user_id, userId)),
+      );
+
+    if (!teamMember) {
+      throw new BadRequestException(
+        'User is not a member of the specified team',
+      );
+    }
+
+    return teamMember.team_members.role as TeamRole;
   }
 
   async getUserRoleByBoardId(

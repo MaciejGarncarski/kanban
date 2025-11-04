@@ -33,6 +33,10 @@ export class InMemoryUserRepository implements UserRepositoryInterface {
     return 'member' as TeamRole;
   }
 
+  async getUserRolebyReadableTeamId(teamId: string, userId: string) {
+    return 'member' as TeamRole;
+  }
+
   async find(id: string) {
     const user = this.users.find((user) => user.id === id);
 

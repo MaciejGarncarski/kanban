@@ -18,11 +18,9 @@ import {
   useCombobox,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 export function NewTeamForm() {
-  const router = useRouter()
   const { data: allUsersData } = useAllUsers()
   const { data: userData } = useAuth()
   const [selectedUsers, setSelectedUsers] = useState<string[]>([])
@@ -44,22 +42,13 @@ export function NewTeamForm() {
   const newTeamMutation = useCreateTeam()
 
   const handleSubmit = form.onSubmit((values) => {
-    newTeamMutation.mutate(
-      {
-        body: {
-          name: values.name,
-          description: values.description,
-          members: selectedUsers || [],
-        },
+    newTeamMutation.mutate({
+      body: {
+        name: values.name,
+        description: values.description,
+        members: selectedUsers || [],
       },
-      {
-        onSuccess: (data) => {
-          if (data.readableId) {
-            router.push(`/teams/${data.readableId}`)
-          }
-        },
-      },
-    )
+    })
   })
 
   const filteredUsers = allUsersData.users.filter(

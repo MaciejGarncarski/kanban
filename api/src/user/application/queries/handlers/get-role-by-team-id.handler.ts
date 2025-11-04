@@ -10,7 +10,10 @@ export class GetRoleByTeamIdHandler {
   async execute(query: GetRoleByTeamIdQuery): Promise<TeamRole> {
     const { teamId, userId } = query;
 
-    const role = await this.userRepo.getUserRoleByTeamId(teamId, userId);
+    const role = await this.userRepo.getUserRolebyReadableTeamId(
+      teamId,
+      userId,
+    );
 
     return role;
   }

@@ -70,7 +70,6 @@ const API_MODULES = [
       envFilePath: ['.env'],
       load: [refreshTokenCookieConfig, accessTokenCookieConfig, registerEnv],
     }),
-    CqrsModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [
