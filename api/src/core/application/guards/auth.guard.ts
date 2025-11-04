@@ -89,14 +89,6 @@ export class AuthGuard implements CanActivate {
       return refreshTokenCookieSigned;
     }
 
-    const refreshTokenCookie = request.cookies?.['refreshToken'] as
-      | string
-      | undefined;
-
-    if (refreshTokenCookie) {
-      return refreshTokenCookie;
-    }
-
     return null;
   }
 

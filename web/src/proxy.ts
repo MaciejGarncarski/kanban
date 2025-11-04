@@ -34,7 +34,6 @@ export async function proxy(request: NextRequest) {
   const refreshToken = request.cookies.get('refreshToken')?.value
   const isAuthPage = url.pathname.startsWith('/auth')
 
-  // If does not have refresh token, and on / route, it creates infinite redirect loop
   if (!refreshToken && !isAuthPage) {
     const isServerAction =
       request.headers.has('next-action') || request.headers.has('x-action')
@@ -42,8 +41,6 @@ export async function proxy(request: NextRequest) {
     if (isServerAction) {
       return NextResponse.next()
     }
-
-    // there happens infinite redirect loop
 
     return NextResponse.redirect(new URL('/auth/sign-in', request.url))
   }
@@ -104,12 +101,19 @@ export async function proxy(request: NextRequest) {
         newAccessTokenCookie || refreshResponse.data.accessToken
       const res = NextResponse.next()
 
-      res.cookies.set(
-        'refreshToken',
-        refreshTokenCookie,
-        cookieConfigRefreshToken,
-      )
-      res.cookies.set('accessToken', newAccessToken, cookieConfigAccessToken)
+      // This is workaround for fucking stupid Next.js behavior, that does not allow NOT to encode cookie values
+      // So if we have signed cookie from backend, and we would set it in cookie here, it would get encoded, breaking the signature
+      // So we manually construct the Set-Cookie header here
+      const accessTokenCookie = `${'accessToken'}=${newAccessToken}; Path=${cookieConfigAccessToken.path}; HttpOnly; SameSite=${cookieConfigAccessToken.sameSite}${
+        cookieConfigAccessToken.secure ? '; Secure' : ''
+      }${cookieConfigAccessToken.domain ? `; Domain=${cookieConfigAccessToken.domain}` : ''}; Max-Age=${cookieConfigAccessToken.maxAge}`
+
+      const refreshCookieString = `${'refreshToken'}=${refreshTokenCookie}; Path=${cookieConfigRefreshToken.path}; HttpOnly; SameSite=${cookieConfigRefreshToken.sameSite}${
+        cookieConfigRefreshToken.secure ? '; Secure' : ''
+      }${cookieConfigRefreshToken.domain ? `; Domain=${cookieConfigRefreshToken.domain}` : ''}; Max-Age=${cookieConfigRefreshToken.maxAge}`
+
+      res.headers.append('Set-Cookie', accessTokenCookie)
+      res.headers.append('Set-Cookie', refreshCookieString)
 
       return res
     } catch {
