@@ -43,7 +43,7 @@ export class AuthGuard implements CanActivate {
       }
 
       const payload = this.jwtService.verify<JWTPayload>(accessToken);
-      request.userId = payload.id;
+      request.userId = payload.sub;
 
       return true;
     } catch (error) {
@@ -68,7 +68,7 @@ export class AuthGuard implements CanActivate {
 
             setTokenCookie(response, this.refreshTokenConf, newRefreshToken);
             setTokenCookie(response, this.accessTokenConf, accessToken);
-            request.userId = verifiedToken.id;
+            request.userId = verifiedToken.sub;
 
             return true;
           } catch {

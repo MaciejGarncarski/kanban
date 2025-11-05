@@ -17,10 +17,6 @@ export class CreateBoardHandler implements ICommandHandler<CreateBoardCommand> {
       userId,
     });
 
-    if (!created) {
-      throw new Error('Failed to create board');
-    }
-
     return created;
   }
 }

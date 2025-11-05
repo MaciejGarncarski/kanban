@@ -24,7 +24,7 @@ import { DeleteBoardRequestDto } from 'src/board/application/dtos/delete-board.r
 import { GetBoardByIdDto } from 'src/board/application/dtos/ger-board-by-id.request.dto';
 import { GetBoardsByTeamRequestDto } from 'src/board/application/dtos/get-boards-by-team.request.dto';
 import { GetBoardsByTeamResponseDto } from 'src/board/application/dtos/get-boards-by-team.response.dto';
-import { GetBoardByIdQuery } from 'src/board/application/queries/get-board-by-id-query';
+import { GetBoardByIdQuery } from 'src/board/application/queries/get-board-by-id.query';
 import { GetBoardsByTeamQuery } from 'src/board/application/queries/get-boards-by-team.query';
 import { ApiErrorResponse } from 'src/core/application/dtos/api-error.response.dto';
 import { routesV1 } from 'src/infrastructure/configs/app.routes.config';

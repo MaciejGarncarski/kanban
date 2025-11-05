@@ -4,6 +4,7 @@ import { SignInUserCommand } from 'src/auth/application/commands/sign-in-user.co
 import { JwtService } from '@nestjs/jwt';
 import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
 import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+import { JWTPayload } from 'src/auth/domain/token.types';
 
 export type SignInUserCommandReturn = {
   accessToken: string;
@@ -32,8 +33,8 @@ export class SignInUserHandler implements ICommandHandler<SignInUserCommand> {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const accessToken = this.jwtService.sign({
-      id: user.id,
+    const accessToken = this.jwtService.sign<JWTPayload>({
+      sub: user.id,
     });
 
     const { tokenHash, tokenPlain } = await this.refreshTokenRepo.create(

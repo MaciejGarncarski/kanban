@@ -7,7 +7,7 @@ import { UserRepository } from 'src/user/infrastructure/persistence/user.reposit
 export class GetAllUsersHandler implements IQueryHandler<GetAllUsersQuery> {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async execute(query: GetAllUsersQuery): Promise<UserEntity[]> {
+  async execute(): Promise<UserEntity[]> {
     const allUsers = await this.userRepository.findAll();
 
     return allUsers;

@@ -55,36 +55,36 @@ describe('AuthGuard', () => {
     const token = 'signed-token';
     mockRequest.signedCookies = { accessToken: token };
 
-    const payload = { id: 'user123' };
+    const payload = { sub: 'user123' };
     jest.spyOn(jwtService, 'verify').mockReturnValue(payload);
 
     const result = await guard.canActivate(mockContext);
     expect(result).toBe(true);
-    expect(mockRequest.userId).toBe(payload.id);
+    expect(mockRequest.userId).toBe(payload.sub);
   });
 
   it('should extract token from cookies if signed cookies are empty', async () => {
     const token = 'cookie-token';
     mockRequest.cookies = { accessToken: token };
 
-    const payload = { id: 'user456' };
+    const payload = { sub: 'user456' };
     jest.spyOn(jwtService, 'verify').mockReturnValue(payload);
 
     const result = await guard.canActivate(mockContext);
     expect(result).toBe(true);
-    expect(mockRequest.userId).toBe(payload.id);
+    expect(mockRequest.userId).toBe(payload.sub);
   });
 
   it('should extract token from Authorization header', async () => {
     const token = 'header-token';
     mockRequest.headers = { authorization: `Bearer ${token}` };
 
-    const payload = { id: 'user789' };
+    const payload = { sub: 'user789' };
     jest.spyOn(jwtService, 'verify').mockReturnValue(payload);
 
     const result = await guard.canActivate(mockContext);
     expect(result).toBe(true);
-    expect(mockRequest.userId).toBe(payload.id);
+    expect(mockRequest.userId).toBe(payload.sub);
   });
 
   it('should throw UnauthorizedException if token is invalid', async () => {

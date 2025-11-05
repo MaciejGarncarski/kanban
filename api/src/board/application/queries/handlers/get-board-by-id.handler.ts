@@ -1,7 +1,7 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { NotFoundException } from '@nestjs/common';
 import { BoardRepository } from 'src/board/infrastructure/persistence/board.repository';
-import { GetBoardByIdQuery } from 'src/board/application/queries/get-board-by-id-query';
+import { GetBoardByIdQuery } from 'src/board/application/queries/get-board-by-id.query';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { BoardDetailDto } from 'src/board/application/dtos/board-detail.dto';
 

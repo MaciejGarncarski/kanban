@@ -3,6 +3,7 @@ import { UnauthorizedException } from '@nestjs/common';
 import { RefreshAccessTokenCommand } from 'src/auth/application/commands/refresh-access-token.command';
 import { JwtService } from '@nestjs/jwt';
 import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
+import { JWTPayload } from 'src/auth/domain/token.types';
 
 export type RefreshAccessTokenReturn = {
   accessToken: string;
@@ -32,8 +33,8 @@ export class RefreshAccessTokenHandler
 
     const rotatedToken = await this.refreshTokenRepo.rotate(tokenRecord);
 
-    const accessToken = this.jwtService.sign({
-      id: rotatedToken.entity.userId,
+    const accessToken = this.jwtService.sign<JWTPayload>({
+      sub: rotatedToken.entity.userId,
     });
 
     return {

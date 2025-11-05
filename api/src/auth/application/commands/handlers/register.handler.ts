@@ -1,8 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import {
-  BadRequestException,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
 import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
@@ -10,6 +7,7 @@ import { RegisterCommand } from 'src/auth/application/commands/register.command'
 import { hash } from '@node-rs/argon2';
 import { UserResponseDto } from 'src/user/application/dtos/user.response.dto';
 import { plainToInstance } from 'class-transformer';
+import { JWTPayload } from 'src/auth/domain/token.types';
 
 export type RegisterHandlerReturn = {
   user: UserResponseDto;
@@ -45,12 +43,8 @@ export class RegisterUserHandler implements ICommandHandler<RegisterCommand> {
       password_hash: passwordHash,
     });
 
-    if (!user) {
-      throw new InternalServerErrorException('Could not create user');
-    }
-
-    const accessToken = this.jwtService.sign({
-      id: user.id,
+    const accessToken = this.jwtService.sign<JWTPayload>({
+      sub: user.id,
     });
 
     const { tokenHash, tokenPlain } = await this.refreshTokenRepo.create(
