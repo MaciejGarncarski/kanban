@@ -15,7 +15,7 @@ export class GetUsersByTeamIdHandler {
 
     if (!userIsInTeam) {
       throw new UnauthorizedException(
-        'User is not authorized to access this columns',
+        'User is not authorized to access this team',
       );
     }
 

@@ -30,7 +30,7 @@ export class UpdateColumnHandler
 
     if (userRole !== teamRoles.ADMIN) {
       throw new UnauthorizedException(
-        'User is not authorized to update this column',
+        'User is not authorized to update this team',
       );
     }
 

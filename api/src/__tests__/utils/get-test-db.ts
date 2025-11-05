@@ -9,11 +9,10 @@ import { resetDB } from 'src/infrastructure/persistence/db/reset-db';
 export async function getTestDb() {
   const pgContainer = await new PostgreSqlContainer('postgres:18-alpine')
     .withDatabase('kanban')
-    .withReuse()
     .start();
 
   const pgPool = new Pool({
-    host: 'localhost',
+    host: pgContainer.getHost(),
     port: pgContainer.getMappedPort(5432),
     user: pgContainer.getUsername(),
     password: pgContainer.getPassword(),

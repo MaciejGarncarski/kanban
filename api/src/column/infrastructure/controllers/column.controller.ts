@@ -105,7 +105,7 @@ export class ColumnController {
 
     if (userRole !== teamRoles.ADMIN) {
       throw new ForbiddenException(
-        'User is not authorized to delete this column',
+        'User is not authorized to delete this team',
       );
     }
 

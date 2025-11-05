@@ -37,7 +37,7 @@ export class UserRepository implements UserRepositoryInterface {
 
     if (!teamMember) {
       throw new BadRequestException(
-        'User is not a member of the specified team',
+        'User is not authorized to access this team',
       );
     }
 
@@ -56,7 +56,7 @@ export class UserRepository implements UserRepositoryInterface {
 
     if (!teamMember) {
       throw new BadRequestException(
-        'User is not a member of the specified team',
+        'User is not authorized to access this team',
       );
     }
 
@@ -77,7 +77,7 @@ export class UserRepository implements UserRepositoryInterface {
 
     if (!teamMember) {
       throw new BadRequestException(
-        'User is not a member of the specified team',
+        'User is not authorized to access this team',
       );
     }
 
@@ -99,7 +99,7 @@ export class UserRepository implements UserRepositoryInterface {
 
     if (!teamMember) {
       throw new BadRequestException(
-        'User is not a member of the specified team',
+        'User is not authorized to access this team',
       );
     }
 
