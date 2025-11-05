@@ -2,9 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
 import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { Pool } from 'pg';
-import { AuthModule } from 'src/auth/auth.module';
-import { createJWTService } from 'src/__tests__/utils/create-jwt-service';
-import { TestConfigModule } from 'src/__tests__/utils/get-test-env';
 import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { Server } from 'node:net';
@@ -12,9 +9,6 @@ import cookieParser from 'cookie-parser';
 import { testEnv } from 'src/__tests__/env';
 import { getCookieFromResponse } from 'src/__tests__/utils/get-cookie-from-response';
 import { userFixture } from 'src/__tests__/fixtures/user.fixture';
-import { DB } from 'src/infrastructure/persistence/db/client';
-import { DbModule } from 'src/infrastructure/persistence/db/db.module';
-import { DB_PROVIDER } from 'src/infrastructure/persistence/db/db.provider';
 import { routesV1 } from 'src/infrastructure/configs/app.routes.config';
 import { AppModule } from 'src/app.module';
 
@@ -22,20 +16,12 @@ describe('AuthController e2e', () => {
   let container: StartedPostgreSqlContainer;
   let pool: Pool;
   let app: INestApplication<Server>;
-  let db: DB;
 
   beforeAll(async () => {
-    const { pgContainer, pgPool, testDb } = await getTestDb();
+    const { pgContainer, pgPool } = await getTestDb();
     container = pgContainer;
     pool = pgPool;
-    db = testDb;
-  });
 
-  afterAll(async () => {
-    await stopTestDb(container, pool);
-  });
-
-  beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -44,6 +30,11 @@ describe('AuthController e2e', () => {
     app.use(cookieParser(testEnv.COOKIE_SECRET));
 
     await app.init();
+  });
+
+  afterAll(async () => {
+    await app.close();
+    await stopTestDb(container, pool);
   });
 
   describe('/auth/me', () => {

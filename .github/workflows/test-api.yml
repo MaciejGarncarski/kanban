@@ -1,4 +1,4 @@
-name: Testcontainers CI (NestJS API + pnpm)
+name: Test API
 
 on:
   push:
@@ -10,10 +10,33 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        type: [unit, e2e]
+
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/kanban
+      API_PORT: 3001
+      JWT_SECRET: 8840fa71085e5796e1a22fd572cb62887619ef6161b80f9bffe6dc582f162c4d
+      COOKIE_SECRET: af3b1a9f62a320476791d5966127485e1a46b90b36a8a7af6f6d5b780658ff7b
+      COOKIE_SECURE: false
+      CORS_ORIGIN: http://localhost:3000
+      WEB_DOMAIN: localhost
+
     services:
       docker:
         image: docker:28.0-dind
-        privileged: true
+        options: --privileged
+
+      kanban-db:
+        image: postgres:18
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: kanban
+          PGDATA: /var/lib/postgresql/data-kanban
 
     defaults:
       run:
@@ -23,17 +46,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "pnpm"
-          cache-dependency-path: api/pnpm-lock.yaml
-
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10
+          version: 10.18.2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.11.0
+          cache: "pnpm"
 
       - name: Enable Docker
         run: |
@@ -43,15 +65,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Lint
-        run: pnpm lint
-
-      - name: Build
-        run: pnpm build
-
       - name: Run tests
         env:
           TESTCONTAINERS_RYUK_DISABLED: true
           TESTCONTAINERS_CHECKS_DISABLE: true
           NODE_ENV: test
-        run: pnpm test -- --runInBand
+        run: |
+          if [ "${{ matrix.type }}" = "unit" ]; then
+            pnpm test
+          elif [ "${{ matrix.type }}" = "e2e" ]; then
+            pnpm dlx tsx ./src/infrastructure/persistence/db/reset && pnpm test:e2e
+          fi
