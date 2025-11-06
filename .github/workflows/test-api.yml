@@ -76,3 +76,9 @@ jobs:
           elif [ "${{ matrix.type }}" = "e2e" ]; then
             pnpm dlx tsx ./src/infrastructure/persistence/db/reset && pnpm test:e2e
           fi
+
+      - name: Upload coverage to Codecov
+        if: matrix.type == 'unit' # Only upload once (skip e2e)
+        uses: codecov/codecov-action@v5
+        with:
+          directory: ./api/coverage

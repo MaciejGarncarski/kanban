@@ -57,6 +57,8 @@ then run
 
 ## Running tests for API
 
+[![codecov](https://codecov.io/gh/maciejgarncarski/kanban/branch/main/graph/badge.svg)](https://codecov.io/gh/maciejgarncarski/kanban)
+
 ### Unit & Integration
 
 run `pnpm test`
