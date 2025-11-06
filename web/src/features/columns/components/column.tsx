@@ -13,15 +13,13 @@ export const Column = ({
   name,
   columnId,
   createdAt,
-  teamId,
+  readableTeamId,
   cards,
-  boardId,
 }: {
-  boardId: string
   name: string
   columnId: string
   createdAt: string
-  teamId: string
+  readableTeamId: string
   cards: Array<{
     id: string
     title: string
@@ -36,7 +34,7 @@ export const Column = ({
     type: 'card-stack',
   })
 
-  const { columnRef, closestEdge } = useColumnDrag({ columnId, teamId })
+  const { columnRef, closestEdge } = useColumnDrag({ columnId, readableTeamId })
 
   return (
     <Card
@@ -65,7 +63,7 @@ export const Column = ({
           columnId={columnId}
           name={name}
           createdAt={createdAt}
-          teamId={teamId}
+          readableTeamId={readableTeamId}
         />
       </Group>
       <ScrollAreaAutosize scrollbars="y" maw={'20rem'}>
@@ -87,8 +85,7 @@ export const Column = ({
           {cards.map(({ id, title, assignedTo, description, dueDate }) => (
             <TaskCard
               key={id}
-              boardId={boardId}
-              teamId={teamId}
+              readableTeamId={readableTeamId}
               description={description}
               cardId={id}
               title={title}
@@ -97,7 +94,10 @@ export const Column = ({
             />
           ))}
           {isDraggingCard ? null : (
-            <AddTaskCardModal teamId={teamId} columnId={columnId} />
+            <AddTaskCardModal
+              readableTeamId={readableTeamId}
+              columnId={columnId}
+            />
           )}
         </Stack>
       </ScrollAreaAutosize>

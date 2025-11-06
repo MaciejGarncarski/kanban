@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation'
 import * as z from 'zod/v4'
 
 const paramsSchema = z.object({
-  teamId: z.string().length(READABLE_ID_LENGTH),
+  readableTeamId: z.string().length(READABLE_ID_LENGTH),
 })
 
 export default async function Page({
@@ -21,13 +21,13 @@ export default async function Page({
 
   const queryClient = getQueryClient()
   const cookies = await attachCookies()
-  const boards = await prefetchBoards(queryClient, cookies, data.teamId)
+  const boards = await prefetchBoards(queryClient, cookies, data.readableTeamId)
 
   const firstBoardId = boards?.boards[0]?.readableId
 
   if (firstBoardId) {
-    redirect(`/teams/${data.teamId}/boards/${firstBoardId}`)
+    redirect(`/teams/${data.readableTeamId}/boards/${firstBoardId}`)
   }
 
-  redirect(`/teams/${data.teamId}/`)
+  redirect(`/teams/${data.readableTeamId}/`)
 }

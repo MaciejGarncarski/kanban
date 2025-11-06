@@ -6,5 +6,5 @@ export class DeleteTeamRequestDto {
     description: 'The ID of the team to be deleted',
   })
   @IsString()
-  teamId: string;
+  readableTeamId: string;
 }

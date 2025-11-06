@@ -8,11 +8,11 @@ import { useForm } from '@mantine/form'
 type Props = {
   isOpen: boolean
   onClose: () => void
-  boardId: string
+  readableBoardId: string
 }
 
-export function EditBoardModal({ isOpen, onClose, boardId }: Props) {
-  const { data: boardData } = useBoardById({ boardId })
+export function EditBoardModal({ isOpen, onClose, readableBoardId }: Props) {
+  const { data: boardData } = useBoardById({ readableBoardId })
   const { mutate, isPending } = useUpdateBoard()
   const form = useForm({
     initialValues: {
@@ -31,7 +31,7 @@ export function EditBoardModal({ isOpen, onClose, boardId }: Props) {
         body: { description: values.description, name: values.name },
         params: {
           path: {
-            boardId,
+            readableBoardId,
           },
         },
       },

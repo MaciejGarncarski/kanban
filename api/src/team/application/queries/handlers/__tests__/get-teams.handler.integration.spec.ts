@@ -8,17 +8,15 @@ import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
 import { TestConfigModule } from 'src/__tests__/utils/get-test-env';
 import { DB } from 'src/infrastructure/persistence/db/client';
 import { DB_PROVIDER } from 'src/infrastructure/persistence/db/db.provider';
+import { team_members } from 'src/infrastructure/persistence/db/schema';
 import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
-import { DeleteTeamCommand } from 'src/team/application/commands/delete-team.command';
-import { DeleteTeamHandler } from 'src/team/application/commands/handlers/delete-team.handler';
+import { GetTeamsHandler } from 'src/team/application/queries/handlers/get-teams.handler';
 import { TeamRepository } from 'src/team/infrastructure/persistence/team.repository';
-import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
 import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
-import { v7 } from 'uuid';
 
-describe('DeleteTeamHandler Integration Tests', () => {
-  let handler: DeleteTeamHandler;
-  let userRepo: UserRepositoryInterface;
+describe('GetTeamsHandler', () => {
+  let handler: GetTeamsHandler;
+  let userRepo: UserRepository;
   let teamRepo: TeamRepository;
   let container: StartedPostgreSqlContainer;
   let pool: Pool;
@@ -42,7 +40,7 @@ describe('DeleteTeamHandler Integration Tests', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [TestConfigModule],
       providers: [
-        DeleteTeamHandler,
+        GetTeamsHandler,
         { provide: TeamRepository, useValue: teamRepo },
         { provide: DB_PROVIDER, useValue: db },
         { provide: UserRepository, useValue: userRepo },
@@ -50,22 +48,11 @@ describe('DeleteTeamHandler Integration Tests', () => {
       ],
     }).compile();
 
-    handler = module.get<DeleteTeamHandler>(DeleteTeamHandler);
-    userRepo = module.get<UserRepositoryInterface>(UserRepository);
+    handler = module.get<GetTeamsHandler>(GetTeamsHandler);
+    userRepo = module.get<UserRepository>(UserRepository);
   });
 
-  it('should throw a BadRequestException if team not found', async () => {
-    // Arrange
-    const userId = v7();
-    const teamReadableId = generateReadableId();
-    const command = new DeleteTeamCommand(userId, teamReadableId);
-
-    // Act & Assert
-
-    await expect(handler.execute(command)).rejects.toThrow('Team not found');
-  });
-
-  it('should delete a team', async () => {
+  it('should retrieve teams for a user', async () => {
     // Arrange
     const user = await userRepo.create({
       email: faker.internet.email(),
@@ -73,18 +60,45 @@ describe('DeleteTeamHandler Integration Tests', () => {
       name: faker.person.fullName(),
     });
 
-    const team = await teamRepo.createTeam(
+    const teamName1 = faker.company.name();
+    const teamName2 = faker.company.name();
+
+    const team1 = await teamRepo.createTeam(
       user.id,
       {
-        name: 'Test Team',
-        description: 'A team for testing',
+        name: teamName1,
         readable_id: generateReadableId(),
       },
-      [],
+      [user.id],
     );
 
-    await expect(
-      handler.execute(new DeleteTeamCommand(user.id, team.readableId)),
-    ).resolves.toBeUndefined();
+    const team2 = await teamRepo.createTeam(
+      user.id,
+      {
+        name: teamName2,
+        readable_id: generateReadableId(),
+      },
+      [user.id],
+    );
+
+    await db.insert(team_members).values([
+      {
+        team_id: team1.id,
+        user_id: user.id,
+      },
+      {
+        team_id: team2.id,
+        user_id: user.id,
+      },
+    ]);
+
+    // Act
+    const result = await handler.execute({ userId: user.id });
+
+    // Assert
+    expect(result.teams).toHaveLength(2);
+    const teamNames = result.teams.map((team) => team.name);
+    expect(teamNames).toContain(teamName1);
+    expect(teamNames).toContain(teamName2);
   });
 });

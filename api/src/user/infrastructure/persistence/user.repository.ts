@@ -64,7 +64,7 @@ export class UserRepository implements UserRepositoryInterface {
   }
 
   async getUserRolebyReadableTeamId(
-    teamId: string,
+    readableTeamId: string,
     userId: string,
   ): Promise<TeamRole> {
     const [teamMember] = await this.db
@@ -72,7 +72,10 @@ export class UserRepository implements UserRepositoryInterface {
       .from(team_members)
       .innerJoin(teams, eq(team_members.team_id, teams.id))
       .where(
-        and(eq(teams.readable_id, teamId), eq(team_members.user_id, userId)),
+        and(
+          eq(teams.readable_id, readableTeamId),
+          eq(team_members.user_id, userId),
+        ),
       );
 
     if (!teamMember) {
@@ -85,7 +88,7 @@ export class UserRepository implements UserRepositoryInterface {
   }
 
   async getUserRoleByBoardId(
-    boardId: string,
+    readableBoardId: string,
     userId: string,
   ): Promise<TeamRole> {
     const [teamMember] = await this.db
@@ -94,7 +97,10 @@ export class UserRepository implements UserRepositoryInterface {
       .innerJoin(teams, eq(team_members.team_id, teams.id))
       .innerJoin(boards, eq(boards.team_id, teams.id))
       .where(
-        and(eq(boards.readable_id, boardId), eq(team_members.user_id, userId)),
+        and(
+          eq(boards.readable_id, readableBoardId),
+          eq(team_members.user_id, userId),
+        ),
       );
 
     if (!teamMember) {
@@ -154,14 +160,14 @@ export class UserRepository implements UserRepositoryInterface {
     return UserMapper.toDomain(createdUser);
   }
 
-  async findAllByBoardId(boardId: string) {
+  async findAllByBoardId(readableBoardId: string) {
     const usersOnBoard = await this.db
       .select()
       .from(users)
       .innerJoin(team_members, eq(users.id, team_members.user_id))
       .innerJoin(teams, eq(team_members.team_id, teams.id))
       .innerJoin(boards, eq(boards.team_id, teams.id))
-      .where(eq(boards.readable_id, boardId));
+      .where(eq(boards.readable_id, readableBoardId));
 
     return usersOnBoard.map(({ users }) => {
       return UserMapper.toDomain(users);
@@ -181,36 +187,38 @@ export class UserRepository implements UserRepositoryInterface {
     return Boolean(userInTeam);
   }
 
-  async isUserInTeamByBoard(userId: string, boardId: string) {
+  async isUserInTeamByBoard(userId: string, readableBoardId: string) {
     const [userInTeam] = await this.db
       .select()
       .from(users)
       .innerJoin(team_members, eq(users.id, team_members.user_id))
       .innerJoin(teams, eq(team_members.team_id, teams.id))
       .innerJoin(boards, eq(boards.team_id, teams.id))
-      .where(and(eq(boards.readable_id, boardId), eq(users.id, userId)));
+      .where(
+        and(eq(boards.readable_id, readableBoardId), eq(users.id, userId)),
+      );
 
     return Boolean(userInTeam);
   }
 
-  async isUserInTeamByTeam(userId: string, teamId: string) {
+  async isUserInTeamByTeam(userId: string, readableTeamId: string) {
     const [userInTeam] = await this.db
       .select()
       .from(users)
       .innerJoin(team_members, eq(users.id, team_members.user_id))
       .innerJoin(teams, eq(team_members.team_id, teams.id))
-      .where(and(eq(teams.readable_id, teamId), eq(users.id, userId)));
+      .where(and(eq(teams.readable_id, readableTeamId), eq(users.id, userId)));
 
     return Boolean(userInTeam);
   }
 
-  async findAllByTeamId(teamId: string) {
+  async findAllByTeamId(readableTeamId: string) {
     const usersInTeam = await this.db
       .select()
       .from(users)
       .innerJoin(team_members, eq(users.id, team_members.user_id))
       .innerJoin(teams, eq(team_members.team_id, teams.id))
-      .where(eq(teams.readable_id, teamId));
+      .where(eq(teams.readable_id, readableTeamId));
 
     return usersInTeam.map(({ users }) => {
       return UserMapper.toDomain(users);

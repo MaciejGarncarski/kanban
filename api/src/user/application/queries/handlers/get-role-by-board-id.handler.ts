@@ -8,9 +8,12 @@ export class GetRoleByBoardIdHandler {
   constructor(private readonly userRepo: UserRepository) {}
 
   async execute(query: GetRoleByBoardIdQuery): Promise<TeamRole> {
-    const { boardId, userId } = query;
+    const { readableBoardId, userId } = query;
 
-    const role = await this.userRepo.getUserRoleByBoardId(boardId, userId);
+    const role = await this.userRepo.getUserRoleByBoardId(
+      readableBoardId,
+      userId,
+    );
 
     return role;
   }

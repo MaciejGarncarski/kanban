@@ -11,12 +11,12 @@ import { SettingsIcon } from 'lucide-react'
 import Link from 'next/link'
 
 type Props = {
-  teamId?: string
-  boardId?: string
+  readableTeamId?: string
+  readableBoardId?: string
 }
 
-export function SettingsModal({ teamId, boardId }: Props) {
-  const { isAdmin } = useRoleByTeamId(teamId || '')
+export function SettingsModal({ readableTeamId, readableBoardId }: Props) {
+  const { isAdmin } = useRoleByTeamId(readableTeamId || '')
 
   const [
     deleteBoardOpened,
@@ -34,33 +34,33 @@ export function SettingsModal({ teamId, boardId }: Props) {
 
   return (
     <>
-      {boardId && isAdmin && (
+      {readableBoardId && isAdmin && (
         <DeleteBoardModal
-          boardId={boardId}
+          readableBoardId={readableBoardId}
           isOpen={deleteBoardOpened}
           onClose={closeDeleteBoard}
         />
       )}
 
-      {teamId && isAdmin && (
+      {readableTeamId && isAdmin && (
         <DeleteTeamModal
-          teamId={teamId}
+          readableTeamId={readableTeamId}
           isOpen={deleteTeamOpened}
           onClose={closeDeleteTeam}
         />
       )}
 
-      {teamId && isAdmin && (
+      {readableTeamId && isAdmin && (
         <EditTeamModal
-          teamId={teamId}
+          readableTeamId={readableTeamId}
           isOpen={editTeamOpened}
           onClose={closeEditTeam}
         />
       )}
 
-      {teamId && boardId && isAdmin && (
+      {readableTeamId && readableBoardId && isAdmin && (
         <EditBoardModal
-          boardId={boardId}
+          readableBoardId={readableBoardId}
           isOpen={editBoardOpened}
           onClose={closeEditBoard}
         />
@@ -90,14 +90,16 @@ export function SettingsModal({ teamId, boardId }: Props) {
             </Menu.Item>
           )}
 
-          {isAdmin && teamId && (
+          {isAdmin && readableTeamId && (
             <>
               <Menu.Divider />
               <Menu.Label>Board</Menu.Label>
-              <Menu.Item component={Link} href={`/teams/${teamId}/boards/new`}>
+              <Menu.Item
+                component={Link}
+                href={`/teams/${readableTeamId}/boards/new`}>
                 New board
               </Menu.Item>
-              {boardId && (
+              {readableBoardId && (
                 <>
                   <Menu.Item color="orange" onClick={openEditBoard}>
                     Edit board

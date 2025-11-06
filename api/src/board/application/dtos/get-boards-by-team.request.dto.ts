@@ -7,5 +7,5 @@ export class GetBoardsByTeamRequestDto {
     description: 'Team ID',
   })
   @IsString()
-  teamId: string;
+  readableTeamId: string;
 }

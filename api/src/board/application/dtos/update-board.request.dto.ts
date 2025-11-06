@@ -21,5 +21,5 @@ export class UpdateBoardParamsDto {
     description: 'Board ID',
   })
   @IsString()
-  boardId: string;
+  readableBoardId: string;
 }

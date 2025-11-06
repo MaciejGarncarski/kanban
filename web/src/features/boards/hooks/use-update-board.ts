@@ -2,7 +2,7 @@ import { appQuery } from '@/api-client/api-client'
 import { notifications } from '@mantine/notifications'
 
 export function useUpdateBoard() {
-  return appQuery.useMutation('patch', '/v1/boards/{boardId}', {
+  return appQuery.useMutation('patch', '/v1/boards/{readableBoardId}', {
     onError: (error) => {
       notifications.show({
         title: 'Error',
@@ -18,10 +18,10 @@ export function useUpdateBoard() {
       })
 
       client.invalidateQueries({
-        queryKey: ['get', '/v1/teams/{teamId}/boards'],
+        queryKey: ['get', '/v1/teams/{readableTeamId}/boards'],
       })
       client.invalidateQueries({
-        queryKey: ['get', '/v1/boards/{boardId}'],
+        queryKey: ['get', '/v1/boards/{readableBoardId}'],
       })
     },
   })

@@ -30,14 +30,14 @@ export class BoardRepository implements BoardRepositoryInterface {
   ) {}
 
   async updateBoard(boardData: {
-    boardId: string;
+    readableBoardId: string;
     name: string;
     description?: string;
   }): Promise<BoardAggregate> {
     const [prevData] = await this.db
       .select()
       .from(boards)
-      .where(eq(boards.readable_id, boardData.boardId))
+      .where(eq(boards.readable_id, boardData.readableBoardId))
       .limit(1);
 
     if (!prevData) {
@@ -57,7 +57,7 @@ export class BoardRepository implements BoardRepositoryInterface {
           ? boardData.description
           : prevData.description,
       })
-      .where(eq(boards.readable_id, boardData.boardId))
+      .where(eq(boards.readable_id, boardData.readableBoardId))
       .returning();
 
     return new BoardAggregate({
@@ -72,7 +72,7 @@ export class BoardRepository implements BoardRepositoryInterface {
     });
   }
 
-  async findByTeamId(teamId: string): Promise<BoardAggregate[]> {
+  async findByTeamId(readableTeamId: string): Promise<BoardAggregate[]> {
     const boardRecords = await this.db
       .select({
         board: boards,
@@ -80,14 +80,14 @@ export class BoardRepository implements BoardRepositoryInterface {
       })
       .from(boards)
       .innerJoin(teams, eq(boards.team_id, teams.id))
-      .where(eq(teams.readable_id, teamId));
+      .where(eq(teams.readable_id, readableTeamId));
 
     return boardRecords.map((record) =>
       BoardMapper.toDomain(record.board, record.teams.readable_id),
     );
   }
 
-  async findById(boardId: string): Promise<BoardAggregate | null> {
+  async findById(readableBoardId: string): Promise<BoardAggregate | null> {
     const rows = await this.db
       .select({
         board: boards,
@@ -96,7 +96,7 @@ export class BoardRepository implements BoardRepositoryInterface {
         teams: teams,
       })
       .from(boards)
-      .where(eq(boards.readable_id, boardId))
+      .where(eq(boards.readable_id, readableBoardId))
       .innerJoin(teams, eq(boards.team_id, teams.id))
       .leftJoin(columns, eq(columns.board_id, boards.id))
       .leftJoin(cards, eq(cards.column_id, columns.id));
@@ -151,15 +151,20 @@ export class BoardRepository implements BoardRepositoryInterface {
     return boardAggregate;
   }
 
-  async createBoard({ userId, teamId, name, description }: CreateBoardCommand) {
+  async createBoard({
+    userId,
+    readableTeamId,
+    name,
+    description,
+  }: CreateBoardCommand) {
     const [team] = await this.db
       .select({ id: teams.id })
       .from(teams)
-      .where(eq(teams.readable_id, teamId));
+      .where(eq(teams.readable_id, readableTeamId));
 
     if (!team) {
       throw new BadRequestException(
-        `Team not found for readable_id: ${teamId}`,
+        `Team not found for readable_id: ${readableTeamId}`,
       );
     }
 
@@ -171,7 +176,7 @@ export class BoardRepository implements BoardRepositoryInterface {
 
     if (boardNameExists.length > 0) {
       throw new BadRequestException(
-        `Board with name "${name}" already exists in team: ${teamId}`,
+        `Board with name "${name}" already exists in team: ${readableTeamId}`,
       );
     }
 
@@ -182,7 +187,7 @@ export class BoardRepository implements BoardRepositoryInterface {
 
     if (userRole !== 'admin') {
       throw new ForbiddenException(
-        `User does not have permission to create a board in team: ${teamId}`,
+        `User does not have permission to create a board in team: ${readableTeamId}`,
       );
     }
 
@@ -211,7 +216,7 @@ export class BoardRepository implements BoardRepositoryInterface {
       teamId: team.id,
       readableId: board.readable_id,
       columns: [],
-      readableTeamId: teamId,
+      readableTeamId: readableTeamId,
       createdAt: board.created_at,
     });
   }

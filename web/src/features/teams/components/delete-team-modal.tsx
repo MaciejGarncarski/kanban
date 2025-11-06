@@ -8,10 +8,10 @@ import { useRouter } from 'next/navigation'
 type Props = {
   isOpen: boolean
   onClose: () => void
-  teamId: string
+  readableTeamId: string
 }
 
-export function DeleteTeamModal({ isOpen, onClose, teamId }: Props) {
+export function DeleteTeamModal({ isOpen, onClose, readableTeamId }: Props) {
   const router = useRouter()
   const { data: teamsData } = useTeams()
   const { mutate, isPending } = useDeleteTeam()
@@ -20,11 +20,13 @@ export function DeleteTeamModal({ isOpen, onClose, teamId }: Props) {
     return null
   }
 
-  const currentTeam = teamsData.teams.find((team) => team.readableId === teamId)
+  const currentTeam = teamsData.teams.find(
+    (team) => team.readableId === readableTeamId,
+  )
 
   const handleDelete = () => {
     mutate(
-      { params: { path: { teamId } } },
+      { params: { path: { readableTeamId: readableTeamId } } },
       {
         onSuccess: () => {
           onClose()

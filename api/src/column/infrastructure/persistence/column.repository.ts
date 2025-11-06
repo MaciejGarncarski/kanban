@@ -81,11 +81,11 @@ export class ColumnRepository implements ColumnRepositoryInterface {
       .where(eq(columns.id, column.id));
   }
 
-  async checkMaxColumns(boardId: string): Promise<boolean> {
+  async checkMaxColumns(readableBoardId: string): Promise<boolean> {
     const boardRecord = await this.db
       .select()
       .from(boards)
-      .where(eq(boards.readable_id, boardId))
+      .where(eq(boards.readable_id, readableBoardId))
       .limit(1);
 
     if (!boardRecord || boardRecord.length === 0) {
@@ -102,11 +102,14 @@ export class ColumnRepository implements ColumnRepositoryInterface {
     return columnCount.count >= 6;
   }
 
-  async createColumn(boardId: string, name: string): Promise<ColumnEntity> {
+  async createColumn(
+    readableBoardId: string,
+    name: string,
+  ): Promise<ColumnEntity> {
     const boardRecord = await this.db
       .select()
       .from(boards)
-      .where(eq(boards.readable_id, boardId))
+      .where(eq(boards.readable_id, readableBoardId))
       .limit(1);
 
     if (!boardRecord || boardRecord.length === 0) {
@@ -145,12 +148,12 @@ export class ColumnRepository implements ColumnRepositoryInterface {
 
   async existsByNameAndBoardId(
     name: string,
-    boardId: string,
+    readableBoardId: string,
   ): Promise<boolean> {
     const boardRecord = await this.db
       .select()
       .from(boards)
-      .where(eq(boards.readable_id, boardId))
+      .where(eq(boards.readable_id, readableBoardId))
       .limit(1);
 
     if (!boardRecord || boardRecord.length === 0) {

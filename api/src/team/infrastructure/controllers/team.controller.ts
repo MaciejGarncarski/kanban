@@ -104,7 +104,7 @@ export class TeamController {
   })
   async deleteTeam(@Req() req: Request, @Param() params: DeleteTeamRequestDto) {
     await this.commandBus.execute<DeleteTeamCommand, void>(
-      new DeleteTeamCommand(req.userId, params.teamId),
+      new DeleteTeamCommand(req.userId, params.readableTeamId),
     );
   }
 
@@ -126,7 +126,7 @@ export class TeamController {
   ) {
     await this.commandBus.execute<UpdateTeamCommand, void>(
       new UpdateTeamCommand(
-        params.teamId,
+        params.readableTeamId,
         req.userId,
         body.name,
         body.description,

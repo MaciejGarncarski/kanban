@@ -4,22 +4,25 @@ import { Board } from '@/features/boards/components/board'
 import { BoardProvider } from '@/features/boards/components/board-context'
 
 type Props = {
-  teamId: string | null
-  boardId: string | null
+  readableTeamId: string | null
+  readableBoardId: string | null
 }
 
-export function BoardContainer({ teamId, boardId }: Props) {
-  if (!teamId) {
+export function BoardContainer({ readableTeamId, readableBoardId }: Props) {
+  if (!readableTeamId) {
     return <div>Please select a team to view the board.</div>
   }
 
-  if (!boardId) {
+  if (!readableBoardId) {
     return <div>Please select a board to view its contents.</div>
   }
 
   return (
     <BoardProvider>
-      <Board boardId={boardId} teamId={teamId} />
+      <Board
+        readableBoardId={readableBoardId}
+        readableTeamId={readableTeamId}
+      />
     </BoardProvider>
   )
 }

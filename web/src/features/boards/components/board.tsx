@@ -17,16 +17,16 @@ import { useMonitorElements } from '@/features/boards/hooks/use-monitor-elements
 import { useBoardById } from '@/features/boards/hooks/use-board-by-id'
 
 export const Board = ({
-  teamId,
-  boardId,
+  readableTeamId,
+  readableBoardId,
 }: {
-  teamId: string
-  boardId: string
+  readableTeamId: string
+  readableBoardId: string
 }) => {
-  useMonitorElements({ boardId })
-  const { data: boardData } = useBoardById({ boardId })
+  useMonitorElements({ readableBoardId })
+  const { data: boardData } = useBoardById({ readableBoardId })
   const { isDraggedOver, ref } = useDraggedOver({})
-  const { isAdmin } = useRoleByTeamId(teamId)
+  const { isAdmin } = useRoleByTeamId(readableTeamId)
 
   if (!boardData) {
     return <div>Board not found</div>
@@ -56,11 +56,10 @@ export const Board = ({
                 return (
                   <Column
                     key={columnId}
-                    boardId={boardId}
+                    readableTeamId={boardData.readableTeamId}
                     name={name}
                     columnId={columnId}
                     createdAt={createdAt}
-                    teamId={boardData.readableTeamId}
                     cards={cards}
                   />
                 )
@@ -78,7 +77,7 @@ export const Board = ({
                 w="20rem"
                 style={{ flexShrink: 0, justifyContent: 'center' }}>
                 <Center>
-                  <AddColumnModal boardId={boardId} />
+                  <AddColumnModal readableBoardId={readableBoardId} />
                 </Center>
               </Card>
             )}

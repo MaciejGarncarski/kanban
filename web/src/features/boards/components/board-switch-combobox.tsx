@@ -12,11 +12,14 @@ import {
 import { useRouter } from 'next/navigation'
 
 type Props = {
-  teamId: string | null
-  boardId: string | null
+  readableTeamId: string | null
+  readableBoardId: string | null
 }
 
-export function BoardSwitchCombobox({ teamId, boardId }: Props) {
+export function BoardSwitchCombobox({
+  readableTeamId,
+  readableBoardId,
+}: Props) {
   const router = useRouter()
 
   const combobox = useCombobox({
@@ -25,23 +28,28 @@ export function BoardSwitchCombobox({ teamId, boardId }: Props) {
 
   const setBoard = async (val: string) => {
     combobox.closeDropdown()
-    router.push(`/teams/${teamId}/boards/${val}`)
+    router.push(`/teams/${readableTeamId}/boards/${val}`)
   }
 
   return (
     <Combobox store={combobox} width={250} onOptionSubmit={setBoard}>
-      {boardId && teamId ? (
+      {readableBoardId && readableTeamId ? (
         <BoardSwitchInput
-          boardId={boardId}
+          readableBoardId={readableBoardId}
           combobox={combobox}
-          teamId={teamId}
+          readableTeamId={readableTeamId}
         />
       ) : (
         <BoardSwitchInputEmpty combobox={combobox} />
       )}
       <Combobox.Dropdown>
         <Combobox.Options>
-          {teamId && <BoardSwitchOptions teamId={teamId} boardId={boardId} />}
+          {readableTeamId && (
+            <BoardSwitchOptions
+              readableTeamId={readableTeamId}
+              readableBoardId={readableBoardId}
+            />
+          )}
         </Combobox.Options>
       </Combobox.Dropdown>
     </Combobox>
@@ -69,17 +77,17 @@ const BoardSwitchInputEmpty = ({ combobox }: { combobox: ComboboxStore }) => {
 
 const BoardSwitchInput = ({
   combobox,
-  boardId,
-  teamId,
+  readableBoardId,
+  readableTeamId,
 }: {
   combobox: ComboboxStore
-  boardId: string
-  teamId: string
+  readableBoardId: string
+  readableTeamId: string
 }) => {
-  const { data } = useBoards({ teamId })
+  const { data } = useBoards({ readableTeamId })
 
   const boardName = data?.boards.find((board) => {
-    return board.readableId === boardId
+    return board.readableId === readableBoardId
   })?.name
 
   return (
@@ -94,8 +102,10 @@ const BoardSwitchInput = ({
           rightSectionPointerEvents="none"
           onClick={() => combobox.toggleDropdown()}>
           <>
-            {boardId && boardName}
-            {!boardId && <Input.Placeholder>Select board</Input.Placeholder>}
+            {readableBoardId && boardName}
+            {!readableBoardId && (
+              <Input.Placeholder>Select board</Input.Placeholder>
+            )}
           </>
         </InputBase>
       </Input.Wrapper>

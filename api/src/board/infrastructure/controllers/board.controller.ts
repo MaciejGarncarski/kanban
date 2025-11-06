@@ -68,7 +68,7 @@ export class BoardController {
     const data = await this.queryBus.execute<
       GetBoardsByTeamQuery,
       GetBoardsByTeamResponseDto
-    >(new GetBoardsByTeamQuery(params.teamId));
+    >(new GetBoardsByTeamQuery(params.readableTeamId));
 
     return { boards: data.boards };
   }
@@ -91,7 +91,7 @@ export class BoardController {
     const board = await this.queryBus.execute<
       GetBoardByIdQuery,
       BoardDetailDto
-    >(new GetBoardByIdQuery(params.boardId));
+    >(new GetBoardByIdQuery(params.readableBoardId));
 
     return board;
   }
@@ -114,7 +114,7 @@ export class BoardController {
     @Req() req: Request,
   ): Promise<void> {
     await this.commandBus.execute(
-      new DeleteBoardCommand(params.boardId, req.userId),
+      new DeleteBoardCommand(params.readableBoardId, req.userId),
     );
   }
 
@@ -138,7 +138,7 @@ export class BoardController {
     >(
       new CreateBoardCommand(
         req.userId,
-        body.teamId,
+        body.readableTeamId,
         body.name,
         body.description,
       ),
@@ -167,7 +167,7 @@ export class BoardController {
     const userRole = await this.queryBus.execute<
       GetRoleByBoardIdQuery,
       TeamRole
-    >(new GetRoleByBoardIdQuery(params.boardId, req.userId));
+    >(new GetRoleByBoardIdQuery(params.readableBoardId, req.userId));
 
     if (userRole !== teamRoles.ADMIN) {
       throw new ForbiddenException('User is not authorized to create a column');
@@ -176,7 +176,13 @@ export class BoardController {
     const result = await this.commandBus.execute<
       UpdateBoardCommand,
       BoardAggregate
-    >(new UpdateBoardCommand(params.boardId, body.name, body.description));
+    >(
+      new UpdateBoardCommand(
+        params.readableBoardId,
+        body.name,
+        body.description,
+      ),
+    );
 
     return plainToInstance(BoardSummaryDto, result);
   }

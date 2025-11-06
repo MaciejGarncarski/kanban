@@ -2,7 +2,7 @@ import { appQuery } from '@/api-client/api-client'
 import { notifications } from '@mantine/notifications'
 import { useRouter } from 'next/navigation'
 
-export function useCreateBoard({ teamId }: { teamId: string }) {
+export function useCreateBoard({ readableTeamId }: { readableTeamId: string }) {
   const router = useRouter()
 
   return appQuery.useMutation('post', '/v1/boards', {
@@ -20,7 +20,7 @@ export function useCreateBoard({ teamId }: { teamId: string }) {
         color: 'green',
       })
 
-      router.replace(`/teams/${teamId}/boards/${readableId}`)
+      router.replace(`/teams/${readableTeamId}/boards/${readableId}`)
     },
   })
 }

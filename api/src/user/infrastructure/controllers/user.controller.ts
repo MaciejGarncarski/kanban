@@ -49,11 +49,14 @@ export class UserController {
   @ApiBadRequestResponse({
     type: ApiErrorResponse,
   })
-  async getUsers(@Param('teamId') teamId: string, @Req() req: Request) {
+  async getUsers(
+    @Param('readableTeamId') readableTeamId: string,
+    @Req() req: Request,
+  ) {
     const result = await this.queryBus.execute<
       GetUsersByTeamIdQuery,
       UserEntity[]
-    >(new GetUsersByTeamIdQuery(teamId, req.userId));
+    >(new GetUsersByTeamIdQuery(readableTeamId, req.userId));
 
     const usersDto = plainToInstance(
       UserArrayResponseDto,
@@ -73,9 +76,12 @@ export class UserController {
   @ApiBadRequestResponse({
     type: ApiErrorResponse,
   })
-  async getRoleByTeamId(@Param('teamId') teamId: string, @Req() req: Request) {
+  async getRoleByTeamId(
+    @Param('readableTeamId') readableTeamId: string,
+    @Req() req: Request,
+  ) {
     const result = await this.queryBus.execute<GetRoleByTeamIdQuery, string>(
-      new GetRoleByTeamIdQuery(teamId, req.userId),
+      new GetRoleByTeamIdQuery(readableTeamId, req.userId),
     );
 
     const roleDto = plainToInstance(

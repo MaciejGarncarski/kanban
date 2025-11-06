@@ -9,7 +9,7 @@ export class UpdateBoardHandler implements ICommandHandler<UpdateBoardCommand> {
 
   async execute(command: UpdateBoardCommand): Promise<BoardAggregate> {
     const updated = await this.boardRepository.updateBoard({
-      boardId: command.boardId,
+      readableBoardId: command.readableBoardId,
       description: command.description,
       name: command.title,
     });

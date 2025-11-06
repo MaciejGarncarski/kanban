@@ -1,4 +1,4 @@
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { DeleteTeamCommand } from 'src/team/application/commands/delete-team.command';
 import { TeamRepository } from 'src/team/infrastructure/persistence/team.repository';
@@ -12,17 +12,17 @@ export class DeleteTeamHandler implements ICommandHandler<DeleteTeamCommand> {
   ) {}
 
   async execute(command: DeleteTeamCommand): Promise<void> {
-    const { userId, teamId } = command;
+    const { userId, readableTeamId } = command;
 
-    const team = await this.teamRepository.findById(teamId);
+    const team = await this.teamRepository.findById(readableTeamId);
 
     if (!team) {
-      throw new NotFoundException('Team not found');
+      throw new BadRequestException('Team not found');
     }
 
     const isAdmin =
       (await this.userRepository.getUserRolebyReadableTeamId(
-        teamId,
+        readableTeamId,
         userId,
       )) === 'admin';
 
@@ -30,6 +30,6 @@ export class DeleteTeamHandler implements ICommandHandler<DeleteTeamCommand> {
       throw new ForbiddenException('Only admins can delete the team');
     }
 
-    await this.teamRepository.deleteTeam(teamId);
+    await this.teamRepository.deleteTeam(readableTeamId);
   }
 }

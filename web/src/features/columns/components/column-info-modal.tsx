@@ -10,18 +10,18 @@ import { useState } from 'react'
 export function ColumnInfoModal({
   name,
   createdAt,
-  teamId,
+  readableTeamId,
   columnId,
 }: {
   columnId: string
   name: string
   createdAt: string
-  teamId: string
+  readableTeamId: string
 }) {
   const [isEditing, setIsEditing] = useState(false)
   const deleteColumn = useDeleteColumn()
   const mutateColumn = useUpdateColumn()
-  const { isAdmin } = useRoleByTeamId(teamId)
+  const { isAdmin } = useRoleByTeamId(readableTeamId)
   const [opened, { open, close }] = useDisclosure(false, {
     onClose: () => {
       setTimeout(() => {

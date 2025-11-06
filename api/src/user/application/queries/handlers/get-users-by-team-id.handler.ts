@@ -10,7 +10,7 @@ export class GetUsersByTeamIdHandler {
   async execute(query: GetUsersByTeamIdQuery) {
     const userIsInTeam = await this.userRepository.isUserInTeamByTeam(
       query.userId,
-      query.teamId,
+      query.readableTeamId,
     );
 
     if (!userIsInTeam) {
@@ -19,6 +19,6 @@ export class GetUsersByTeamIdHandler {
       );
     }
 
-    return this.userRepository.findAllByTeamId(query.teamId);
+    return this.userRepository.findAllByTeamId(query.readableTeamId);
   }
 }

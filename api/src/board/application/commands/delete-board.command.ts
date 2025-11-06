@@ -1,6 +1,6 @@
 export class DeleteBoardCommand {
   constructor(
-    public readonly boardId: string,
+    public readonly readableBoardId: string,
     public readonly userId: string,
   ) {}
 }

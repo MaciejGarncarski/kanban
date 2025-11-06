@@ -51,7 +51,7 @@ export class ColumnController {
     const userRole = await this.queryBus.execute<
       GetRoleByBoardIdQuery,
       TeamRole
-    >(new GetRoleByBoardIdQuery(createColumnDto.boardId, userId));
+    >(new GetRoleByBoardIdQuery(createColumnDto.readableBoardId, userId));
 
     if (userRole !== teamRoles.ADMIN) {
       throw new ForbiddenException('User is not authorized to create a column');
@@ -60,7 +60,12 @@ export class ColumnController {
     const result = await this.commandBus.execute<
       CreateColumnCommand,
       CreateColumnResponseDto
-    >(new CreateColumnCommand(createColumnDto.title, createColumnDto.boardId));
+    >(
+      new CreateColumnCommand(
+        createColumnDto.title,
+        createColumnDto.readableBoardId,
+      ),
+    );
 
     return result;
   }

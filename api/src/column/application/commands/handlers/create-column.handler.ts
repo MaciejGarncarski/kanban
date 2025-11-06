@@ -14,11 +14,11 @@ export class CreateColumnHandler
   async execute(
     command: CreateColumnCommand,
   ): Promise<CreateColumnResponseDto> {
-    const { title, boardId } = command;
+    const { title, readableBoardId } = command;
 
     const alreadyExists = await this.columnRepository.existsByNameAndBoardId(
       title,
-      boardId,
+      readableBoardId,
     );
 
     if (alreadyExists) {
@@ -28,7 +28,7 @@ export class CreateColumnHandler
     }
 
     const maxColumnsReached =
-      await this.columnRepository.checkMaxColumns(boardId);
+      await this.columnRepository.checkMaxColumns(readableBoardId);
 
     if (maxColumnsReached) {
       throw new BadRequestException(
@@ -36,7 +36,10 @@ export class CreateColumnHandler
       );
     }
 
-    const created = await this.columnRepository.createColumn(boardId, title);
+    const created = await this.columnRepository.createColumn(
+      readableBoardId,
+      title,
+    );
 
     const dto = plainToInstance(CreateColumnResponseDto, created, {
       excludeExtraneousValues: true,

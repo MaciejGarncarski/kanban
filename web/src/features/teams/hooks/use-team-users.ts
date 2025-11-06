@@ -1,10 +1,10 @@
 import { appQuery } from '@/api-client/api-client'
 
-export function useTeamUsers({ teamId }: { teamId: string }) {
-  return appQuery.useSuspenseQuery('get', '/v1/teams/{teamId}/users', {
+export function useTeamUsers({ readableTeamId }: { readableTeamId: string }) {
+  return appQuery.useSuspenseQuery('get', '/v1/teams/{readableTeamId}/users', {
     params: {
       path: {
-        teamId,
+        readableTeamId,
       },
     },
   })

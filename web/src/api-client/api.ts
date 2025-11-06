@@ -37,7 +37,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/teams/{teamId}/users": {
+    "/v1/teams/{readableTeamId}/users": {
         parameters: {
             query?: never;
             header?: never;
@@ -53,7 +53,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/user/{teamId}/role": {
+    "/v1/user/{readableTeamId}/role": {
         parameters: {
             query?: never;
             header?: never;
@@ -172,7 +172,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/teams/{teamId}": {
+    "/v1/teams/{readableTeamId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -190,7 +190,7 @@ export interface paths {
         patch: operations["TeamController_updateTeam"];
         trace?: never;
     };
-    "/v1/teams/{teamId}/boards": {
+    "/v1/teams/{readableTeamId}/boards": {
         parameters: {
             query?: never;
             header?: never;
@@ -207,7 +207,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/boards/{boardId}": {
+    "/v1/boards/{readableBoardId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -526,7 +526,7 @@ export interface components {
              * @description ID of the team to which the board belongs
              * @example team-12345
              */
-            teamId: string;
+            readableTeamId: string;
         };
         UpdateBoardRequestDto: {
             /** @example name */
@@ -570,15 +570,15 @@ export interface components {
              * @description ID of the board the column belongs to
              * @example 123e4567-e89b-12d3-a456-426614174000
              */
-            boardId: string;
+            readableBoardId: string;
         };
         CreateColumnResponseDto: {
             /** @example a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6 */
             id: string;
             /** @example To Do */
             name: string;
-            /** @example a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6 */
-            boardId: string;
+            /** @example a1b2c3d4 */
+            readableBoardId: string;
             /**
              * @description User account creation date
              * @example 2025-10-17T15:42:05.351Z
@@ -658,7 +658,7 @@ export interface operations {
                 Authorization?: string;
             };
             path: {
-                teamId: string;
+                readableTeamId: string;
             };
             cookie?: never;
         };
@@ -690,7 +690,7 @@ export interface operations {
                 Authorization?: string;
             };
             path: {
-                teamId: string;
+                readableTeamId: string;
             };
             cookie?: never;
         };
@@ -948,7 +948,7 @@ export interface operations {
             };
             path: {
                 /** @description The ID of the team to be deleted */
-                teamId: string;
+                readableTeamId: string;
             };
             cookie?: never;
         };
@@ -980,7 +980,7 @@ export interface operations {
             };
             path: {
                 /** @description ID of the team */
-                teamId: string;
+                readableTeamId: string;
             };
             cookie?: never;
         };
@@ -1016,7 +1016,7 @@ export interface operations {
             };
             path: {
                 /** @description Team ID */
-                teamId: string;
+                readableTeamId: string;
             };
             cookie?: never;
         };
@@ -1050,7 +1050,7 @@ export interface operations {
             };
             path: {
                 /** @description Board ID */
-                boardId: string;
+                readableBoardId: string;
             };
             cookie?: never;
         };
@@ -1084,7 +1084,7 @@ export interface operations {
             };
             path: {
                 /** @description The ID of the board to delete */
-                boardId: string;
+                readableBoardId: string;
             };
             cookie?: never;
         };
@@ -1116,7 +1116,7 @@ export interface operations {
             };
             path: {
                 /** @description Board ID */
-                boardId: string;
+                readableBoardId: string;
             };
             cookie?: never;
         };

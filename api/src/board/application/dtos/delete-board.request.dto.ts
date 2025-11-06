@@ -8,5 +8,5 @@ export class DeleteBoardRequestDto {
   })
   @IsString()
   @IsNotEmpty()
-  boardId: string;
+  readableBoardId: string;
 }

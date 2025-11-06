@@ -19,7 +19,7 @@ import { useDisclosure } from '@mantine/hooks'
 import { EditIcon } from 'lucide-react'
 
 type Props = {
-  teamId: string
+  readableTeamId: string
   cardId: string
   title: string
   description?: string
@@ -29,7 +29,7 @@ type Props = {
 
 export function EditTaskModal({
   cardId,
-  teamId,
+  readableTeamId,
   title,
   description,
   dueDate,
@@ -50,7 +50,7 @@ export function EditTaskModal({
     onDropdownClose: () => combobox.resetSelectedOption(),
   })
 
-  const { data } = useTeamUsers({ teamId })
+  const { data } = useTeamUsers({ readableTeamId })
 
   const selectedUserData = data.users.find(
     (user) => user.id === form.values.assignedToId,

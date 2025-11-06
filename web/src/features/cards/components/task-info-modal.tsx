@@ -16,7 +16,7 @@ import { useDisclosure } from '@mantine/hooks'
 import { Info, TrashIcon } from 'lucide-react'
 
 type Props = {
-  teamId: string
+  readableTeamId: string
   cardId: string
   assignedToId?: string
   title: string
@@ -25,7 +25,7 @@ type Props = {
 }
 
 export function TaskInfoModal({
-  teamId,
+  readableTeamId,
   cardId,
   assignedToId,
   title,
@@ -33,8 +33,8 @@ export function TaskInfoModal({
   dueDate,
 }: Props) {
   const [opened, { open, close }] = useDisclosure(false)
-  const { data } = useTeamUsers({ teamId })
-  const { isAdmin } = useRoleByTeamId(teamId)
+  const { data } = useTeamUsers({ readableTeamId })
+  const { isAdmin } = useRoleByTeamId(readableTeamId)
   const assignedToUser = data.users.find((user) => user.id === assignedToId)
   const deleteMutation = useDeleteCard()
 
@@ -81,7 +81,7 @@ export function TaskInfoModal({
             {isAdmin && (
               <Group justify="space-between">
                 <EditTaskModal
-                  teamId={teamId}
+                  readableTeamId={readableTeamId}
                   cardId={cardId}
                   title={title}
                   description={description}

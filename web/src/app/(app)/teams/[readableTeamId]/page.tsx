@@ -2,10 +2,7 @@ import { READABLE_ID_LENGTH } from '@/constants/column'
 import { prefetchCurrentUser } from '@/features/auth/api/prefetch-current-user'
 import { prefetchTeamRole } from '@/features/auth/api/prefetch-team-role'
 import { attachCookies } from '@/features/auth/utils/attach-cookies'
-import { prefetchBoardById } from '@/features/boards/api/prefetch-board-by-id'
 import { prefetchBoards } from '@/features/boards/api/prefetch-boards'
-import { BoardContainer } from '@/features/boards/components/board-container'
-import { BoardPlaceholder } from '@/features/boards/components/board-placeholder'
 import { BoardSwitch } from '@/features/boards/components/board-switch'
 import { SettingsModal } from '@/features/layout/components/settings-modal'
 import { prefetchTeamUsers } from '@/features/teams/api/prefetch-team-users'
@@ -15,60 +12,60 @@ import { TeamSwitch } from '@/features/teams/components/team-switch'
 import { prefetchAllUsers } from '@/features/users/api/prefetch-all-users'
 import { TeamRole } from '@/types/team.types'
 import { getQueryClient } from '@/utils/get-query-client'
-import { Box, Group, Stack } from '@mantine/core'
+import { Box, Group, Stack, Text } from '@mantine/core'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
-import { Suspense } from 'react'
-import { ErrorBoundary } from 'react-error-boundary'
+import { redirect } from 'next/navigation'
 import * as z from 'zod/v4'
 
 const paramsSchema = z.object({
-  teamId: z.string().length(READABLE_ID_LENGTH),
-  boardId: z.string().length(READABLE_ID_LENGTH),
+  readableTeamId: z.string().length(READABLE_ID_LENGTH),
 })
 
 export default async function Page({
   params,
 }: PageProps<'/teams/[teamId]/boards/[boardId]'>) {
   const awaitedParams = await params
+  const cookies = await attachCookies()
 
   const { data, error } = paramsSchema.safeParse(awaitedParams)
 
   if (!data) {
     return <div>Invalid parameters: {error?.message}</div>
   }
-  const cookies = await attachCookies()
-  const { teamId, boardId } = data
+
+  const { readableTeamId } = data
   const queryClient = getQueryClient()
 
-  const [role] = await Promise.all([
-    prefetchTeamRole(queryClient, cookies, teamId),
+  const [role, boards] = await Promise.all([
+    prefetchTeamRole(queryClient, cookies, readableTeamId),
+    prefetchBoards(queryClient, cookies, readableTeamId),
+    prefetchTeamUsers(queryClient, cookies, readableTeamId),
     prefetchTeams(queryClient, cookies),
-    prefetchBoards(queryClient, cookies, teamId),
-    prefetchTeamUsers(queryClient, cookies, teamId),
-    prefetchBoardById(queryClient, cookies, boardId),
     prefetchAllUsers(queryClient, cookies),
     prefetchCurrentUser(queryClient, cookies),
   ])
 
+  if (boards?.boards && boards.boards.length > 0) {
+    redirect(`/teams/${readableTeamId}/boards/${boards.boards[0]?.readableId}`)
+  }
+
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <main>
+      <div>
         <Group justify="flex-start" align="flex-end">
-          <TeamSwitch teamId={teamId} />
-          <BoardSwitch teamId={teamId} boardId={boardId} />
+          <TeamSwitch readableTeamId={readableTeamId} />
+          <BoardSwitch readableTeamId={readableTeamId} readableBoardId={null} />
           <TeamRoleBadge role={role?.role as TeamRole} />
           <Box ml={'auto'}>
-            <SettingsModal teamId={teamId} boardId={boardId} />
+            <SettingsModal readableTeamId={readableTeamId} />
           </Box>
         </Group>
         <Stack mt="md">
-          <Suspense fallback={<BoardPlaceholder />}>
-            <ErrorBoundary fallback={<p>Failed to load board.</p>}>
-              <BoardContainer teamId={teamId} boardId={boardId} />
-            </ErrorBoundary>
-          </Suspense>
+          {role?.role === 'admin' && (
+            <Text>No boards found. Create a board to get started.</Text>
+          )}
         </Stack>
-      </main>
+      </div>
     </HydrationBoundary>
   )
 }

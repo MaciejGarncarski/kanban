@@ -21,16 +21,16 @@ import { useTeamUsers } from '@/features/teams/hooks/use-team-users'
 import { useCreateCard } from '@/features/cards/hooks/use-create-card'
 
 type Props = {
-  teamId: string
+  readableTeamId: string
   columnId: string
 }
 
-export function AddTaskCardModal({ teamId, columnId }: Props) {
+export function AddTaskCardModal({ readableTeamId, columnId }: Props) {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   })
   const { mutate, isPending } = useCreateCard()
-  const { data } = useTeamUsers({ teamId })
+  const { data } = useTeamUsers({ readableTeamId })
 
   const [opened, { open, close }] = useDisclosure(false)
   const form = useForm({

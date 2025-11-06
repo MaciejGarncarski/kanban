@@ -4,7 +4,11 @@ import { useForm } from '@mantine/form'
 import { useDisclosure } from '@mantine/hooks'
 import { Plus } from 'lucide-react'
 
-export function AddColumnModal({ boardId }: { boardId: string }) {
+export function AddColumnModal({
+  readableBoardId,
+}: {
+  readableBoardId: string
+}) {
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
@@ -20,7 +24,7 @@ export function AddColumnModal({ boardId }: { boardId: string }) {
   const onSubmit = form.onSubmit(async (values) => {
     mutate(
       {
-        body: { boardId, title: values.name },
+        body: { readableBoardId, title: values.name },
       },
       {
         onSuccess: () => {

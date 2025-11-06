@@ -28,5 +28,5 @@ export class UpdateTeamParamsDto {
   @ApiProperty({ description: 'ID of the team' })
   @IsString()
   @Expose()
-  teamId: string;
+  readableTeamId: string;
 }

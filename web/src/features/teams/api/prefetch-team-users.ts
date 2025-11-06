@@ -4,15 +4,15 @@ import { QueryClient } from '@tanstack/react-query'
 export function prefetchTeamUsers(
   queryClient: QueryClient,
   cookies: string,
-  teamId: string,
+  readableTeamId: string,
 ) {
-  const paramsTeamId = { params: { path: { teamId } } }
+  const paramsTeamId = { params: { path: { readableTeamId: readableTeamId } } }
 
   return queryClient.fetchQuery({
-    queryKey: ['get', `/v1/teams/{teamId}/users`, paramsTeamId],
+    queryKey: ['get', `/v1/teams/{readableTeamId}/users`, paramsTeamId],
     queryFn: async () => {
       try {
-        const res = await fetchServer.GET('/v1/teams/{teamId}/users', {
+        const res = await fetchServer.GET('/v1/teams/{readableTeamId}/users', {
           ...paramsTeamId,
           headers: {
             'x-skip-jwt-middleware': 'true',

@@ -5,11 +5,11 @@ import { Button, Stack, Textarea, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
 
 type Props = {
-  teamId: string
+  readableTeamId: string
 }
 
-export function CreateBoardForm({ teamId }: Props) {
-  const { mutate, isPending } = useCreateBoard({ teamId })
+export function CreateBoardForm({ readableTeamId }: Props) {
+  const { mutate, isPending } = useCreateBoard({ readableTeamId })
   const form = useForm({
     initialValues: {
       name: '',
@@ -22,7 +22,7 @@ export function CreateBoardForm({ teamId }: Props) {
       body: {
         name: values.name,
         description: values.description,
-        teamId: teamId,
+        readableTeamId: readableTeamId,
       },
     })
   })

@@ -16,12 +16,12 @@ import { useBoardContext } from '@/features/boards/components/board-context'
 
 export const useColumnDrag = ({
   columnId,
-  teamId,
+  readableTeamId,
 }: {
   columnId: string
-  teamId: string
+  readableTeamId: string
 }) => {
-  const { role } = useRoleByTeamId(teamId)
+  const { role } = useRoleByTeamId(readableTeamId)
 
   const { setIsDraggingColumn, isDraggingCard } = useBoardContext()
 

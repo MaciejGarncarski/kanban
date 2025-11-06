@@ -8,10 +8,10 @@ export class GetRoleByTeamIdHandler {
   constructor(private readonly userRepo: UserRepository) {}
 
   async execute(query: GetRoleByTeamIdQuery): Promise<TeamRole> {
-    const { teamId, userId } = query;
+    const { readableTeamId, userId } = query;
 
     const role = await this.userRepo.getUserRolebyReadableTeamId(
-      teamId,
+      readableTeamId,
       userId,
     );
 

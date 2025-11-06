@@ -11,10 +11,10 @@ export class DeleteBoardHandler implements ICommandHandler<DeleteBoardCommand> {
   ) {}
 
   async execute(command: DeleteBoardCommand): Promise<void> {
-    const { boardId } = command;
+    const { readableBoardId } = command;
 
     const role = await this.userRepository.getUserRoleByBoardId(
-      boardId,
+      readableBoardId,
       command.userId,
     );
 
@@ -22,6 +22,6 @@ export class DeleteBoardHandler implements ICommandHandler<DeleteBoardCommand> {
       throw new Error('Only admins can delete the board');
     }
 
-    await this.boardRepository.deleteBoardById(boardId);
+    await this.boardRepository.deleteBoardById(readableBoardId);
   }
 }

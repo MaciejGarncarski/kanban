@@ -25,12 +25,12 @@ import { useState } from 'react'
 type Props = {
   isOpen: boolean
   onClose: () => void
-  teamId: string
+  readableTeamId: string
 }
 
-export function EditTeamModal({ isOpen, onClose, teamId }: Props) {
+export function EditTeamModal({ isOpen, onClose, readableTeamId }: Props) {
   const { data: teamsData } = useTeams()
-  const { data: teamUsers } = useTeamUsers({ teamId })
+  const { data: teamUsers } = useTeamUsers({ readableTeamId })
   const { data: userData } = useAuth()
   const { data: allUsersData } = useAllUsers()
   const { mutate, isPending } = useEditTeam()
@@ -39,7 +39,9 @@ export function EditTeamModal({ isOpen, onClose, teamId }: Props) {
     onDropdownClose: () => combobox.resetSelectedOption(),
   })
 
-  const currentTeam = teamsData.teams.find((team) => team.readableId === teamId)
+  const currentTeam = teamsData.teams.find(
+    (team) => team.readableId === readableTeamId,
+  )
 
   const form = useForm({
     initialValues: {
@@ -77,7 +79,7 @@ export function EditTeamModal({ isOpen, onClose, teamId }: Props) {
           description: description,
           members: [...selectedUsers, userData.id],
         },
-        params: { path: { teamId } },
+        params: { path: { readableTeamId } },
       },
       {
         onSuccess: () => {

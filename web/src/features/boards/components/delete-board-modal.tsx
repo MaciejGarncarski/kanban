@@ -7,11 +7,11 @@ import { Button, Group, Modal } from '@mantine/core'
 type Props = {
   isOpen: boolean
   onClose: () => void
-  boardId: string
+  readableBoardId: string
 }
 
-export function DeleteBoardModal({ isOpen, onClose, boardId }: Props) {
-  const { data: boardData } = useBoardById({ boardId })
+export function DeleteBoardModal({ isOpen, onClose, readableBoardId }: Props) {
+  const { data: boardData } = useBoardById({ readableBoardId })
 
   const { mutate, isPending } = useDeleteBoard()
 
@@ -35,7 +35,7 @@ export function DeleteBoardModal({ isOpen, onClose, boardId }: Props) {
               {
                 params: {
                   path: {
-                    boardId,
+                    readableBoardId,
                   },
                 },
               },

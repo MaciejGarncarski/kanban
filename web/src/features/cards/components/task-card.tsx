@@ -11,8 +11,7 @@ type Props = {
   description?: string
   assignedToId?: string
   dueDate?: Date | null
-  boardId: string
-  teamId: string
+  readableTeamId: string
   cardId: string
 }
 
@@ -21,8 +20,7 @@ export function TaskCard({
   description,
   assignedToId,
   dueDate,
-  boardId,
-  teamId,
+  readableTeamId,
   cardId,
 }: Props) {
   const { isDraggingCard, isDraggingColumn } = useBoardContext()
@@ -44,7 +42,7 @@ export function TaskCard({
         <Flex w="100%" justify="space-between" align="center">
           <Text>{title}</Text>
           <TaskInfoModal
-            teamId={teamId}
+            readableTeamId={readableTeamId}
             cardId={cardId}
             assignedToId={assignedToId}
             title={title}

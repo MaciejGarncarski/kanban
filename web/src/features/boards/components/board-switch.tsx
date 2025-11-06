@@ -4,15 +4,18 @@ import { Suspense } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
 type Props = {
-  teamId: string
-  boardId: string | null
+  readableTeamId: string
+  readableBoardId: string | null
 }
 
-export function BoardSwitch({ teamId, boardId }: Props) {
+export function BoardSwitch({ readableTeamId, readableBoardId }: Props) {
   return (
     <Suspense fallback={<BoardSwitchPlaceholder />}>
       <ErrorBoundary fallback={<BoardSwitchPlaceholder />}>
-        <BoardSwitchCombobox teamId={teamId} boardId={boardId} />
+        <BoardSwitchCombobox
+          readableTeamId={readableTeamId}
+          readableBoardId={readableBoardId}
+        />
       </ErrorBoundary>
     </Suspense>
   )

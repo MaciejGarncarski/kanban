@@ -7,11 +7,11 @@ export class UpdateTeamHandler implements ICommandHandler<UpdateTeamCommand> {
   constructor(private readonly teamRepository: TeamRepository) {}
 
   async execute(command: UpdateTeamCommand): Promise<void> {
-    const { teamId, userId, name, description, members } = command;
+    const { readableTeamId, userId, name, description, members } = command;
 
     await this.teamRepository.updateTeam(
       userId,
-      teamId,
+      readableTeamId,
       {
         name,
         description,

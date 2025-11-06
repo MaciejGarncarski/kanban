@@ -15,10 +15,10 @@ import {
 import { useRouter } from 'next/navigation'
 
 type Props = {
-  teamId: string | null
+  readableTeamId: string | null
 }
 
-export function TeamSwitchCombobox({ teamId }: Props) {
+export function TeamSwitchCombobox({ readableTeamId }: Props) {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   })
@@ -31,14 +31,14 @@ export function TeamSwitchCombobox({ teamId }: Props) {
 
   return (
     <Combobox store={combobox} width={250} onOptionSubmit={setTeam}>
-      {teamId ? (
-        <TeamSwitchInput combobox={combobox} teamId={teamId} />
+      {readableTeamId ? (
+        <TeamSwitchInput combobox={combobox} readableTeamId={readableTeamId} />
       ) : (
         <TeamSwitchInputEmpty combobox={combobox} />
       )}
       <Combobox.Dropdown>
         <Combobox.Options>
-          <TeamSwitchOptions teamId={teamId} />
+          <TeamSwitchOptions readableTeamId={readableTeamId} />
         </Combobox.Options>
       </Combobox.Dropdown>
     </Combobox>
@@ -65,10 +65,10 @@ const TeamSwitchInputEmpty = ({ combobox }: { combobox: ComboboxStore }) => {
 
 const TeamSwitchInput = ({
   combobox,
-  teamId,
+  readableTeamId,
 }: {
   combobox: ComboboxStore
-  teamId: string
+  readableTeamId: string
 }) => {
   const { data: teamsData } = useTeams()
 
@@ -84,9 +84,12 @@ const TeamSwitchInput = ({
           rightSectionPointerEvents="none"
           onClick={() => combobox.toggleDropdown()}>
           <>
-            {teamId &&
-              teamsData.teams.find((team) => team.readableId === teamId)?.name}
-            {!teamId && <Input.Placeholder>Select team</Input.Placeholder>}
+            {readableTeamId &&
+              teamsData.teams.find((team) => team.readableId === readableTeamId)
+                ?.name}
+            {!readableTeamId && (
+              <Input.Placeholder>Select team</Input.Placeholder>
+            )}
           </>
         </InputBase>
       </Input.Wrapper>
@@ -94,7 +97,11 @@ const TeamSwitchInput = ({
   )
 }
 
-const TeamSwitchOptions = ({ teamId }: { teamId: string | null }) => {
+const TeamSwitchOptions = ({
+  readableTeamId,
+}: {
+  readableTeamId: string | null
+}) => {
   const { data: teamsData } = useTeams()
 
   if (!teamsData.teams || teamsData.teams.length === 0) {
@@ -104,7 +111,7 @@ const TeamSwitchOptions = ({ teamId }: { teamId: string | null }) => {
   return teamsData.teams.map(({ description, readableId, name }) => (
     <Combobox.Option value={readableId} key={readableId}>
       <Group gap="sm" wrap="nowrap">
-        {readableId === teamId && (
+        {readableId === readableTeamId && (
           <CheckIcon size={12} style={{ flexGrow: 0, flexShrink: 0 }} />
         )}
         <Flex direction={'column'}>

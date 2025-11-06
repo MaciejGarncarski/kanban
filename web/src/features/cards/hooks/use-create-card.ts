@@ -5,7 +5,7 @@ export function useCreateCard() {
   return appQuery.useMutation('post', '/v1/cards', {
     onSuccess: async (_, __, ___, ctx) => {
       await ctx.client.invalidateQueries({
-        queryKey: ['get', '/v1/boards/{boardId}'],
+        queryKey: ['get', '/v1/boards/{readableBoardId}'],
       })
       notifications.show({
         title: 'Success',

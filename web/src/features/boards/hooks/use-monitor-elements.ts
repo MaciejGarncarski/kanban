@@ -5,8 +5,12 @@ import { useBoardById } from '@/features/boards/hooks/use-board-by-id'
 import { useUpdateCard } from '@/features/cards/hooks/use-update-card'
 import { useUpdateColumn } from '@/features/columns/hooks/use-update-column'
 
-export function useMonitorElements({ boardId }: { boardId: string }) {
-  const { data: boardData } = useBoardById({ boardId })
+export function useMonitorElements({
+  readableBoardId,
+}: {
+  readableBoardId: string
+}) {
+  const { data: boardData } = useBoardById({ readableBoardId })
   const cardMutation = useUpdateCard()
   const columnMutation = useUpdateColumn()
 
@@ -146,5 +150,5 @@ export function useMonitorElements({ boardId }: { boardId: string }) {
         }
       },
     })
-  }, [cardMutation, boardData, boardId, columnMutation])
+  }, [cardMutation, boardData, readableBoardId, columnMutation])
 }

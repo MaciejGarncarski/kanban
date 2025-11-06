@@ -4,10 +4,10 @@ export function useUpdateColumn() {
   return appQuery.useMutation('patch', '/v1/columns/{columnId}', {
     onSuccess: (_, __, ___, ctx) => {
       ctx.client.invalidateQueries({
-        queryKey: ['get', `/v1/boards/{teamId}/boards`],
+        queryKey: ['get', `/v1/boards/{readableTeamId}/boards`],
       })
       ctx.client.invalidateQueries({
-        queryKey: ['get', '/v1/boards/{boardId}'],
+        queryKey: ['get', '/v1/boards/{readableBoardId}'],
       })
     },
   })

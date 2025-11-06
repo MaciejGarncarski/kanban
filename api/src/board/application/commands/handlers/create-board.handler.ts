@@ -8,12 +8,12 @@ export class CreateBoardHandler implements ICommandHandler<CreateBoardCommand> {
   constructor(private readonly boardRepository: BoardRepository) {}
 
   async execute(command: CreateBoardCommand): Promise<BoardAggregate> {
-    const { userId, description, name, teamId } = command;
+    const { userId, description, name, readableTeamId } = command;
 
     const created = await this.boardRepository.createBoard({
       description,
       name,
-      teamId,
+      readableTeamId,
       userId,
     });
 

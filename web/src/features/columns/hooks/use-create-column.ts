@@ -5,7 +5,7 @@ export function useCreateColumn() {
   return appQuery.useMutation('post', '/v1/columns', {
     onSuccess: (_, __, ___, ctx) => {
       ctx.client.invalidateQueries({
-        queryKey: ['get', '/v1/boards/{boardId}'],
+        queryKey: ['get', '/v1/boards/{readableBoardId}'],
       })
       notifications.show({
         title: 'Success',

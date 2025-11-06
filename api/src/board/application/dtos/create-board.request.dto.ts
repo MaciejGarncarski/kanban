@@ -21,5 +21,5 @@ export class CreateBoardRequestDto {
     example: 'team-12345',
   })
   @IsString()
-  teamId: string;
+  readableTeamId: string;
 }

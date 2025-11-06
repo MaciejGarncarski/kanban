@@ -12,5 +12,5 @@ export class CreateColumnRequestDto {
     description: 'ID of the board the column belongs to',
   })
   @IsString()
-  boardId: string;
+  readableBoardId: string;
 }
