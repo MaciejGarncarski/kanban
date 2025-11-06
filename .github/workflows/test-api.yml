@@ -81,4 +81,4 @@ jobs:
         if: matrix.type == 'unit' # Only upload once (skip e2e)
         uses: codecov/codecov-action@v5
         with:
-          directory: ./api/coverage
+          directory: ./coverage
