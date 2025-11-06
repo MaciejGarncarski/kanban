@@ -116,10 +116,6 @@
       "!**/__tests__/**"
     ],
     "coverageDirectory": "../coverage",
-    "coverageReporters": [
-      "text",
-      "lcov"
-    ],
     "testEnvironment": "node"
   }
 }
