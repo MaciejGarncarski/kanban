@@ -109,11 +109,11 @@ export function EditTaskModal({
                   combobox.closeDropdown()
 
                   if (form.values.assignedToId === val) {
-                    form.setFieldValue('assignedTo', '')
+                    form.setFieldValue('assignedToId', '')
                     return
                   }
 
-                  form.setFieldValue('assignedTo', val)
+                  form.setFieldValue('assignedToId', val)
                 }}>
                 <Combobox.Target>
                   <InputBase
