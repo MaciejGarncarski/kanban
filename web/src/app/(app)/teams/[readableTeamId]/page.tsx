@@ -23,7 +23,7 @@ const paramsSchema = z.object({
 
 export default async function Page({
   params,
-}: PageProps<'/teams/[teamId]/boards/[boardId]'>) {
+}: PageProps<'/teams/[readableTeamId]'>) {
   const awaitedParams = await params
   const cookies = await attachCookies()
 

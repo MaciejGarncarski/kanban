@@ -10,7 +10,7 @@ const paramsSchema = z.object({
 
 export default async function NewBoardPage({
   params,
-}: PageProps<'/teams/[teamId]/boards/new'>) {
+}: PageProps<'/teams/[readableTeamId]/boards/new'>) {
   const awaitedParams = await params
 
   const { data, error } = paramsSchema.safeParse(awaitedParams)

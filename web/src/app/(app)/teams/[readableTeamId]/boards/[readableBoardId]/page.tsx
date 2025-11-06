@@ -28,7 +28,7 @@ const paramsSchema = z.object({
 
 export default async function Page({
   params,
-}: PageProps<'/teams/[teamId]/boards/[boardId]'>) {
+}: PageProps<'/teams/[readableTeamId]/boards/[readableBoardId]'>) {
   const awaitedParams = await params
 
   const { data, error } = paramsSchema.safeParse(awaitedParams)
