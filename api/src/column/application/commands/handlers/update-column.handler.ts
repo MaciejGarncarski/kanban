@@ -38,20 +38,21 @@ export class UpdateColumnHandler
       const allColumns = await this.columnRepository.findAllByBoardId(
         column.boardId,
       );
-      const filtered = allColumns.filter((c) => c.id !== columnId);
+      const filtered = allColumns
+        .filter((c) => c.id !== columnId)
+        .filter(Boolean);
       const insertIndex = position > 0 ? position - 1 : 0;
       filtered.splice(insertIndex, 0, column);
 
-      await Promise.all(
-        filtered.map((c, idx) =>
-          this.columnRepository.save(
-            new ColumnEntity({ ...c, position: idx + 1 }),
-          ),
-        ),
-      );
+      const newPositions = filtered.map((c, idx) => {
+        return { ...c, position: idx + 1 };
+      });
 
-      const updatedColumn = filtered[insertIndex];
-      return updatedColumn;
+      for (const col of newPositions) {
+        await this.columnRepository.save(new ColumnEntity({ ...col }));
+      }
+
+      return filtered[insertIndex];
     }
 
     const updatedData = new ColumnEntity({

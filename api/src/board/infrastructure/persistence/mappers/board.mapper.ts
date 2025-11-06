@@ -62,42 +62,4 @@ export class BoardMapper {
       readableTeamId: boardReadableTeamId,
     });
   }
-
-  static toPersistence(board: BoardAggregate): NewBoardRecord {
-    return {
-      id: board.id,
-      team_id: board.teamId,
-      name: board.name,
-      description: board.description ?? null,
-      created_at: board.createdAt ?? new Date(),
-      readable_id: board.readableId,
-    };
-  }
-
-  static toPersistenceColumns(board: BoardAggregate): NewColumnRecord[] {
-    if (!board.columns) return [];
-
-    return board.columns.map((col) => ({
-      id: col.id,
-      board_id: board.id,
-      name: col.name,
-      position: col.position,
-      created_at: col.createdAt ?? new Date(),
-    }));
-  }
-
-  static toPersistenceCards(board: BoardAggregate): NewCardRecord[] {
-    if (!board.columns) return [];
-
-    return board.columns.flatMap((col) =>
-      col.cards.map((card) => ({
-        id: card.id,
-        column_id: col.id,
-        title: card.title,
-        description: card.description ?? null,
-        position: card.position,
-        created_at: card.createdAt ?? new Date(),
-      })),
-    );
-  }
 }

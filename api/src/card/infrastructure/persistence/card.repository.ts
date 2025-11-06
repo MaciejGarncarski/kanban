@@ -9,6 +9,7 @@ import {
   cards,
   columns,
   comments,
+  teams,
 } from 'src/infrastructure/persistence/db/schema';
 
 type NewCardRecord = {
@@ -116,17 +117,18 @@ export class CardRepository implements CardRepositoryInterface {
 
   async getTeamIdByCardId(cardId: string): Promise<string> {
     const [cardRecord] = await this.db
-      .select({ teamId: boards.team_id })
+      .select()
       .from(cards)
       .innerJoin(columns, eq(cards.column_id, columns.id))
       .innerJoin(boards, eq(columns.board_id, boards.id))
+      .innerJoin(teams, eq(teams.id, boards.team_id))
       .where(eq(cards.id, cardId));
 
     if (!cardRecord) {
       throw new BadRequestException('Card not found');
     }
 
-    return cardRecord.teamId;
+    return cardRecord.teams.readable_id;
   }
 
   async deleteCard(cardId: string): Promise<void> {

@@ -1,5 +1,4 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { UnauthorizedException } from '@nestjs/common';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { GetBoardsByTeamQuery } from 'src/board/application/queries/get-boards-by-team.query';
 import { BoardRepository } from 'src/board/infrastructure/persistence/board.repository';
@@ -12,11 +11,10 @@ export class GetBoardsByTeamHandler
   constructor(private readonly boardRepo: BoardRepository) {}
 
   async execute(query: GetBoardsByTeamQuery) {
-    const boards = await this.boardRepo.findByTeamId(query.readableTeamId);
-
-    if (!boards) {
-      throw new UnauthorizedException('Boards not found');
-    }
+    const boards = await this.boardRepo.findByTeamId(
+      query.userId,
+      query.readableTeamId,
+    );
 
     const plainBoards = instanceToPlain(boards);
 

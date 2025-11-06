@@ -64,11 +64,12 @@ export class BoardController {
   })
   async getAllBoardsByTeamId(
     @Param() params: GetBoardsByTeamRequestDto,
+    @Req() req: Request,
   ): Promise<GetBoardsByTeamResponseDto> {
     const data = await this.queryBus.execute<
       GetBoardsByTeamQuery,
       GetBoardsByTeamResponseDto
-    >(new GetBoardsByTeamQuery(params.readableTeamId));
+    >(new GetBoardsByTeamQuery(req.userId, params.readableTeamId));
 
     return { boards: data.boards };
   }
@@ -87,11 +88,14 @@ export class BoardController {
   })
   async getBoardById(
     @Param() params: GetBoardByIdDto,
+    @Req() req: Request,
   ): Promise<BoardDetailDto> {
+    const userId = req.userId;
+
     const board = await this.queryBus.execute<
       GetBoardByIdQuery,
       BoardDetailDto
-    >(new GetBoardByIdQuery(params.readableBoardId));
+    >(new GetBoardByIdQuery(userId, params.readableBoardId));
 
     return board;
   }

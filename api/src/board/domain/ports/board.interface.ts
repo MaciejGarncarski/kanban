@@ -1,8 +1,14 @@
 import { BoardAggregate } from 'src/board/domain/board.entity';
 
 export interface BoardRepositoryInterface {
-  findByTeamId(teamId: string): Promise<BoardAggregate[]>;
-  findById(readableBoardId: string): Promise<BoardAggregate | null>;
+  findByTeamId(
+    userId: string,
+    readableTeamId: string,
+  ): Promise<BoardAggregate[]>;
+  findById(
+    userId: string,
+    readableBoardId: string,
+  ): Promise<BoardAggregate | null>;
   createBoard(board: {
     userId: string;
     name: string;

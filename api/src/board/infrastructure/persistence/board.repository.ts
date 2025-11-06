@@ -70,22 +70,34 @@ export class BoardRepository implements BoardRepositoryInterface {
     });
   }
 
-  async findByTeamId(readableTeamId: string): Promise<BoardAggregate[]> {
+  async findByTeamId(
+    userId: string,
+    readableTeamId: string,
+  ): Promise<BoardAggregate[]> {
     const boardRecords = await this.db
       .select({
         board: boards,
         teams: teams,
       })
       .from(boards)
+      .innerJoin(team_members, eq(team_members.team_id, boards.team_id))
       .innerJoin(teams, eq(boards.team_id, teams.id))
-      .where(eq(teams.readable_id, readableTeamId));
+      .where(
+        and(
+          eq(team_members.user_id, userId),
+          eq(teams.readable_id, readableTeamId),
+        ),
+      );
 
     return boardRecords.map((record) =>
       BoardMapper.toDomain(record.board, record.teams.readable_id),
     );
   }
 
-  async findById(readableBoardId: string): Promise<BoardAggregate | null> {
+  async findById(
+    userId: string,
+    readableBoardId: string,
+  ): Promise<BoardAggregate | null> {
     const rows = await this.db
       .select({
         board: boards,
@@ -94,10 +106,16 @@ export class BoardRepository implements BoardRepositoryInterface {
         teams: teams,
       })
       .from(boards)
-      .where(eq(boards.readable_id, readableBoardId))
+      .innerJoin(team_members, eq(team_members.team_id, boards.team_id))
       .innerJoin(teams, eq(boards.team_id, teams.id))
       .leftJoin(columns, eq(columns.board_id, boards.id))
-      .leftJoin(cards, eq(cards.column_id, columns.id));
+      .leftJoin(cards, eq(cards.column_id, columns.id))
+      .where(
+        and(
+          eq(team_members.user_id, userId),
+          eq(boards.readable_id, readableBoardId),
+        ),
+      );
 
     if (rows.length === 0) return null;
 

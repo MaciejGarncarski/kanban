@@ -10,7 +10,10 @@ export class GetBoardByIdHandler implements IQueryHandler<GetBoardByIdQuery> {
   constructor(private readonly boardRepo: BoardRepository) {}
 
   async execute(query: GetBoardByIdQuery): Promise<BoardDetailDto> {
-    const board = await this.boardRepo.findById(query.readableBoardId);
+    const board = await this.boardRepo.findById(
+      query.userId,
+      query.readableBoardId,
+    );
 
     if (!board) {
       throw new NotFoundException('Board not found');

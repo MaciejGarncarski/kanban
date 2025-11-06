@@ -1,3 +1,6 @@
 export class GetBoardByIdQuery {
-  constructor(public readonly readableBoardId: string) {}
+  constructor(
+    public readonly userId: string,
+    public readonly readableBoardId: string,
+  ) {}
 }

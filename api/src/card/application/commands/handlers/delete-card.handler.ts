@@ -14,8 +14,9 @@ export class DeleteCardHandler implements ICommandHandler<DeleteCardCommand> {
 
   async execute(command: DeleteCardCommand): Promise<boolean> {
     const { cardId, userId } = command;
-
     const teamId = await this.cardRepository.getTeamIdByCardId(cardId);
+
+    // readableid
 
     const userRole = await this.queryBus.execute<
       GetRoleByTeamIdQuery,
