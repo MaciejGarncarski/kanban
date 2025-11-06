@@ -1,6 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { DeleteBoardCommand } from 'src/board/application/commands/delete-board.command';
 import { BoardRepository } from 'src/board/infrastructure/persistence/board.repository';
+import { teamRoles } from 'src/team/domain/types/team.types';
 import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
 
 @CommandHandler(DeleteBoardCommand)
@@ -18,7 +19,7 @@ export class DeleteBoardHandler implements ICommandHandler<DeleteBoardCommand> {
       command.userId,
     );
 
-    if (role !== 'admin') {
+    if (role !== teamRoles.ADMIN) {
       throw new Error('Only admins can delete the board');
     }
 

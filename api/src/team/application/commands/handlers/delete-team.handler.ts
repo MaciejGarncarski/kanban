@@ -1,6 +1,7 @@
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { DeleteTeamCommand } from 'src/team/application/commands/delete-team.command';
+import { teamRoles } from 'src/team/domain/types/team.types';
 import { TeamRepository } from 'src/team/infrastructure/persistence/team.repository';
 import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
 
@@ -24,7 +25,7 @@ export class DeleteTeamHandler implements ICommandHandler<DeleteTeamCommand> {
       (await this.userRepository.getUserRolebyReadableTeamId(
         readableTeamId,
         userId,
-      )) === 'admin';
+      )) === teamRoles.ADMIN;
 
     if (!isAdmin) {
       throw new ForbiddenException('Only admins can delete the team');

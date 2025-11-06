@@ -10,7 +10,7 @@ import { prefetchTeams } from '@/features/teams/api/prefetch-teams'
 import { TeamRoleBadge } from '@/features/teams/components/team-role-badge'
 import { TeamSwitch } from '@/features/teams/components/team-switch'
 import { prefetchAllUsers } from '@/features/users/api/prefetch-all-users'
-import { TeamRole } from '@/types/team.types'
+import { TeamRole, teamRoles } from '@/types/team.types'
 import { getQueryClient } from '@/utils/get-query-client'
 import { Box, Group, Stack, Text } from '@mantine/core'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
@@ -61,7 +61,7 @@ export default async function Page({
           </Box>
         </Group>
         <Stack mt="md">
-          {role?.role === 'admin' && (
+          {role?.role === teamRoles.ADMIN && (
             <Text>No boards found. Create a board to get started.</Text>
           )}
         </Stack>

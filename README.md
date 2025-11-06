@@ -55,6 +55,14 @@ then run
 
 `pnpm dlx tsx ./src/infrastructure/persistence/db/reset`
 
-## Running tests
+## Running tests for API
 
-`pnpm test`
+### Unit & Integration
+
+run `pnpm test`
+
+### E2E
+
+First [prepare database](#prepare-database)
+
+then run `pnpm test:e2e`

@@ -10,7 +10,12 @@ import {
   Req,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiBadRequestResponse, ApiBody, ApiOkResponse } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiOkResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { type Request } from 'express';
 import { Auth } from 'src/auth/common/decorators/auth.decorator';
@@ -38,6 +43,7 @@ export class CardController {
   @Auth()
   @Post(routesV1.card.createCard)
   @ApiBody({ type: CreateCardRequestDto })
+  @ApiOperation({ summary: 'Create a new card' })
   @ApiOkResponse({
     type: CardDto,
   })
@@ -65,6 +71,7 @@ export class CardController {
 
   @Auth()
   @Delete(routesV1.card.deleteCard)
+  @ApiOperation({ summary: 'Delete a card' })
   @ApiOkResponse({
     type: CardDto,
   })
@@ -85,6 +92,7 @@ export class CardController {
 
   @Auth()
   @Patch(routesV1.card.updateCard)
+  @ApiOperation({ summary: 'Update a card' })
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBadRequestResponse({
     type: ApiErrorResponse,

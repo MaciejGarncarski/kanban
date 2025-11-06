@@ -1,6 +1,10 @@
 import { Controller, Get, Param, Req } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
-import { ApiBadRequestResponse, ApiOkResponse } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiOkResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { type Request } from 'express';
 import { Auth } from 'src/auth/common/decorators/auth.decorator';
@@ -19,6 +23,7 @@ export class UserController {
 
   @Auth()
   @Get(routesV1.user.getAllUsers)
+  @ApiOperation({ summary: 'Get all users' })
   @ApiOkResponse({
     type: UserArrayResponseDto,
   })
@@ -43,6 +48,7 @@ export class UserController {
 
   @Auth()
   @Get(routesV1.user.getUsersByTeamId)
+  @ApiOperation({ summary: 'Get users by readable team ID' })
   @ApiOkResponse({
     type: UserArrayResponseDto,
   })
@@ -70,6 +76,7 @@ export class UserController {
 
   @Auth()
   @Get(routesV1.user.getRoleByTeamId)
+  @ApiOperation({ summary: 'Get user role by readable team ID' })
   @ApiOkResponse({
     type: RoleResponseDto,
   })

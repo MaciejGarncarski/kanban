@@ -9,7 +9,12 @@ import {
   Req,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiBadRequestResponse, ApiBody, ApiOkResponse } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiOkResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { type Request } from 'express';
 import { Auth } from 'src/auth/common/decorators/auth.decorator';
 import { CreateColumnCommand } from 'src/column/application/commands/create-column.command';
@@ -38,6 +43,7 @@ export class ColumnController {
 
   @Auth()
   @Post(routesV1.column.createColumn)
+  @ApiOperation({ summary: 'Create a new column' })
   @ApiOkResponse({ type: CreateColumnResponseDto })
   @ApiBadRequestResponse({
     type: ApiErrorResponse,
@@ -73,6 +79,7 @@ export class ColumnController {
   @Auth()
   @Patch(routesV1.column.updateColumn)
   @ApiOkResponse({ type: CreateColumnResponseDto })
+  @ApiOperation({ summary: 'Update a column' })
   @ApiBadRequestResponse({
     type: ApiErrorResponse,
   })
@@ -94,6 +101,7 @@ export class ColumnController {
 
   @Auth()
   @Delete(routesV1.column.deleteColumn)
+  @ApiOperation({ summary: 'Delete a column' })
   @ApiBadRequestResponse({
     type: ApiErrorResponse,
   })

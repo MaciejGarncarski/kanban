@@ -14,6 +14,7 @@ import {
   users,
 } from 'src/infrastructure/persistence/db/schema';
 import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
+import { teamRoles } from 'src/team/domain/types/team.types';
 import { GetRoleByTeamIdQuery } from 'src/user/application/queries/get-role-by-team-id.query';
 import { GetUsersByTeamIdQuery } from 'src/user/application/queries/get-users-by-team-id.query';
 import { GetUsersByTeamIdHandler } from 'src/user/application/queries/handlers/get-users-by-team-id.handler';
@@ -98,12 +99,12 @@ describe('GetUsersByTeamIdHandler', () => {
       {
         team_id: team.id,
         user_id: user1.id,
-        role: 'member',
+        role: teamRoles.MEMBER,
       },
       {
         team_id: team.id,
         user_id: user2.id,
-        role: 'admin',
+        role: teamRoles.ADMIN,
       },
     ]);
 

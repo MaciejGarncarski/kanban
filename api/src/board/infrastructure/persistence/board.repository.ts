@@ -17,17 +17,15 @@ import {
   cards,
   columns,
   comments,
+  team_members,
   teams,
 } from 'src/infrastructure/persistence/db/schema';
 import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+import { teamRoles } from 'src/team/domain/types/team.types';
 
 @Injectable()
 export class BoardRepository implements BoardRepositoryInterface {
-  constructor(
-    @InjectDb() private readonly db: DB,
-    private readonly userRepository: UserRepository,
-  ) {}
+  constructor(@InjectDb() private readonly db: DB) {}
 
   async updateBoard(boardData: {
     readableBoardId: string;
@@ -180,12 +178,24 @@ export class BoardRepository implements BoardRepositoryInterface {
       );
     }
 
-    const userRole = await this.userRepository.getUserRoleByTeamId(
-      team.id,
-      userId,
-    );
+    const [teamMember] = await this.db
+      .select()
+      .from(team_members)
+      .innerJoin(teams, eq(team_members.team_id, teams.id))
+      .where(
+        and(
+          eq(teams.readable_id, readableTeamId),
+          eq(team_members.user_id, userId),
+        ),
+      );
 
-    if (userRole !== 'admin') {
+    if (!teamMember) {
+      throw new BadRequestException(
+        'User is not authorized to access this team',
+      );
+    }
+
+    if (teamMember.team_members.role !== teamRoles.ADMIN) {
       throw new ForbiddenException(
         `User does not have permission to create a board in team: ${readableTeamId}`,
       );

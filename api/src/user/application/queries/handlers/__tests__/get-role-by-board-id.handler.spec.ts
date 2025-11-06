@@ -15,6 +15,7 @@ import {
   users,
 } from 'src/infrastructure/persistence/db/schema';
 import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
+import { teamRoles } from 'src/team/domain/types/team.types';
 import { GetRoleByBoardIdQuery } from 'src/user/application/queries/get-role-by-board-id.query';
 import { GetRoleByBoardIdHandler } from 'src/user/application/queries/handlers/get-role-by-board-id.handler';
 import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
@@ -95,7 +96,7 @@ describe('GetRoleByBoardIdHandler', () => {
   it('should return user role in team', async () => {
     const teamIdReadable = generateReadableId();
     const teamId = v7();
-    const role = 'admin';
+    const role = teamRoles.ADMIN;
 
     await db.insert(teams).values({
       id: teamId,
