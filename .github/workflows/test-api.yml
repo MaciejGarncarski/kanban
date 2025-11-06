@@ -72,7 +72,7 @@ jobs:
           NODE_ENV: test
         run: |
           if [ "${{ matrix.type }}" = "unit" ]; then
-            pnpm test
+            pnpm test:cov
           elif [ "${{ matrix.type }}" = "e2e" ]; then
             pnpm dlx tsx ./src/infrastructure/persistence/db/reset && pnpm test:e2e
           fi
