@@ -35,6 +35,10 @@ export function TaskCard({
   return (
     <motion.div
       layout
+      layoutId={cardId}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
       transition={{ type: 'spring', stiffness: 400, damping: 30 }}>
       <Paper
         withBorder

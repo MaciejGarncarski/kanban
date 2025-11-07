@@ -40,6 +40,7 @@ export const Column = ({
   return (
     <motion.div
       ref={columnRef}
+      layoutId={columnId}
       layout
       transition={{ type: 'spring', stiffness: 400, damping: 50 }}>
       <Card
