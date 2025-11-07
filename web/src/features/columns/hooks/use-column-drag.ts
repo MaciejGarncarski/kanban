@@ -13,6 +13,7 @@ import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine'
 import { useRoleByTeamId } from '@/features/teams/hooks/use-role-by-team-id'
 import { teamRoles } from '@/types/team.types'
 import { useBoardContext } from '@/features/boards/components/board-context'
+import { autoScrollForElements } from '@atlaskit/pragmatic-drag-and-drop-auto-scroll/element'
 
 export const useColumnDrag = ({
   columnId,
@@ -74,6 +75,9 @@ export const useColumnDrag = ({
         onDrop: () => {
           setClosestEdge(null)
         },
+      }),
+      autoScrollForElements({
+        element: columnEl,
       }),
     )
   }, [columnId, isDraggingCard, role, setIsDraggingColumn])

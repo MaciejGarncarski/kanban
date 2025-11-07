@@ -11,6 +11,7 @@ import {
 } from '@atlaskit/pragmatic-drag-and-drop/element/adapter'
 import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine'
 import { useBoardContext } from '@/features/boards/components/board-context'
+import { autoScrollForElements } from '@atlaskit/pragmatic-drag-and-drop-auto-scroll/element'
 
 export const useCardDrag = ({ cardId }: { cardId: string }) => {
   const { setIsDraggingCard, isDraggingColumn, isDraggingCard } =
@@ -61,6 +62,9 @@ export const useCardDrag = ({ cardId }: { cardId: string }) => {
         onDrop: () => {
           setClosestEdge(null)
         },
+      }),
+      autoScrollForElements({
+        element: cardEl,
       }),
     )
   }, [cardId, isDraggingCard, isDraggingColumn, setIsDraggingCard])

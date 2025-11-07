@@ -129,6 +129,7 @@ export class BoardRepository implements BoardRepositoryInterface {
 
     const columnMap = new Map<string, ColumnEntity>();
 
+    // Build columns and cards from the rows
     for (const row of rows) {
       if (!row.column || !row.column.id) continue;
 
@@ -230,10 +231,6 @@ export class BoardRepository implements BoardRepositoryInterface {
         })
         .returning();
 
-      if (!created[0]) {
-        throw new Error('Failed to create board');
-      }
-
       return created[0];
     });
 
@@ -257,7 +254,9 @@ export class BoardRepository implements BoardRepositoryInterface {
         .where(eq(boards.readable_id, readableId));
 
       if (!board) {
-        throw new Error(`Board not found for readable_id: ${readableId}`);
+        throw new BadRequestException(
+          `Board not found for readable_id: ${readableId}`,
+        );
       }
 
       await tx.delete(comments).where(

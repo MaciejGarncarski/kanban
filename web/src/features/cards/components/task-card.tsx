@@ -5,6 +5,7 @@ import { DropIndicator } from '@/components/drop-indicator'
 import { useCardDrag } from '@/features/cards/hooks/use-card-drag'
 import { TaskInfoModal } from '@/features/cards/components/task-info-modal'
 import { useBoardContext } from '@/features/boards/components/board-context'
+import { MouseEvent } from 'react'
 
 type Props = {
   title: string
@@ -26,11 +27,16 @@ export function TaskCard({
   const { isDraggingCard, isDraggingColumn } = useBoardContext()
   const { cardRef, closestEdge } = useCardDrag({ cardId })
 
+  const preventContextMenu = (event: MouseEvent<HTMLDivElement>) => {
+    event.preventDefault()
+  }
+
   return (
     <Paper
       withBorder
       py="sm"
       px="md"
+      onContextMenu={preventContextMenu}
       style={{
         opacity: isDraggingCard ? 0.6 : 1,
         maxWidth: '100%',

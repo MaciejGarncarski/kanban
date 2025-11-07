@@ -15,6 +15,8 @@ import { useDraggedOver } from '@/hooks/use-dragged-over'
 import { useRoleByTeamId } from '@/features/teams/hooks/use-role-by-team-id'
 import { useMonitorElements } from '@/features/boards/hooks/use-monitor-elements'
 import { useBoardById } from '@/features/boards/hooks/use-board-by-id'
+import { useEffect } from 'react'
+import { autoScrollWindowForElements } from '@atlaskit/pragmatic-drag-and-drop-auto-scroll/element'
 
 export const Board = ({
   readableTeamId,
@@ -27,6 +29,10 @@ export const Board = ({
   const { data: boardData } = useBoardById({ readableBoardId })
   const { isDraggedOver, ref } = useDraggedOver({})
   const { isAdmin } = useRoleByTeamId(readableTeamId)
+
+  useEffect(() => {
+    return autoScrollWindowForElements()
+  })
 
   if (!boardData) {
     return <div>Board not found</div>
