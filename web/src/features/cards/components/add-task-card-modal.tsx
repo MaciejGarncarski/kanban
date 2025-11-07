@@ -160,7 +160,7 @@ export function AddTaskCardModal({ readableTeamId, columnId }: Props) {
         </form>
       </Modal>
 
-      <Button variant="light" onClick={open}>
+      <Button variant="light" onClick={open} radius="md">
         <Plus /> Add Task
       </Button>
     </>

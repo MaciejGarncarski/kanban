@@ -8,7 +8,7 @@ import { TaskCard } from '@/features/cards/components/task-card'
 import { AddTaskCardModal } from '@/features/cards/components/add-task-card-modal'
 import { useColumnDrag } from '@/features/columns/hooks/use-column-drag'
 import { useBoardContext } from '@/features/boards/components/board-context'
-import { motion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 
 export const Column = ({
   name,
@@ -48,6 +48,7 @@ export const Column = ({
         shadow="sm"
         h={'40rem'}
         w="20rem"
+        radius={'md'}
         style={{
           opacity: isDraggingColumn ? 0.6 : 1,
           marginRight: '1rem',
@@ -56,6 +57,7 @@ export const Column = ({
         <Group justify="space-between" wrap="nowrap">
           <Title
             order={2}
+            size="1.5rem"
             maw="80%"
             style={{
               overflow: 'hidden',
@@ -82,22 +84,25 @@ export const Column = ({
             ref={cardStackRef}
             style={{
               opacity: isDraggedOver ? 0.8 : 1,
+              borderRadius: '5px',
               border:
                 !isDraggingColumn && isDraggedOver
                   ? '2px dashed #228be6'
                   : '2px solid transparent',
             }}>
-            {cards.map(({ id, title, assignedTo, description, dueDate }) => (
-              <TaskCard
-                key={id}
-                readableTeamId={readableTeamId}
-                description={description}
-                cardId={id}
-                title={title}
-                assignedToId={assignedTo}
-                dueDate={dueDate ? new Date(dueDate) : null}
-              />
-            ))}
+            <AnimatePresence>
+              {cards.map(({ id, title, assignedTo, description, dueDate }) => (
+                <TaskCard
+                  key={id}
+                  readableTeamId={readableTeamId}
+                  description={description}
+                  cardId={id}
+                  title={title}
+                  assignedToId={assignedTo}
+                  dueDate={dueDate ? new Date(dueDate) : null}
+                />
+              ))}
+            </AnimatePresence>
             {isDraggingCard ? null : (
               <AddTaskCardModal
                 readableTeamId={readableTeamId}

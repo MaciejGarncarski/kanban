@@ -44,6 +44,7 @@ export function TaskCard({
         withBorder
         py="sm"
         px="md"
+        radius="md"
         onContextMenu={preventContextMenu}
         style={{
           opacity: isDraggingCard ? 0.6 : 1,
@@ -54,7 +55,7 @@ export function TaskCard({
         {!isDraggingColumn && closestEdge && (
           <DropIndicator edge={closestEdge} />
         )}
-        <Stack w="100%" gap="xs">
+        <Stack w="100%" gap="xs" mih={'3.5rem'}>
           <Flex w="100%" justify="space-between" align="center">
             <Text>{title}</Text>
             <TaskInfoModal
@@ -77,9 +78,7 @@ export function TaskCard({
                 }}>
                 {description}
               </Text>
-            ) : (
-              <Text c="gray.6">No description provided.</Text>
-            )}
+            ) : null}
           </Group>
         </Stack>
       </Paper>
