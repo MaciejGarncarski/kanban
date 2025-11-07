@@ -10,6 +10,8 @@ import { useColumnDrag } from '@/features/columns/hooks/use-column-drag'
 import { useBoardContext } from '@/features/boards/components/board-context'
 import { AnimatePresence, motion } from 'motion/react'
 
+const MotionScrollArea = motion.create(ScrollAreaAutosize)
+
 export const Column = ({
   name,
   columnId,
@@ -40,8 +42,8 @@ export const Column = ({
   return (
     <motion.div
       ref={columnRef}
-      layoutId={columnId}
       layout
+      layoutDependency={cards}
       transition={{ type: 'spring', stiffness: 400, damping: 50 }}>
       <Card
         withBorder
@@ -73,7 +75,7 @@ export const Column = ({
             readableTeamId={readableTeamId}
           />
         </Group>
-        <ScrollAreaAutosize scrollbars="y" maw={'20rem'}>
+        <MotionScrollArea layoutScroll scrollbars="y" maw={'20rem'}>
           <Stack
             gap="md"
             mt="lg"
@@ -90,7 +92,7 @@ export const Column = ({
                   ? '2px dashed #228be6'
                   : '2px solid transparent',
             }}>
-            <AnimatePresence>
+            <AnimatePresence mode="popLayout">
               {cards.map(({ id, title, assignedTo, description, dueDate }) => (
                 <TaskCard
                   key={id}
@@ -110,7 +112,7 @@ export const Column = ({
               />
             )}
           </Stack>
-        </ScrollAreaAutosize>
+        </MotionScrollArea>
       </Card>
     </motion.div>
   )

@@ -45,7 +45,7 @@ export const Board = ({
         {boardData?.description || 'No description provided for this board.'}
       </Title>
 
-      <ScrollAreaAutosize scrollbars="x" offsetScrollbars>
+      <ScrollAreaAutosize scrollbars="x" offsetScrollbars id="test">
         <Group justify="flex-start" wrap="nowrap" gap="lg" ref={ref}>
           <>
             {boardData.columns.length === 0 && (
@@ -58,7 +58,7 @@ export const Board = ({
                 <Center>No columns found</Center>
               </Card>
             )}
-            <LayoutGroup>
+            <LayoutGroup id={`board-${boardData.readableId}-columns`}>
               {boardData?.columns.map(
                 ({ name, cards, id: columnId, createdAt }) => {
                   return (
