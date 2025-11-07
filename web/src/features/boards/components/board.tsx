@@ -17,6 +17,7 @@ import { useMonitorElements } from '@/features/boards/hooks/use-monitor-elements
 import { useBoardById } from '@/features/boards/hooks/use-board-by-id'
 import { useEffect } from 'react'
 import { autoScrollWindowForElements } from '@atlaskit/pragmatic-drag-and-drop-auto-scroll/element'
+import { LayoutGroup } from 'motion/react'
 
 export const Board = ({
   readableTeamId,
@@ -57,20 +58,22 @@ export const Board = ({
                 <Center>No columns found</Center>
               </Card>
             )}
-            {boardData?.columns.map(
-              ({ name, cards, id: columnId, createdAt }) => {
-                return (
-                  <Column
-                    key={columnId}
-                    readableTeamId={boardData.readableTeamId}
-                    name={name}
-                    columnId={columnId}
-                    createdAt={createdAt}
-                    cards={cards}
-                  />
-                )
-              },
-            )}
+            <LayoutGroup>
+              {boardData?.columns.map(
+                ({ name, cards, id: columnId, createdAt }) => {
+                  return (
+                    <Column
+                      key={columnId}
+                      readableTeamId={boardData.readableTeamId}
+                      name={name}
+                      columnId={columnId}
+                      createdAt={createdAt}
+                      cards={cards}
+                    />
+                  )
+                },
+              )}
+            </LayoutGroup>
           </>
 
           {isAdmin &&

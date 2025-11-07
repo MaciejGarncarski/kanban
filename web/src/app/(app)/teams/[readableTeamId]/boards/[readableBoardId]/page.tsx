@@ -67,7 +67,7 @@ export default async function Page({
             />
           </Box>
         </Group>
-        <Stack mt="md">
+        <Stack mt="xl">
           <Suspense fallback={<BoardPlaceholder />}>
             <ErrorBoundary fallback={<p>Failed to load board.</p>}>
               <BoardContainer

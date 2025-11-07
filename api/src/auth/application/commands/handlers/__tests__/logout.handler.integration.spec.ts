@@ -1,4 +1,3 @@
-import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { hashSync } from '@node-rs/argon2';
 import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
@@ -21,7 +20,6 @@ describe('LogoutHandler', () => {
   let container: StartedPostgreSqlContainer;
   let pool: Pool;
   let db: DB;
-  let jwtService: JwtService;
 
   beforeAll(async () => {
     const { pgContainer, pgPool, testDb } = await getTestDb();
@@ -52,7 +50,6 @@ describe('LogoutHandler', () => {
 
     handler = module.get<LogoutHandler>(LogoutHandler);
     userRepo = module.get<UserRepositoryInterface>(UserRepository);
-    jwtService = module.get<JwtService>(JwtService);
   });
 
   it('should revoke existing token', async () => {

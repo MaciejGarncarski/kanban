@@ -6,6 +6,7 @@ import { useCardDrag } from '@/features/cards/hooks/use-card-drag'
 import { TaskInfoModal } from '@/features/cards/components/task-info-modal'
 import { useBoardContext } from '@/features/boards/components/board-context'
 import { MouseEvent } from 'react'
+import { motion } from 'motion/react'
 
 type Props = {
   title: string
@@ -32,46 +33,52 @@ export function TaskCard({
   }
 
   return (
-    <Paper
-      withBorder
-      py="sm"
-      px="md"
-      onContextMenu={preventContextMenu}
-      style={{
-        opacity: isDraggingCard ? 0.6 : 1,
-        maxWidth: '100%',
-        position: 'relative',
-      }}
-      ref={cardRef}>
-      {!isDraggingColumn && closestEdge && <DropIndicator edge={closestEdge} />}
-      <Stack w="100%" gap="xs">
-        <Flex w="100%" justify="space-between" align="center">
-          <Text>{title}</Text>
-          <TaskInfoModal
-            readableTeamId={readableTeamId}
-            cardId={cardId}
-            assignedToId={assignedToId}
-            title={title}
-            dueDate={dueDate}
-            description={description}
-          />
-        </Flex>
-        <Group gap="xs" justify="space-between" align="center" wrap="nowrap">
-          {description ? (
-            <Text
-              c="gray.6"
-              style={{
-                maxWidth: '100%',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}>
-              {description}
-            </Text>
-          ) : (
-            <Text c="gray.6">No description provided.</Text>
-          )}
-        </Group>
-      </Stack>
-    </Paper>
+    <motion.div
+      layout
+      transition={{ type: 'spring', stiffness: 400, damping: 30 }}>
+      <Paper
+        withBorder
+        py="sm"
+        px="md"
+        onContextMenu={preventContextMenu}
+        style={{
+          opacity: isDraggingCard ? 0.6 : 1,
+          maxWidth: '100%',
+          position: 'relative',
+        }}
+        ref={cardRef}>
+        {!isDraggingColumn && closestEdge && (
+          <DropIndicator edge={closestEdge} />
+        )}
+        <Stack w="100%" gap="xs">
+          <Flex w="100%" justify="space-between" align="center">
+            <Text>{title}</Text>
+            <TaskInfoModal
+              readableTeamId={readableTeamId}
+              cardId={cardId}
+              assignedToId={assignedToId}
+              title={title}
+              dueDate={dueDate}
+              description={description}
+            />
+          </Flex>
+          <Group gap="xs" justify="space-between" align="center" wrap="nowrap">
+            {description ? (
+              <Text
+                c="gray.6"
+                style={{
+                  maxWidth: '100%',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}>
+                {description}
+              </Text>
+            ) : (
+              <Text c="gray.6">No description provided.</Text>
+            )}
+          </Group>
+        </Stack>
+      </Paper>
+    </motion.div>
   )
 }

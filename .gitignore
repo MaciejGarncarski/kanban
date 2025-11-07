@@ -12,3 +12,10 @@ coverage
 .env.test.local
 .env.production.local
 .env.production
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

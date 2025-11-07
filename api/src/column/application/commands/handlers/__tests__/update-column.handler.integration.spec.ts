@@ -218,4 +218,165 @@ describe('update-column-handler integration', () => {
       'User is not authorized to update this team',
     );
   });
+
+  it('should reorder columns when position > 0 is provided', async () => {
+    // Arrange
+    const [user] = await db
+      .insert(users)
+      .values({
+        email: faker.internet.email(),
+        name: faker.person.fullName(),
+        password_hash: await hash(faker.internet.password()),
+      })
+      .returning();
+
+    const [team] = await db
+      .insert(teams)
+      .values({
+        id: v7(),
+        name: faker.company.name(),
+        description: faker.lorem.sentence(),
+        readable_id: generateReadableId(),
+      })
+      .returning();
+
+    await db.insert(team_members).values({
+      team_id: team.id,
+      user_id: user.id,
+      role: teamRoles.ADMIN,
+    });
+
+    const [board] = await db
+      .insert(boards)
+      .values({
+        id: v7(),
+        name: faker.lorem.words(2),
+        description: faker.lorem.sentence(),
+        team_id: team.id,
+        readable_id: generateReadableId(),
+      })
+      .returning();
+
+    // Create multiple columns to test reordering
+    const [col1] = await db
+      .insert(columns)
+      .values({
+        id: v7(),
+        name: 'Column 1',
+        board_id: board.id,
+        position: 1,
+      })
+      .returning();
+
+    const [col2] = await db
+      .insert(columns)
+      .values({
+        id: v7(),
+        name: 'Column 2',
+        board_id: board.id,
+        position: 2,
+      })
+      .returning();
+
+    const [col3] = await db
+      .insert(columns)
+      .values({
+        id: v7(),
+        name: 'Column 3',
+        board_id: board.id,
+        position: 3,
+      })
+      .returning();
+
+    // Move col3 to position 1
+    const command = new UpdateColumnCommand(user.id, col3.id, undefined, 1);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(result).toBeDefined();
+    expect(result.id).toBe(col3.id);
+
+    // Ensure the new order persisted
+    const updated = await columnRepo.findAllByBoardId(board.id);
+    const sorted = updated.sort((a, b) => a.position - b.position);
+    expect(sorted[0].id).toBe(col3.id);
+    expect(sorted[1].id).toBe(col1.id);
+    expect(sorted[2].id).toBe(col2.id);
+  });
+
+  it('should insert column at index 0 when position <= 0', async () => {
+    // Arrange
+    const [user] = await db
+      .insert(users)
+      .values({
+        email: faker.internet.email(),
+        name: faker.person.fullName(),
+        password_hash: await hash(faker.internet.password()),
+      })
+      .returning();
+
+    const [team] = await db
+      .insert(teams)
+      .values({
+        id: v7(),
+        name: faker.company.name(),
+        description: faker.lorem.sentence(),
+        readable_id: generateReadableId(),
+      })
+      .returning();
+
+    await db.insert(team_members).values({
+      team_id: team.id,
+      user_id: user.id,
+      role: teamRoles.ADMIN,
+    });
+
+    const [board] = await db
+      .insert(boards)
+      .values({
+        id: v7(),
+        name: faker.lorem.words(2),
+        description: faker.lorem.sentence(),
+        team_id: team.id,
+        readable_id: generateReadableId(),
+      })
+      .returning();
+
+    const [col1] = await db
+      .insert(columns)
+      .values({
+        id: v7(),
+        name: 'Column 1',
+        board_id: board.id,
+        position: 1,
+      })
+      .returning();
+
+    const [col2] = await db
+      .insert(columns)
+      .values({
+        id: v7(),
+        name: 'Column 2',
+        board_id: board.id,
+        position: 2,
+      })
+      .returning();
+
+    // Move col2 to position 0 (should become first)
+    const command = new UpdateColumnCommand(user.id, col2.id, undefined, 0);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(result).toBeDefined();
+    expect(result.id).toBe(col2.id);
+
+    const updated = await columnRepo.findAllByBoardId(board.id);
+    const sorted = updated.sort((a, b) => a.position - b.position);
+    expect(sorted[0].id).toBe(col2.id);
+    expect(sorted[1].id).toBe(col1.id);
+  });
 });

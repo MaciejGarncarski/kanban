@@ -6,7 +6,6 @@ import { userFixture } from 'src/__tests__/fixtures/user.fixture';
 import { createJWTService } from 'src/__tests__/utils/create-jwt-service';
 import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
 import { TestConfigModule } from 'src/__tests__/utils/get-test-env';
-import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
 import { GetBoardByIdQuery } from 'src/board/application/queries/get-board-by-id.query';
 import { GetBoardByIdHandler } from 'src/board/application/queries/handlers/get-board-by-id.handler';
 import { BoardRepository } from 'src/board/infrastructure/persistence/board.repository';
@@ -26,7 +25,7 @@ import { v7 } from 'uuid';
 describe('get-board-by-id-handler integration', () => {
   let handler: GetBoardByIdHandler;
   let userRepo: UserRepositoryInterface;
-  let refreshTokenRepo: RefreshTokenRepository;
+  let boardRepo: BoardRepository;
   let container: StartedPostgreSqlContainer;
   let pool: Pool;
   let db: DB;
@@ -37,8 +36,8 @@ describe('get-board-by-id-handler integration', () => {
     pool = pgPool;
 
     db = testDb;
-    refreshTokenRepo = new RefreshTokenRepository(db);
     userRepo = new UserRepository(testDb);
+    boardRepo = new BoardRepository(testDb);
   });
 
   afterAll(async () => {
@@ -50,10 +49,8 @@ describe('get-board-by-id-handler integration', () => {
       imports: [TestConfigModule],
       providers: [
         GetBoardByIdHandler,
-        BoardRepository,
-        RefreshTokenRepository,
+        { provide: BoardRepository, useValue: boardRepo },
         { provide: DB_PROVIDER, useValue: db },
-        { provide: RefreshTokenRepository, useValue: refreshTokenRepo },
         { provide: UserRepository, useValue: userRepo },
         createJWTService(),
       ],

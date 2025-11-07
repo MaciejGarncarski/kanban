@@ -6,7 +6,6 @@ import { userFixture } from 'src/__tests__/fixtures/user.fixture';
 import { createJWTService } from 'src/__tests__/utils/create-jwt-service';
 import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
 import { TestConfigModule } from 'src/__tests__/utils/get-test-env';
-import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
 import { GetBoardsByTeamQuery } from 'src/board/application/queries/get-boards-by-team.query';
 import { GetBoardsByTeamHandler } from 'src/board/application/queries/handlers/get-boards-by-team.handler';
 import { BoardRepository } from 'src/board/infrastructure/persistence/board.repository';
@@ -26,7 +25,6 @@ import { v7 } from 'uuid';
 describe('get-board-by-team-handler integration', () => {
   let handler: GetBoardsByTeamHandler;
   let userRepo: UserRepositoryInterface;
-  let refreshTokenRepo: RefreshTokenRepository;
   let container: StartedPostgreSqlContainer;
   let pool: Pool;
   let db: DB;
@@ -37,7 +35,6 @@ describe('get-board-by-team-handler integration', () => {
     pool = pgPool;
 
     db = testDb;
-    refreshTokenRepo = new RefreshTokenRepository(db);
     userRepo = new UserRepository(testDb);
   });
 
@@ -51,9 +48,7 @@ describe('get-board-by-team-handler integration', () => {
       providers: [
         GetBoardsByTeamHandler,
         BoardRepository,
-        RefreshTokenRepository,
         { provide: DB_PROVIDER, useValue: db },
-        { provide: RefreshTokenRepository, useValue: refreshTokenRepo },
         { provide: UserRepository, useValue: userRepo },
         createJWTService(),
       ],
