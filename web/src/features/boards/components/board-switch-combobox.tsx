@@ -7,6 +7,7 @@ import {
   ComboboxStore,
   Input,
   InputBase,
+  Text,
   useCombobox,
 } from '@mantine/core'
 import { useRouter } from 'next/navigation'
@@ -102,7 +103,17 @@ const BoardSwitchInput = ({
           rightSectionPointerEvents="none"
           onClick={() => combobox.toggleDropdown()}>
           <>
-            {readableBoardId && boardName}
+            {readableBoardId && (
+              <Text
+                w="100%"
+                style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}>
+                {boardName}
+              </Text>
+            )}
             {!readableBoardId && (
               <Input.Placeholder>Select board</Input.Placeholder>
             )}

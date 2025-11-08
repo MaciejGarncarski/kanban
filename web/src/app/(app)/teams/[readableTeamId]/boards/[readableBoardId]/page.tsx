@@ -15,7 +15,7 @@ import { TeamSwitch } from '@/features/teams/components/team-switch'
 import { prefetchAllUsers } from '@/features/users/api/prefetch-all-users'
 import { TeamRole } from '@/types/team.types'
 import { getQueryClient } from '@/utils/get-query-client'
-import { Box, Group, Stack } from '@mantine/core'
+import { Box, Flex, Stack } from '@mantine/core'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { Suspense } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -53,20 +53,24 @@ export default async function Page({
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <main>
-        <Group justify="flex-start" align="flex-end">
+        <Flex
+          justify="flex-start"
+          gap={{ base: 'md', md: 'lg' }}
+          align={{ base: 'center', md: 'flex-end' }}
+          direction={{ base: 'column', md: 'row' }}>
           <TeamSwitch readableTeamId={readableTeamId} />
           <BoardSwitch
             readableTeamId={readableTeamId}
             readableBoardId={readableBoardId}
           />
           <TeamRoleBadge role={role?.role as TeamRole} />
-          <Box ml={'auto'}>
+          <Box ml={{ base: 0, md: 'auto' }}>
             <SettingsModal
               readableTeamId={readableTeamId}
               readableBoardId={readableBoardId}
             />
           </Box>
-        </Group>
+        </Flex>
         <Stack mt="xl">
           <Suspense fallback={<BoardPlaceholder />}>
             <ErrorBoundary fallback={<p>Failed to load board.</p>}>

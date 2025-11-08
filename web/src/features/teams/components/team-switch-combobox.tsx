@@ -84,9 +84,21 @@ const TeamSwitchInput = ({
           rightSectionPointerEvents="none"
           onClick={() => combobox.toggleDropdown()}>
           <>
-            {readableTeamId &&
-              teamsData.teams.find((team) => team.readableId === readableTeamId)
-                ?.name}
+            {readableTeamId && (
+              <Text
+                w="100%"
+                style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}>
+                {
+                  teamsData.teams.find(
+                    (team) => team.readableId === readableTeamId,
+                  )?.name
+                }
+              </Text>
+            )}
             {!readableTeamId && (
               <Input.Placeholder>Select team</Input.Placeholder>
             )}

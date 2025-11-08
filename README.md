@@ -4,6 +4,8 @@
 
 Kanban App is a simple and intuitive task management tool that helps teams and individuals organize work using the Kanban method.
 
+<img src="https://raw.githubusercontent.com/MaciejGarncarski/kanban/refs/heads/main/.github/assets/presentation.gif">
+
 ## Live demo
 
 [https://kanban.maciej-garncarski.pl](https://kanban.maciej-garncarski.pl)
