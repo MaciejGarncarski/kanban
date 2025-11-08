@@ -10,7 +10,7 @@ export const ThemeSwitch = () => {
   return (
     <ClientOnly
       fallback={
-        <Button variant="light" leftSection={<Loader />} radius="md">
+        <Button variant="light" leftSection={<Loader size={18} />} radius="md">
           Wait...
         </Button>
       }>
