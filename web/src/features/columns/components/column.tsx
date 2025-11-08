@@ -59,7 +59,7 @@ export const Column = ({
           marginRight: '1rem',
         }}>
         {!isDraggingCard && closestEdge && <DropIndicator edge={closestEdge} />}
-        <Group justify="space-between" wrap="nowrap">
+        <Group justify="space-between" wrap="nowrap" pb="sm">
           <Title
             order={2}
             size="1.5rem"
@@ -85,7 +85,7 @@ export const Column = ({
             h={'34rem'}
             viewportRef={cardStackRef}>
             <Flex
-              py="lg"
+              py="sm"
               px="xs"
               direction="column"
               mih={'20rem'}
@@ -93,12 +93,14 @@ export const Column = ({
               gap="md"
               ref={cardStackRef}
               style={{
+                transition:
+                  'border 150ms, background-color 150ms, opacity 150ms',
                 opacity: isDraggedOver ? 0.8 : 1,
                 borderRadius: '5px',
                 border:
                   !isDraggingColumn && isDraggedOver
-                    ? '2px dashed #228be6'
-                    : '2px solid transparent',
+                    ? '1px dashed #228be6'
+                    : '1px dashed transparent',
               }}>
               {cards.map(({ id, title, assignedTo, description, dueDate }) => (
                 <TaskCard

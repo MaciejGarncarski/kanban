@@ -28,11 +28,8 @@ export function AddColumnModal({
       },
       {
         onSuccess: () => {
-          close()
-        },
-
-        onSettled: () => {
           form.reset()
+          close()
         },
       },
     )

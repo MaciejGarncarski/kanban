@@ -37,8 +37,8 @@ export const Board = ({
 
   return (
     <Flex direction="column" gap="md">
-      <Title order={2}>
-        {boardData?.description || 'No description provided for this board.'}
+      <Title order={2} size="20" px="sm">
+        {boardData?.description || 'No description.'}
       </Title>
 
       <ScrollAreaAutosize
