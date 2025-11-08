@@ -26,6 +26,39 @@ const paramsSchema = z.object({
   readableBoardId: z.string().length(READABLE_ID_LENGTH),
 })
 
+export async function generateMetadata({
+  params,
+}: PageProps<'/teams/[readableTeamId]/boards/[readableBoardId]'>) {
+  const awaitedParams = await params
+
+  const { data, error } = paramsSchema.safeParse(awaitedParams)
+
+  if (!data || error) {
+    return {
+      title: 'Kanban app',
+    }
+  }
+  const queryClient = getQueryClient()
+  const cookies = await attachCookies()
+
+  const { readableBoardId } = data
+
+  const [board] = await Promise.all([
+    prefetchBoardById(queryClient, cookies, readableBoardId),
+  ])
+
+  if (!board?.name) {
+    return {
+      title: 'Kanban app',
+    }
+  }
+
+  return {
+    title: `Board ${board.name} - Kanban App`,
+    description: `Viewing board ${board.name} in the Kanban application.`,
+  }
+}
+
 export default async function Page({
   params,
 }: PageProps<'/teams/[readableTeamId]/boards/[readableBoardId]'>) {
