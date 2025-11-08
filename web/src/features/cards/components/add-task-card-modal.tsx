@@ -9,6 +9,7 @@ import {
   Input,
   InputBase,
   Modal,
+  Portal,
   Textarea,
   TextInput,
   useCombobox,
@@ -19,6 +20,7 @@ import { Plus } from 'lucide-react'
 import { DateTimePicker } from '@mantine/dates'
 import { useTeamUsers } from '@/features/teams/hooks/use-team-users'
 import { useCreateCard } from '@/features/cards/hooks/use-create-card'
+import { motion } from 'motion/react'
 
 type Props = {
   readableTeamId: string
@@ -83,86 +85,95 @@ export function AddTaskCardModal({ readableTeamId, columnId }: Props) {
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title="Add task" centered>
-        <form onSubmit={onSubmit} style={{ width: '100%' }}>
-          <Flex direction="column" gap="lg">
-            <TextInput
-              withAsterisk
-              label="Task Name"
-              placeholder="Name of the task"
-              type="text"
-              key={form.key('name')}
-              {...form.getInputProps('name')}
-            />
-            <Textarea
-              label="Task Description"
-              placeholder="Description of the task"
-              key={form.key('description')}
-              {...form.getInputProps('description')}
-            />
-            <Input.Wrapper label="Assigned To">
-              <Combobox
-                store={combobox}
-                onOptionSubmit={(val) => {
-                  combobox.closeDropdown()
+      <Portal>
+        <Modal opened={opened} onClose={close} title="Add task" centered>
+          <form onSubmit={onSubmit} style={{ width: '100%' }}>
+            <Flex direction="column" gap="lg">
+              <TextInput
+                withAsterisk
+                label="Task Name"
+                placeholder="Name of the task"
+                type="text"
+                key={form.key('name')}
+                {...form.getInputProps('name')}
+              />
+              <Textarea
+                label="Task Description"
+                placeholder="Description of the task"
+                key={form.key('description')}
+                {...form.getInputProps('description')}
+              />
+              <Input.Wrapper label="Assigned To">
+                <Combobox
+                  store={combobox}
+                  onOptionSubmit={(val) => {
+                    combobox.closeDropdown()
 
-                  if (form.values.assignedTo === val) {
-                    form.setFieldValue('assignedTo', '')
-                    return
-                  }
+                    if (form.values.assignedTo === val) {
+                      form.setFieldValue('assignedTo', '')
+                      return
+                    }
 
-                  form.setFieldValue('assignedTo', val)
-                }}>
-                <Combobox.Target>
-                  <InputBase
-                    component="button"
-                    type="button"
-                    pointer
-                    w="100%"
-                    rightSection={<Combobox.Chevron />}
-                    rightSectionPointerEvents="none"
-                    onClick={() => combobox.toggleDropdown()}>
-                    {selectedUser ? (
-                      <span>{selectedUser}</span>
-                    ) : (
-                      <Input.Placeholder>Select user</Input.Placeholder>
-                    )}
-                  </InputBase>
-                </Combobox.Target>
-                <Combobox.Dropdown>
-                  <Combobox.Options>
-                    {data.users.map((user) => (
-                      <Combobox.Option key={user.id} value={user.id}>
-                        <Group>
-                          {user.id === form.values.assignedTo && (
-                            <CheckIcon size={12} />
-                          )}
-                          {user.name} - {user.email}
-                        </Group>
-                      </Combobox.Option>
-                    ))}
-                  </Combobox.Options>
-                </Combobox.Dropdown>
-              </Combobox>
-            </Input.Wrapper>
+                    form.setFieldValue('assignedTo', val)
+                  }}>
+                  <Combobox.Target>
+                    <InputBase
+                      component="button"
+                      type="button"
+                      pointer
+                      w="100%"
+                      rightSection={<Combobox.Chevron />}
+                      rightSectionPointerEvents="none"
+                      onClick={() => combobox.toggleDropdown()}>
+                      {selectedUser ? (
+                        <span>{selectedUser}</span>
+                      ) : (
+                        <Input.Placeholder>Select user</Input.Placeholder>
+                      )}
+                    </InputBase>
+                  </Combobox.Target>
+                  <Combobox.Dropdown>
+                    <Combobox.Options>
+                      {data.users.map((user) => (
+                        <Combobox.Option key={user.id} value={user.id}>
+                          <Group>
+                            {user.id === form.values.assignedTo && (
+                              <CheckIcon size={12} />
+                            )}
+                            {user.name} - {user.email}
+                          </Group>
+                        </Combobox.Option>
+                      ))}
+                    </Combobox.Options>
+                  </Combobox.Dropdown>
+                </Combobox>
+              </Input.Wrapper>
 
-            <DateTimePicker
-              label="Due Date"
-              placeholder="Date and time"
-              key={form.key('dueDate')}
-              {...form.getInputProps('dueDate')}
-            />
+              <DateTimePicker
+                label="Due Date"
+                placeholder="Date and time"
+                key={form.key('dueDate')}
+                {...form.getInputProps('dueDate')}
+              />
 
-            <Button loading={isPending} type="submit" mt="md">
-              Create Task
-            </Button>
-          </Flex>
-        </form>
-      </Modal>
+              <Button loading={isPending} type="submit" mt="md">
+                Create Task
+              </Button>
+            </Flex>
+          </form>
+        </Modal>
+      </Portal>
 
-      <Button variant="light" onClick={open} radius="md">
-        <Plus /> Add Task
-      </Button>
+      <motion.div layout style={{ width: '100%' }}>
+        <Button
+          variant="light"
+          onClick={open}
+          radius="md"
+          size="sm"
+          leftSection={<Plus size={16} />}>
+          Add Task
+        </Button>
+      </motion.div>
     </>
   )
 }

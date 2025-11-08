@@ -38,7 +38,8 @@ export function TaskCard({
       layoutId={cardId}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 30 }}>
+      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+      ref={cardRef}>
       <Paper
         withBorder
         py="sm"
@@ -49,8 +50,7 @@ export function TaskCard({
           opacity: isDraggingCard ? 0.6 : 1,
           maxWidth: '100%',
           position: 'relative',
-        }}
-        ref={cardRef}>
+        }}>
         {!isDraggingColumn && closestEdge && (
           <DropIndicator edge={closestEdge} />
         )}

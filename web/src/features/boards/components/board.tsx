@@ -15,8 +15,6 @@ import { useDraggedOver } from '@/hooks/use-dragged-over'
 import { useRoleByTeamId } from '@/features/teams/hooks/use-role-by-team-id'
 import { useMonitorElements } from '@/features/boards/hooks/use-monitor-elements'
 import { useBoardById } from '@/features/boards/hooks/use-board-by-id'
-import { useEffect } from 'react'
-import { autoScrollWindowForElements } from '@atlaskit/pragmatic-drag-and-drop-auto-scroll/element'
 import { LayoutGroup } from 'motion/react'
 
 export const Board = ({
@@ -31,10 +29,6 @@ export const Board = ({
   const { isDraggedOver, ref } = useDraggedOver({})
   const { isAdmin } = useRoleByTeamId(readableTeamId)
 
-  useEffect(() => {
-    return autoScrollWindowForElements()
-  })
-
   if (!boardData) {
     return <div>Board not found</div>
   }
@@ -45,20 +39,24 @@ export const Board = ({
         {boardData?.description || 'No description provided for this board.'}
       </Title>
 
-      <ScrollAreaAutosize scrollbars="x" offsetScrollbars id="test">
-        <Group justify="flex-start" wrap="nowrap" gap="lg" ref={ref}>
+      <ScrollAreaAutosize
+        scrollbars="x"
+        offsetScrollbars
+        id="test"
+        viewportRef={ref}>
+        <Group justify="flex-start" wrap="nowrap" gap="lg" pb="md" px="md">
           <>
-            {boardData.columns.length === 0 && (
-              <Card
-                withBorder
-                shadow="sm"
-                h={'40rem'}
-                w="20rem"
-                style={{ flexShrink: 0, justifyContent: 'center' }}>
-                <Center>No columns found</Center>
-              </Card>
-            )}
             <LayoutGroup id={`board-${boardData.readableId}-columns`}>
+              {boardData.columns.length === 0 && (
+                <Card
+                  withBorder
+                  shadow="sm"
+                  h={'40rem'}
+                  w="20rem"
+                  style={{ flexShrink: 0, justifyContent: 'center' }}>
+                  <Center>No columns found</Center>
+                </Card>
+              )}
               {boardData?.columns.map(
                 ({ name, cards, id: columnId, createdAt }) => {
                   return (

@@ -1,7 +1,7 @@
 'use client'
 
 import { ColumnInfoModal } from '@/features/columns/components/column-info-modal'
-import { Card, Group, ScrollAreaAutosize, Stack, Title } from '@mantine/core'
+import { Card, Flex, Group, ScrollAreaAutosize, Title } from '@mantine/core'
 import { DropIndicator } from '@/components/drop-indicator'
 import { useDraggedOver } from '@/hooks/use-dragged-over'
 import { TaskCard } from '@/features/cards/components/task-card'
@@ -37,7 +37,10 @@ export const Column = ({
     type: 'card-stack',
   })
 
-  const { columnRef, closestEdge } = useColumnDrag({ columnId, readableTeamId })
+  const { columnRef, closestEdge } = useColumnDrag({
+    columnId,
+    readableTeamId,
+  })
 
   return (
     <motion.div
@@ -75,24 +78,27 @@ export const Column = ({
             readableTeamId={readableTeamId}
           />
         </Group>
-        <MotionScrollArea layoutScroll scrollbars="y" maw={'20rem'}>
-          <Stack
-            gap="md"
-            mt="lg"
-            px="4"
-            py="xs"
-            w="17.5rem"
-            mih={'8rem'}
-            ref={cardStackRef}
-            style={{
-              opacity: isDraggedOver ? 0.8 : 1,
-              borderRadius: '5px',
-              border:
-                !isDraggingColumn && isDraggedOver
-                  ? '2px dashed #228be6'
-                  : '2px solid transparent',
-            }}>
-            <AnimatePresence mode="popLayout">
+        <AnimatePresence mode="popLayout" initial={false}>
+          <MotionScrollArea
+            layoutScroll
+            scrollbars="y"
+            h={'34rem'}
+            viewportRef={cardStackRef}>
+            <Flex
+              py="md"
+              pr="sm"
+              direction="column"
+              wrap="nowrap"
+              gap="md"
+              ref={cardStackRef}
+              style={{
+                opacity: isDraggedOver ? 0.8 : 1,
+                borderRadius: '5px',
+                border:
+                  !isDraggingColumn && isDraggedOver
+                    ? '2px dashed #228be6'
+                    : '2px solid transparent',
+              }}>
               {cards.map(({ id, title, assignedTo, description, dueDate }) => (
                 <TaskCard
                   key={id}
@@ -104,15 +110,15 @@ export const Column = ({
                   dueDate={dueDate ? new Date(dueDate) : null}
                 />
               ))}
-            </AnimatePresence>
-            {isDraggingCard ? null : (
-              <AddTaskCardModal
-                readableTeamId={readableTeamId}
-                columnId={columnId}
-              />
-            )}
-          </Stack>
-        </MotionScrollArea>
+              {isDraggingCard ? null : (
+                <AddTaskCardModal
+                  readableTeamId={readableTeamId}
+                  columnId={columnId}
+                />
+              )}
+            </Flex>
+          </MotionScrollArea>
+        </AnimatePresence>
       </Card>
     </motion.div>
   )
