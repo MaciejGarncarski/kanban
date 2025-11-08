@@ -6,7 +6,10 @@ import { autoScrollForElements } from '@atlaskit/pragmatic-drag-and-drop-auto-sc
 
 type Data = Record<string, unknown>
 
-export function useDraggedOver(data: Data) {
+export function useDraggedOver(
+  data: Data,
+  allowedAxis: 'horizontal' | 'vertical' | 'all' = 'all',
+) {
   const [isDraggedOver, setIsDraggedOver] = useState(false)
 
   const ref = useRef<HTMLDivElement | null>(null)
@@ -27,10 +30,10 @@ export function useDraggedOver(data: Data) {
       }),
       autoScrollForElements({
         element: el,
-        getAllowedAxis: () => 'vertical',
+        getAllowedAxis: () => allowedAxis,
       }),
     )
-  }, [data])
+  }, [data, allowedAxis])
 
   return { isDraggedOver, ref }
 }

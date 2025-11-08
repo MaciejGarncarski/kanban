@@ -15,11 +15,9 @@ import { useDraggedOver } from '@/hooks/use-dragged-over'
 import { useRoleByTeamId } from '@/features/teams/hooks/use-role-by-team-id'
 import { useMonitorElements } from '@/features/boards/hooks/use-monitor-elements'
 import { useBoardById } from '@/features/boards/hooks/use-board-by-id'
-import { AnimatePresence, LayoutGroup, motion } from 'motion/react'
+import { AnimatePresence, LayoutGroup } from 'motion/react'
 import { useRefetchNotification } from '@/features/boards/hooks/use-refetch-notification'
-
-const MotionScrollArea = motion.create(ScrollAreaAutosize)
-const MotionGroup = motion.create(Group)
+import { motion } from 'motion/react'
 
 export const Board = ({
   readableTeamId,
@@ -30,7 +28,7 @@ export const Board = ({
 }) => {
   useMonitorElements({ readableBoardId })
   const { data: boardData } = useBoardById({ readableBoardId })
-  const { isDraggedOver, ref } = useDraggedOver({})
+  const { isDraggedOver, ref } = useDraggedOver({}, 'horizontal')
   const { isAdmin } = useRoleByTeamId(readableTeamId)
   useRefetchNotification({ readableBoardId })
 
@@ -39,75 +37,65 @@ export const Board = ({
   }
 
   return (
-    <Flex direction="column" gap="md">
-      <Title order={2} size="20" px="sm">
-        {boardData?.description || 'No description.'}
-      </Title>
-      <LayoutGroup id={`board-${boardData.readableId}-columns`}>
-        <MotionScrollArea
+    <LayoutGroup id={readableBoardId}>
+      <Flex direction="column" gap="md">
+        <Title order={2} size="20" px="sm">
+          {boardData?.description || 'No description.'}
+        </Title>
+        <ScrollAreaAutosize
           scrollbars="x"
-          layout
-          layoutScroll
           offsetScrollbars
           id="test"
           viewportRef={ref}>
-          <MotionGroup
-            layout
-            justify="flex-start"
-            wrap="nowrap"
-            gap="xl"
-            pb="md"
-            px="sm">
-            <AnimatePresence>
+          <Group justify="flex-start" wrap="nowrap" gap="xl" pb="md" px="sm">
+            <>
               {boardData.columns.length === 0 && (
-                <motion.div layout>
-                  <Card
-                    withBorder
-                    shadow="sm"
-                    h={'40rem'}
-                    radius={'md'}
-                    w="20rem"
-                    style={{ flexShrink: 0, justifyContent: 'center' }}>
-                    <Center>No columns found.</Center>
-                  </Card>
-                </motion.div>
+                <Card
+                  withBorder
+                  shadow="sm"
+                  h={'40rem'}
+                  radius={'md'}
+                  w="20rem"
+                  style={{ flexShrink: 0, justifyContent: 'center' }}>
+                  <Center>No columns found.</Center>
+                </Card>
               )}
-              {boardData?.columns.map(
-                ({ name, cards, id: columnId, createdAt }) => {
-                  return (
-                    <Column
-                      key={columnId}
-                      readableTeamId={boardData.readableTeamId}
-                      name={name}
-                      columnId={columnId}
-                      createdAt={createdAt}
-                      cards={cards}
-                    />
-                  )
-                },
-              )}
-            </AnimatePresence>
+              <AnimatePresence mode="wait">
+                {boardData?.columns.map(
+                  ({ name, cards, id: columnId, createdAt }) => {
+                    return (
+                      <Column
+                        key={columnId}
+                        readableTeamId={boardData.readableTeamId}
+                        name={name}
+                        columnId={columnId}
+                        createdAt={createdAt}
+                        cards={cards}
+                      />
+                    )
+                  },
+                )}
+              </AnimatePresence>
+            </>
 
             {isAdmin &&
               MAX_COLUMN_COUNT > (boardData?.columns.length || 0) &&
               !isDraggedOver && (
-                <motion.div layout>
-                  <Card
-                    withBorder
-                    shadow="sm"
-                    h={'40rem'}
-                    radius={'md'}
-                    w="20rem"
-                    style={{ flexShrink: 0, justifyContent: 'center' }}>
-                    <Center>
-                      <AddColumnModal readableBoardId={readableBoardId} />
-                    </Center>
-                  </Card>
-                </motion.div>
+                <Card
+                  withBorder
+                  shadow="sm"
+                  h={'40rem'}
+                  radius={'md'}
+                  w="20rem"
+                  style={{ flexShrink: 0, justifyContent: 'center' }}>
+                  <Center>
+                    <AddColumnModal readableBoardId={readableBoardId} />
+                  </Center>
+                </Card>
               )}
-          </MotionGroup>
-        </MotionScrollArea>
-      </LayoutGroup>
-    </Flex>
+          </Group>
+        </ScrollAreaAutosize>
+      </Flex>
+    </LayoutGroup>
   )
 }

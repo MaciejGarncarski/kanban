@@ -46,8 +46,12 @@ export const Column = ({
     <motion.div
       ref={columnRef}
       layout
+      layoutId={columnId}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
       style={{ flexShrink: 0, flexGrow: 0, width: '20rem' }}
-      transition={{ type: 'spring', stiffness: 400, damping: 50 }}>
+      transition={{ type: 'spring', stiffness: 400, damping: 50 }}
+      initial={false}>
       <Card
         withBorder
         shadow="sm"
@@ -80,7 +84,6 @@ export const Column = ({
         </Group>
         <AnimatePresence mode="popLayout" initial={false}>
           <MotionScrollArea
-            layout
             layoutScroll
             scrollbars="y"
             h={'34rem'}
@@ -92,6 +95,7 @@ export const Column = ({
               mih={'20rem'}
               wrap="nowrap"
               gap="md"
+              ref={cardStackRef}
               style={{
                 transition:
                   'border 150ms, background-color 150ms, opacity 150ms',
