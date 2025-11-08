@@ -32,10 +32,13 @@ export const Column = ({
   }>
 }) => {
   const { isDraggingColumn, isDraggingCard } = useBoardContext()
-  const { isDraggedOver, ref: cardStackRef } = useDraggedOver({
-    columnId,
-    type: 'card-stack',
-  })
+  const { isDraggedOver, ref: cardStackRef } = useDraggedOver(
+    {
+      columnId,
+      type: 'card-stack',
+    },
+    'vertical',
+  )
 
   const { columnRef, closestEdge } = useColumnDrag({
     columnId,
@@ -85,6 +88,8 @@ export const Column = ({
         <AnimatePresence mode="popLayout" initial={false}>
           <MotionScrollArea
             layoutScroll
+            layout
+            layoutId={columnId + '-scrollarea'}
             scrollbars="y"
             h={'34rem'}
             viewportRef={cardStackRef}>

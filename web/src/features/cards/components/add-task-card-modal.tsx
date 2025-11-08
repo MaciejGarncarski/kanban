@@ -175,7 +175,7 @@ export function AddTaskCardModal({ readableTeamId, columnId }: Props) {
         </Modal>
       </Portal>
 
-      <motion.div layout>
+      <motion.div layout layoutId={`add-task-button-${columnId}`}>
         <Button
           variant="light"
           onClick={open}

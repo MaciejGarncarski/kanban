@@ -17,7 +17,6 @@ import { useMonitorElements } from '@/features/boards/hooks/use-monitor-elements
 import { useBoardById } from '@/features/boards/hooks/use-board-by-id'
 import { AnimatePresence, LayoutGroup } from 'motion/react'
 import { useRefetchNotification } from '@/features/boards/hooks/use-refetch-notification'
-import { motion } from 'motion/react'
 
 export const Board = ({
   readableTeamId,
