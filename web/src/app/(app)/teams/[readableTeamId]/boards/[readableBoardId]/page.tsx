@@ -96,7 +96,9 @@ export default async function Page({
             readableTeamId={readableTeamId}
             readableBoardId={readableBoardId}
           />
-          <TeamRoleBadge role={role?.role as TeamRole} />
+          <Box pb={{ basae: 0, md: 1.5 }}>
+            <TeamRoleBadge role={role?.role as TeamRole} />
+          </Box>
           <Box ml={{ base: 0, md: 'auto' }}>
             <SettingsModal
               readableTeamId={readableTeamId}

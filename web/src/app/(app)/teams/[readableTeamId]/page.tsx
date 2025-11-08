@@ -55,7 +55,9 @@ export default async function Page({
         <Group justify="flex-start" align="flex-end">
           <TeamSwitch readableTeamId={readableTeamId} />
           <BoardSwitch readableTeamId={readableTeamId} readableBoardId={null} />
-          <TeamRoleBadge role={role?.role as TeamRole} />
+          <Box pb={{ basae: 0, md: 1.5 }}>
+            <TeamRoleBadge role={role?.role as TeamRole} />
+          </Box>
           <Box ml={'auto'}>
             <SettingsModal readableTeamId={readableTeamId} />
           </Box>

@@ -35,6 +35,7 @@ export function BoardSwitchCombobox({
   return (
     <Combobox
       store={combobox}
+      radius={'md'}
       width={250}
       onOptionSubmit={setBoard}
       transitionProps={{ duration: 200, transition: 'pop' }}>
@@ -68,6 +69,7 @@ const BoardSwitchInputEmpty = ({ combobox }: { combobox: ComboboxStore }) => {
         <InputBase
           component="button"
           type="button"
+          radius={'md'}
           pointer
           w="12rem"
           rightSection={<Combobox.Chevron />}
@@ -102,6 +104,7 @@ const BoardSwitchInput = ({
           component="button"
           type="button"
           pointer
+          radius={'md'}
           w="12rem"
           rightSection={<Combobox.Chevron />}
           rightSectionPointerEvents="none"

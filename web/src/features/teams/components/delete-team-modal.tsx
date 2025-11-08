@@ -49,10 +49,16 @@ export function DeleteTeamModal({ isOpen, onClose, readableTeamId }: Props) {
         </p>
       </div>
       <Group mt="xl" justify="space-between">
-        <Button color="red" loading={isPending} onClick={handleDelete}>
+        <Button
+          color="red"
+          loading={isPending}
+          onClick={handleDelete}
+          radius="md">
           Delete
         </Button>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onClose} radius="md">
+          Cancel
+        </Button>
       </Group>
     </Modal>
   )

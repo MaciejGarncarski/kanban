@@ -13,7 +13,7 @@ import {
   Title,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import { Info, TrashIcon } from 'lucide-react'
+import { InfoIcon, TrashIcon } from 'lucide-react'
 
 type Props = {
   readableTeamId: string
@@ -50,8 +50,8 @@ export function TaskInfoModal({
 
   return (
     <>
-      <ActionIcon onClick={open} variant="subtle" size={'md'}>
-        <Info size={'70%'} />
+      <ActionIcon onClick={open} variant="light" size={'md'}>
+        <InfoIcon size={16} />
       </ActionIcon>
 
       <Portal>
@@ -98,6 +98,7 @@ export function TaskInfoModal({
                   onClick={handleDelete}
                   loading={deleteMutation.isPending}
                   bg="red"
+                  radius={'md'}
                   leftSection={<TrashIcon size={20} />}>
                   Delete
                 </Button>

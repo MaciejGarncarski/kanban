@@ -16,6 +16,7 @@ export const ThemeSwitch = () => {
       }>
       <Menu
         shadow="md"
+        radius={'md'}
         width={120}
         transitionProps={{ duration: 200, transition: 'pop' }}>
         <Menu.Target>

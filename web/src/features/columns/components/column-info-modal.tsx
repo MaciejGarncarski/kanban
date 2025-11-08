@@ -4,7 +4,7 @@ import { useRoleByTeamId } from '@/features/teams/hooks/use-role-by-team-id'
 import { ActionIcon, Button, Group, Modal, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { useDisclosure } from '@mantine/hooks'
-import { CheckIcon, EditIcon, InfoIcon, TrashIcon, XIcon } from 'lucide-react'
+import { CheckIcon, EditIcon, MenuIcon, TrashIcon, XIcon } from 'lucide-react'
 import { useState } from 'react'
 
 export function ColumnInfoModal({
@@ -122,6 +122,7 @@ export function ColumnInfoModal({
               <Group justify="space-between" mt="md">
                 <Button
                   mt="md"
+                  radius={'md'}
                   onClick={() => setIsEditing(true)}
                   leftSection={<EditIcon size={20} />}>
                   Edit
@@ -129,6 +130,7 @@ export function ColumnInfoModal({
                 <Button
                   mt="md"
                   color="red"
+                  radius={'md'}
                   loading={deleteColumn.isPending}
                   onClick={handleDelete}
                   leftSection={<TrashIcon size={20} />}>
@@ -141,7 +143,7 @@ export function ColumnInfoModal({
       </Modal>
 
       <ActionIcon variant="light" onClick={open}>
-        <InfoIcon size="70%" />
+        <MenuIcon size="70%" />
       </ActionIcon>
     </>
   )

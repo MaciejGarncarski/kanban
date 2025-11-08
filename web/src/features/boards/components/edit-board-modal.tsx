@@ -68,10 +68,10 @@ export function EditBoardModal({ isOpen, onClose, readableBoardId }: Props) {
           />
         </Stack>
         <Group mt="xl" justify="space-between">
-          <Button type="reset" onClick={form.reset} variant="gradient">
+          <Button type="reset" onClick={form.reset} color="red" radius={'md'}>
             Reset form
           </Button>
-          <Button type="submit" loading={isPending}>
+          <Button type="submit" loading={isPending} radius={'md'}>
             Save
           </Button>
         </Group>

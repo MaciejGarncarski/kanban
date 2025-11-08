@@ -53,7 +53,12 @@ export function AddColumnModal({
               key={form.key('name')}
               {...form.getInputProps('name')}
             />
-            <Button loading={isPending} type="submit" mt="md">
+            <Button
+              loading={isPending}
+              type="submit"
+              mt="md"
+              ml="auto"
+              radius="md">
               Create Column
             </Button>
           </Flex>

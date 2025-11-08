@@ -83,7 +83,7 @@ export function EditTeamModal({ isOpen, onClose, readableTeamId }: Props) {
       },
       {
         onSuccess: () => {
-          close()
+          onClose()
         },
       },
     )
@@ -160,8 +160,10 @@ export function EditTeamModal({ isOpen, onClose, readableTeamId }: Props) {
           </Input.Wrapper>
         </Stack>
         <Group mt="xl" justify="space-between">
-          <Button onClick={form.reset}>Reset form</Button>
-          <Button loading={isPending} type="submit">
+          <Button onClick={form.reset} color="red" radius="md">
+            Reset form
+          </Button>
+          <Button loading={isPending} type="submit" radius="md">
             Save
           </Button>
         </Group>

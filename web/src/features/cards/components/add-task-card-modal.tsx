@@ -162,7 +162,12 @@ export function AddTaskCardModal({ readableTeamId, columnId }: Props) {
                 {...form.getInputProps('dueDate')}
               />
 
-              <Button loading={isPending} type="submit" mt="md">
+              <Button
+                loading={isPending}
+                type="submit"
+                mt="md"
+                ml="auto"
+                radius="md">
                 Create Task
               </Button>
             </Flex>

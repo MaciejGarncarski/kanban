@@ -68,6 +68,7 @@ export function SettingsModal({ readableTeamId, readableBoardId }: Props) {
 
       <Menu
         shadow="md"
+        radius={'md'}
         width={200}
         transitionProps={{ duration: 200, transition: 'pop' }}>
         <Menu.Target>

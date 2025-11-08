@@ -92,7 +92,11 @@ export function EditTaskModal({
 
   return (
     <>
-      <Button mt="md" onClick={open} leftSection={<EditIcon size={20} />}>
+      <Button
+        mt="md"
+        onClick={open}
+        leftSection={<EditIcon size={20} />}
+        radius="md">
         Edit
       </Button>
 
@@ -171,13 +175,15 @@ export function EditTaskModal({
             <Group mt="xl" justify="space-between">
               <Button
                 type="reset"
-                bg="cyan"
+                bg="red"
+                radius="md"
                 onClick={() => form.reset()}
                 disabled={mutateTask.isPending}>
                 Reset form
               </Button>
               <Button
                 type="submit"
+                radius="md"
                 disabled={mutateTask.isPending}
                 loading={mutateTask.isPending}>
                 Save Changes

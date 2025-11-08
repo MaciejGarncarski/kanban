@@ -34,6 +34,7 @@ export function DeleteBoardModal({ isOpen, onClose, readableBoardId }: Props) {
       <Group mt="xl" justify="space-between">
         <Button
           color="red"
+          radius="md"
           loading={isPending}
           onClick={() => {
             mutate(
@@ -53,7 +54,7 @@ export function DeleteBoardModal({ isOpen, onClose, readableBoardId }: Props) {
           }}>
           Delete
         </Button>
-        <Button onClick={onClose} loading={isPending}>
+        <Button radius="md" onClick={onClose} loading={isPending}>
           Cancel
         </Button>
       </Group>

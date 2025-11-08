@@ -33,6 +33,7 @@ export function TeamSwitchCombobox({ readableTeamId }: Props) {
     <Combobox
       store={combobox}
       width={250}
+      radius="md"
       onOptionSubmit={setTeam}
       transitionProps={{ duration: 200, transition: 'pop' }}>
       {readableTeamId ? (
@@ -56,6 +57,7 @@ const TeamSwitchInputEmpty = ({ combobox }: { combobox: ComboboxStore }) => {
           component="button"
           type="button"
           pointer
+          radius="md"
           w="12rem"
           rightSection={<Combobox.Chevron />}
           rightSectionPointerEvents="none"
@@ -83,6 +85,7 @@ const TeamSwitchInput = ({
           component="button"
           type="button"
           pointer
+          radius="md"
           w="12rem"
           rightSection={<Combobox.Chevron />}
           rightSectionPointerEvents="none"
