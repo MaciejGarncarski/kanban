@@ -15,7 +15,7 @@ import { useDraggedOver } from '@/hooks/use-dragged-over'
 import { useRoleByTeamId } from '@/features/teams/hooks/use-role-by-team-id'
 import { useMonitorElements } from '@/features/boards/hooks/use-monitor-elements'
 import { useBoardById } from '@/features/boards/hooks/use-board-by-id'
-import { LayoutGroup, motion } from 'motion/react'
+import { AnimatePresence, LayoutGroup, motion } from 'motion/react'
 import { useRefetchNotification } from '@/features/boards/hooks/use-refetch-notification'
 
 const MotionScrollArea = motion.create(ScrollAreaAutosize)
@@ -58,7 +58,7 @@ export const Board = ({
             gap="xl"
             pb="md"
             px="sm">
-            <>
+            <AnimatePresence>
               {boardData.columns.length === 0 && (
                 <motion.div layout>
                   <Card
@@ -86,7 +86,7 @@ export const Board = ({
                   )
                 },
               )}
-            </>
+            </AnimatePresence>
 
             {isAdmin &&
               MAX_COLUMN_COUNT > (boardData?.columns.length || 0) &&

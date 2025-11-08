@@ -27,7 +27,7 @@ export function useDraggedOver(data: Data) {
       }),
       autoScrollForElements({
         element: el,
-        getAllowedAxis: () => 'horizontal',
+        getAllowedAxis: () => 'vertical',
       }),
     )
   }, [data])

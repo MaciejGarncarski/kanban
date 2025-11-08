@@ -80,6 +80,7 @@ export const Column = ({
         </Group>
         <AnimatePresence mode="popLayout" initial={false}>
           <MotionScrollArea
+            layout
             layoutScroll
             scrollbars="y"
             h={'34rem'}
@@ -91,7 +92,6 @@ export const Column = ({
               mih={'20rem'}
               wrap="nowrap"
               gap="md"
-              ref={cardStackRef}
               style={{
                 transition:
                   'border 150ms, background-color 150ms, opacity 150ms',
