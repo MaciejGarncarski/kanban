@@ -46,7 +46,7 @@ export const Column = ({
     <motion.div
       ref={columnRef}
       layout
-      initial={false}
+      style={{ flexShrink: 0, flexGrow: 0, width: '20rem' }}
       transition={{ type: 'spring', stiffness: 400, damping: 50 }}>
       <Card
         withBorder

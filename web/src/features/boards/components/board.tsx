@@ -15,8 +15,11 @@ import { useDraggedOver } from '@/hooks/use-dragged-over'
 import { useRoleByTeamId } from '@/features/teams/hooks/use-role-by-team-id'
 import { useMonitorElements } from '@/features/boards/hooks/use-monitor-elements'
 import { useBoardById } from '@/features/boards/hooks/use-board-by-id'
-import { LayoutGroup } from 'motion/react'
+import { LayoutGroup, motion } from 'motion/react'
 import { useRefetchNotification } from '@/features/boards/hooks/use-refetch-notification'
+
+const MotionScrollArea = motion.create(ScrollAreaAutosize)
+const MotionGroup = motion.create(Group)
 
 export const Board = ({
   readableTeamId,
@@ -40,25 +43,34 @@ export const Board = ({
       <Title order={2} size="20" px="sm">
         {boardData?.description || 'No description.'}
       </Title>
-
-      <ScrollAreaAutosize
-        scrollbars="x"
-        offsetScrollbars
-        id="test"
-        viewportRef={ref}>
-        <Group justify="flex-start" wrap="nowrap" gap="lg" pb="md" px="sm">
-          <>
-            <LayoutGroup id={`board-${boardData.readableId}-columns`}>
+      <LayoutGroup id={`board-${boardData.readableId}-columns`}>
+        <MotionScrollArea
+          scrollbars="x"
+          layout
+          layoutScroll
+          offsetScrollbars
+          id="test"
+          viewportRef={ref}>
+          <MotionGroup
+            layout
+            justify="flex-start"
+            wrap="nowrap"
+            gap="xl"
+            pb="md"
+            px="sm">
+            <>
               {boardData.columns.length === 0 && (
-                <Card
-                  withBorder
-                  shadow="sm"
-                  h={'40rem'}
-                  radius={'md'}
-                  w="20rem"
-                  style={{ flexShrink: 0, justifyContent: 'center' }}>
-                  <Center>No columns found.</Center>
-                </Card>
+                <motion.div layout>
+                  <Card
+                    withBorder
+                    shadow="sm"
+                    h={'40rem'}
+                    radius={'md'}
+                    w="20rem"
+                    style={{ flexShrink: 0, justifyContent: 'center' }}>
+                    <Center>No columns found.</Center>
+                  </Card>
+                </motion.div>
               )}
               {boardData?.columns.map(
                 ({ name, cards, id: columnId, createdAt }) => {
@@ -74,26 +86,28 @@ export const Board = ({
                   )
                 },
               )}
-            </LayoutGroup>
-          </>
+            </>
 
-          {isAdmin &&
-            MAX_COLUMN_COUNT > (boardData?.columns.length || 0) &&
-            !isDraggedOver && (
-              <Card
-                withBorder
-                shadow="sm"
-                h={'40rem'}
-                radius={'md'}
-                w="20rem"
-                style={{ flexShrink: 0, justifyContent: 'center' }}>
-                <Center>
-                  <AddColumnModal readableBoardId={readableBoardId} />
-                </Center>
-              </Card>
-            )}
-        </Group>
-      </ScrollAreaAutosize>
+            {isAdmin &&
+              MAX_COLUMN_COUNT > (boardData?.columns.length || 0) &&
+              !isDraggedOver && (
+                <motion.div layout>
+                  <Card
+                    withBorder
+                    shadow="sm"
+                    h={'40rem'}
+                    radius={'md'}
+                    w="20rem"
+                    style={{ flexShrink: 0, justifyContent: 'center' }}>
+                    <Center>
+                      <AddColumnModal readableBoardId={readableBoardId} />
+                    </Center>
+                  </Card>
+                </motion.div>
+              )}
+          </MotionGroup>
+        </MotionScrollArea>
+      </LayoutGroup>
     </Flex>
   )
 }
