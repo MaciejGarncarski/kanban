@@ -96,7 +96,12 @@ export function EditTaskModal({
         Edit
       </Button>
 
-      <Modal opened={opened} onClose={close} title="Edit Task" centered>
+      <Modal
+        opened={opened}
+        onClose={close}
+        title="Edit Task"
+        centered
+        radius={'md'}>
         <form onSubmit={handleSubmit}>
           <Stack gap="lg">
             <TextInput

@@ -90,7 +90,12 @@ export function EditTeamModal({ isOpen, onClose, readableTeamId }: Props) {
   })
 
   return (
-    <Modal centered opened={isOpen} onClose={onClose} title="Edit Team">
+    <Modal
+      centered
+      opened={isOpen}
+      onClose={onClose}
+      title="Edit Team"
+      radius={'md'}>
       <form onSubmit={handleSubmit}>
         <Stack>
           <TextInput

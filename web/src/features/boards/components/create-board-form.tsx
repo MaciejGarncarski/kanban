@@ -45,7 +45,7 @@ export function CreateBoardForm({ readableTeamId }: Props) {
           {...form.getInputProps('description')}
         />
 
-        <Button type="submit" loading={isPending}>
+        <Button type="submit" loading={isPending} radius="md" ml="auto">
           Create Board
         </Button>
       </Stack>

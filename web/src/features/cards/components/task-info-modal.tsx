@@ -55,7 +55,12 @@ export function TaskInfoModal({
       </ActionIcon>
 
       <Portal>
-        <Modal opened={opened} onClose={close} title={'Details'} centered>
+        <Modal
+          opened={opened}
+          onClose={close}
+          title={'Details'}
+          centered
+          radius={'md'}>
           <Stack gap="sm">
             <Title order={3} size="lg">
               Title: {title}

@@ -54,9 +54,10 @@ export const Board = ({
                   withBorder
                   shadow="sm"
                   h={'40rem'}
+                  radius={'md'}
                   w="20rem"
                   style={{ flexShrink: 0, justifyContent: 'center' }}>
-                  <Center>No columns found</Center>
+                  <Center>No columns found.</Center>
                 </Card>
               )}
               {boardData?.columns.map(
@@ -83,6 +84,7 @@ export const Board = ({
                 withBorder
                 shadow="sm"
                 h={'40rem'}
+                radius={'md'}
                 w="20rem"
                 style={{ flexShrink: 0, justifyContent: 'center' }}>
                 <Center>

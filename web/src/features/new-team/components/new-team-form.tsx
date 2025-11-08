@@ -125,7 +125,7 @@ export function NewTeamForm() {
         </Input.Wrapper>
 
         <Flex>
-          <Button type="submit" ml="auto">
+          <Button type="submit" ml="auto" radius={'md'}>
             Create Team
           </Button>
         </Flex>

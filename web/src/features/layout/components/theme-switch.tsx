@@ -14,7 +14,10 @@ export const ThemeSwitch = () => {
           Wait...
         </Button>
       }>
-      <Menu shadow="md" width={100}>
+      <Menu
+        shadow="md"
+        width={120}
+        transitionProps={{ duration: 200, transition: 'pop' }}>
         <Menu.Target>
           <Button
             variant="light"

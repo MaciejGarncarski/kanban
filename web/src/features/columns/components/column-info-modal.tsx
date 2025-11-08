@@ -75,7 +75,12 @@ export function ColumnInfoModal({
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title="Column Info" centered>
+      <Modal
+        opened={opened}
+        onClose={close}
+        title="Column Info"
+        centered
+        radius={'md'}>
         {isEditing ? (
           <form onSubmit={handleSave}>
             <TextInput

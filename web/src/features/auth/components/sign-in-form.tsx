@@ -63,7 +63,7 @@ export function SignInForm() {
         <form
           onSubmit={form.onSubmit((values) => mutate(values))}
           style={{ width: '100%' }}>
-          <Flex direction="column" gap="lg">
+          <Flex direction="column" gap="xl">
             <TextInput
               withAsterisk
               label="Email"
@@ -79,7 +79,12 @@ export function SignInForm() {
               key={form.key('password')}
               {...form.getInputProps('password')}
             />
-            <Button loading={isPending} type="submit" mt="md">
+            <Button
+              loading={isPending}
+              type="submit"
+              radius="md"
+              px="lg"
+              ml="auto">
               Sign in
             </Button>
           </Flex>

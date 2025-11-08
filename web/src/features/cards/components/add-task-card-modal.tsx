@@ -87,7 +87,12 @@ export function AddTaskCardModal({ readableTeamId, columnId }: Props) {
   return (
     <>
       <Portal>
-        <Modal opened={opened} onClose={close} title="Add task" centered>
+        <Modal
+          opened={opened}
+          onClose={close}
+          title="Add task"
+          centered
+          radius={'md'}>
           <form onSubmit={onSubmit} style={{ width: '100%' }}>
             <Flex direction="column" gap="lg">
               <TextInput

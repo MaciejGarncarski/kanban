@@ -44,7 +44,12 @@ export function EditBoardModal({ isOpen, onClose, readableBoardId }: Props) {
   })
 
   return (
-    <Modal centered opened={isOpen} onClose={onClose} title="Update Board">
+    <Modal
+      centered
+      opened={isOpen}
+      onClose={onClose}
+      title="Update Board"
+      radius={'md'}>
       <form onSubmit={handleSubmit}>
         <Stack gap={'md'}>
           <TextInput

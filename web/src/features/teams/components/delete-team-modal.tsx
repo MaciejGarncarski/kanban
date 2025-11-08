@@ -37,7 +37,12 @@ export function DeleteTeamModal({ isOpen, onClose, readableTeamId }: Props) {
   }
 
   return (
-    <Modal centered opened={isOpen} onClose={onClose} title="Delete Team">
+    <Modal
+      centered
+      opened={isOpen}
+      onClose={onClose}
+      title="Delete Team"
+      radius={'md'}>
       <div>
         <p>
           Are you sure you want to delete team &quot;{currentTeam?.name}&quot;?

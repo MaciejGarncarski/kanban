@@ -37,7 +37,12 @@ export function AddColumnModal({
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title="Add column" centered>
+      <Modal
+        opened={opened}
+        onClose={close}
+        title="Add column"
+        centered
+        radius={'md'}>
         <form onSubmit={onSubmit} style={{ width: '100%' }}>
           <Flex direction="column" gap="lg">
             <TextInput

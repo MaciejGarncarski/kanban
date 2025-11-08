@@ -20,7 +20,12 @@ export function DeleteBoardModal({ isOpen, onClose, readableBoardId }: Props) {
   }
 
   return (
-    <Modal centered opened={isOpen} onClose={onClose} title="Delete Board">
+    <Modal
+      centered
+      opened={isOpen}
+      onClose={onClose}
+      title="Delete Board"
+      radius={'md'}>
       <div>
         <p>
           Are you sure you want to delete board &quot;{boardData.name}&quot;?

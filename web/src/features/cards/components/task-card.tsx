@@ -66,15 +66,18 @@ export function TaskCard({
               description={description}
             />
           </Flex>
-          <Group gap="xs" justify="space-between" align="center" wrap="nowrap">
+          <Group
+            gap="xs"
+            justify="space-between"
+            align="center"
+            wrap="nowrap"
+            maw="15rem">
             {description ? (
               <Text
                 c="gray.6"
-                style={{
-                  maxWidth: '100%',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}>
+                size="sm"
+                lineClamp={2}
+                style={{ wordBreak: 'break-word' }}>
                 {description}
               </Text>
             ) : null}

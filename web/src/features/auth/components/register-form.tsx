@@ -71,7 +71,7 @@ export function RegisterForm() {
           width: '100%',
         }}>
         <form onSubmit={handleRegister} style={{ width: '100%' }}>
-          <Flex direction="column" gap="lg">
+          <Flex direction="column" gap="xl">
             <TextInput
               withAsterisk
               label="Email"
@@ -103,7 +103,12 @@ export function RegisterForm() {
               key={form.key('confirmPassword')}
               {...form.getInputProps('confirmPassword')}
             />
-            <Button loading={isPending} type="submit" mt="md">
+            <Button
+              loading={isPending}
+              type="submit"
+              radius="md"
+              px="lg"
+              ml="auto">
               Register
             </Button>
           </Flex>
