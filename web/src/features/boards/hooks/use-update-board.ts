@@ -8,6 +8,8 @@ export function useUpdateBoard() {
         title: 'Error',
         message: error.message,
         color: 'red',
+        withBorder: true,
+        radius: 'lg',
       })
     },
     onSuccess: (_, __, ___, { client }) => {
@@ -15,6 +17,8 @@ export function useUpdateBoard() {
         title: 'Success',
         message: 'Board updated',
         color: 'green',
+        withBorder: true,
+        radius: 'lg',
       })
 
       client.invalidateQueries({

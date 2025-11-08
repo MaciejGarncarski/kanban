@@ -30,7 +30,11 @@ export function TeamSwitchCombobox({ readableTeamId }: Props) {
   }
 
   return (
-    <Combobox store={combobox} width={250} onOptionSubmit={setTeam}>
+    <Combobox
+      store={combobox}
+      width={250}
+      onOptionSubmit={setTeam}
+      transitionProps={{ duration: 200, transition: 'pop' }}>
       {readableTeamId ? (
         <TeamSwitchInput combobox={combobox} readableTeamId={readableTeamId} />
       ) : (

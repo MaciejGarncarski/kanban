@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsOptional, IsPositive, IsString } from 'class-validator';
+import { IsOptional, IsPositive, IsString, MaxLength } from 'class-validator';
 
 export class UpdateCardParamDto {
   @ApiProperty({ example: 'card-uuid' })
@@ -14,12 +14,14 @@ export class UpdateCardRequestDto {
   @IsString()
   @Expose()
   @IsOptional()
+  @MaxLength(32, { message: 'Title is too long' })
   readonly title?: string;
 
   @ApiProperty({ example: 'New Description', required: false })
   @IsString()
   @Expose()
   @IsOptional()
+  @MaxLength(500, { message: 'Description is too long' })
   readonly description?: string;
 
   @ApiProperty({ example: '2024-12-31', required: false })

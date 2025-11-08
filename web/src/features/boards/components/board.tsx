@@ -16,6 +16,7 @@ import { useRoleByTeamId } from '@/features/teams/hooks/use-role-by-team-id'
 import { useMonitorElements } from '@/features/boards/hooks/use-monitor-elements'
 import { useBoardById } from '@/features/boards/hooks/use-board-by-id'
 import { LayoutGroup } from 'motion/react'
+import { useRefetchNotification } from '@/features/boards/hooks/use-refetch-notification'
 
 export const Board = ({
   readableTeamId,
@@ -28,6 +29,7 @@ export const Board = ({
   const { data: boardData } = useBoardById({ readableBoardId })
   const { isDraggedOver, ref } = useDraggedOver({})
   const { isAdmin } = useRoleByTeamId(readableTeamId)
+  useRefetchNotification({ readableBoardId })
 
   if (!boardData) {
     return <div>Board not found</div>

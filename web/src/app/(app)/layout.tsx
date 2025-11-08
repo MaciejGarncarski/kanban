@@ -19,7 +19,9 @@ export default async function AppLayout({
   return (
     <>
       <Flex component="nav" px="12" py="sm" justify={'space-between'}>
-        <Button onClick={logout}>Logout</Button>
+        <Button radius="md" variant="light" onClick={logout}>
+          Logout
+        </Button>
         <ThemeSwitch />
       </Flex>
       <Container size={'app-container'}>{children}</Container>

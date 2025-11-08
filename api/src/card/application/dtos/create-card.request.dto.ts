@@ -6,7 +6,7 @@ export class CreateCardRequestDto {
   @ApiProperty({ example: 'Title' })
   @IsString()
   @Expose()
-  @MaxLength(32)
+  @MaxLength(32, { message: 'Title is too long' })
   readonly title: string;
 
   @ApiProperty({ example: 'column-uuid' })
@@ -18,7 +18,7 @@ export class CreateCardRequestDto {
   @IsString()
   @IsOptional()
   @Expose()
-  @MaxLength(500)
+  @MaxLength(500, { message: 'Description is too long' })
   readonly description?: string;
 
   @ApiProperty({ example: '2023-01-01', required: false })

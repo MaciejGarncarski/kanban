@@ -44,6 +44,14 @@ export function EditTaskModal({
       dueDate: dueDate?.toISOString() || null,
       assignedToId: assignedToId || '',
     },
+    validate: {
+      title: (value) =>
+        value.length > 0 && value.length <= 32
+          ? null
+          : 'Title must be between 1 and 32 characters',
+      description: (value) =>
+        value.length <= 500 ? null : 'Description is too long',
+    },
   })
 
   const combobox = useCombobox({

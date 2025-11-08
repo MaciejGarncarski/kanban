@@ -6,14 +6,14 @@ export class CreateTeamRequestDto {
   @ApiProperty({ description: 'Name of the team' })
   @IsString()
   @Expose()
-  @MaxLength(32)
+  @MaxLength(32, { message: 'Name is too long' })
   name: string;
 
   @ApiProperty({ description: 'Description of the team', required: false })
   @IsOptional()
   @IsString()
   @Expose()
-  @MaxLength(500)
+  @MaxLength(500, { message: 'Description is too long' })
   description?: string;
 
   @ApiProperty({ description: 'Array of member user IDs', required: false })

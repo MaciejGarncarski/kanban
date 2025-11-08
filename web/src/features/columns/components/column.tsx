@@ -85,8 +85,8 @@ export const Column = ({
             h={'34rem'}
             viewportRef={cardStackRef}>
             <Flex
-              py="md"
-              pr="sm"
+              py="lg"
+              px="xs"
               direction="column"
               mih={'20rem'}
               wrap="nowrap"

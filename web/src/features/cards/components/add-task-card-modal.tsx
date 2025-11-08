@@ -46,7 +46,10 @@ export function AddTaskCardModal({ readableTeamId, columnId }: Props) {
     validate: {
       description: (value) =>
         value.length <= 500 ? null : 'Max length is 500 characters',
-      name: (value) => (value.trim().length > 0 ? null : 'Name is required'),
+      name: (value) =>
+        value.length > 0 && value.length <= 32
+          ? null
+          : 'Name must be between 1 and 32 characters',
     },
   })
 
@@ -70,8 +73,6 @@ export function AddTaskCardModal({ readableTeamId, columnId }: Props) {
       {
         onSuccess: async () => {
           close()
-        },
-        onSettled: () => {
           form.reset()
         },
       },

@@ -11,6 +11,8 @@ export function useCreateColumn() {
         title: 'Success',
         message: 'Column created successfully',
         color: 'green',
+        withBorder: true,
+        radius: 'lg',
       })
     },
     onError: (error) => {
@@ -18,6 +20,8 @@ export function useCreateColumn() {
         title: 'Error',
         message: error.message || 'Failed to create column',
         color: 'red',
+        withBorder: true,
+        radius: 'lg',
       })
     },
   })

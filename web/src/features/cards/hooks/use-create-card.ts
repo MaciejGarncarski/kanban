@@ -11,6 +11,8 @@ export function useCreateCard() {
         title: 'Success',
         message: 'Task created successfully',
         color: 'green',
+        withBorder: true,
+        radius: 'lg',
       })
     },
     onError: (error) => {
@@ -18,6 +20,8 @@ export function useCreateCard() {
         title: 'Error',
         message: error.message || 'Failed to create task',
         color: 'red',
+        withBorder: true,
+        radius: 'lg',
       })
     },
   })

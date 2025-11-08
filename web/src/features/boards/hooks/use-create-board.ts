@@ -11,6 +11,8 @@ export function useCreateBoard({ readableTeamId }: { readableTeamId: string }) {
         title: 'Error',
         message: error.message,
         color: 'red',
+        withBorder: true,
+        radius: 'lg',
       })
     },
     onSuccess: ({ readableId }) => {
@@ -18,6 +20,8 @@ export function useCreateBoard({ readableTeamId }: { readableTeamId: string }) {
         title: 'Success',
         message: 'Board created successfully.',
         color: 'green',
+        withBorder: true,
+        radius: 'lg',
       })
 
       router.replace(`/teams/${readableTeamId}/boards/${readableId}`)

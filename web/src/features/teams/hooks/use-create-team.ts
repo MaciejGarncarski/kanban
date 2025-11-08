@@ -11,6 +11,8 @@ export function useCreateTeam() {
         title: 'Error',
         message: err.message,
         color: 'red',
+        withBorder: true,
+        radius: 'lg',
       })
     },
     onSuccess: (newTeam) => {
@@ -18,6 +20,8 @@ export function useCreateTeam() {
         title: 'Success',
         message: 'Team created successfully.',
         color: 'green',
+        withBorder: true,
+        radius: 'lg',
       })
 
       router.push(`/teams/${newTeam.readableId}`)

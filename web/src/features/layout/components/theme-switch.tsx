@@ -10,7 +10,7 @@ export const ThemeSwitch = () => {
   return (
     <ClientOnly
       fallback={
-        <Button variant="light" leftSection={<Loader />}>
+        <Button variant="light" leftSection={<Loader />} radius="md">
           Wait...
         </Button>
       }>
@@ -18,13 +18,14 @@ export const ThemeSwitch = () => {
         <Menu.Target>
           <Button
             variant="light"
+            radius="md"
             leftSection={
               colorScheme === 'dark' ? (
-                <Moon />
+                <Moon size={18} />
               ) : colorScheme === 'light' ? (
-                <Sun />
+                <Sun size={18} />
               ) : (
-                <Monitor />
+                <Monitor size={18} />
               )
             }>
             Theme

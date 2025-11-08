@@ -33,7 +33,11 @@ export function BoardSwitchCombobox({
   }
 
   return (
-    <Combobox store={combobox} width={250} onOptionSubmit={setBoard}>
+    <Combobox
+      store={combobox}
+      width={250}
+      onOptionSubmit={setBoard}
+      transitionProps={{ duration: 200, transition: 'pop' }}>
       {readableBoardId && readableTeamId ? (
         <BoardSwitchInput
           readableBoardId={readableBoardId}

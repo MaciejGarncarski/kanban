@@ -6,6 +6,7 @@ export function TeamRoleBadge({ role }: { role: TeamRole }) {
   return (
     <Badge
       size="xl"
+      radius={'md'}
       variant={role === teamRoles.ADMIN ? 'filled' : 'light'}
       leftSection={<UserIcon size={18} />}>
       {role}

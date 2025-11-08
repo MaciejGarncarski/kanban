@@ -4,7 +4,7 @@ import { IsString, MaxLength } from 'class-validator';
 export class CreateColumnRequestDto {
   @ApiProperty({ example: 'To Do', description: 'Title of the column' })
   @IsString()
-  @MaxLength(20)
+  @MaxLength(24, { message: 'Title is too long' })
   title: string;
 
   @ApiProperty({

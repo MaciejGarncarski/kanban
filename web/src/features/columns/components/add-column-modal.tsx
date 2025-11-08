@@ -58,8 +58,8 @@ export function AddColumnModal({
         </form>
       </Modal>
 
-      <Button variant="filled" onClick={open}>
-        <Plus /> Add Column
+      <Button onClick={open} radius="md" leftSection={<Plus size={20} />}>
+        Add Column
       </Button>
     </>
   )

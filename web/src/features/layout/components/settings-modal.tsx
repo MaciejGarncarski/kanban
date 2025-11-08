@@ -68,7 +68,10 @@ export function SettingsModal({ readableTeamId, readableBoardId }: Props) {
 
       <Menu shadow="md" width={200}>
         <Menu.Target>
-          <Button variant="light" leftSection={<SettingsIcon size={16} />}>
+          <Button
+            variant="light"
+            radius="md"
+            leftSection={<SettingsIcon size={16} />}>
             Settings
           </Button>
         </Menu.Target>
