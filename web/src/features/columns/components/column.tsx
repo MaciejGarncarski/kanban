@@ -88,6 +88,7 @@ export const Column = ({
               py="md"
               pr="sm"
               direction="column"
+              mih={'20rem'}
               wrap="nowrap"
               gap="md"
               ref={cardStackRef}
