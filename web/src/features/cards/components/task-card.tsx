@@ -36,6 +36,7 @@ export function TaskCard({
     <motion.div
       layout
       layoutId={cardId}
+      whileHover={{ scale: 1.02 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       transition={{ type: 'spring', stiffness: 400, damping: 30 }}

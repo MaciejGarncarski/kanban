@@ -3,7 +3,7 @@ import { prefetchBoards } from '@/features/boards/api/prefetch-boards'
 import { CreateTeamLink } from '@/features/layout/components/create-team-link'
 import { prefetchTeams } from '@/features/teams/api/prefetch-teams'
 import { getQueryClient } from '@/utils/get-query-client'
-import { Box } from '@mantine/core'
+import { Box, Stack, Title } from '@mantine/core'
 import { redirect } from 'next/navigation'
 
 export default async function Home() {
@@ -15,14 +15,14 @@ export default async function Home() {
 
   if (!teams || teams?.teams.length === 0 || !firstTeamId) {
     return (
-      <main>
-        <Box mt="md">
+      <Stack component="main">
+        <Title size="lg">
           You are not a member of any team. Create a team to get started.
-        </Box>
+        </Title>
         <Box>
           <CreateTeamLink />
         </Box>
-      </main>
+      </Stack>
     )
   }
 

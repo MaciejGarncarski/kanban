@@ -16,8 +16,8 @@ export function EditBoardModal({ isOpen, onClose, readableBoardId }: Props) {
   const { mutate, isPending } = useUpdateBoard()
   const form = useForm({
     initialValues: {
-      name: boardData.name || '',
-      description: boardData.description || '',
+      name: boardData?.name || '',
+      description: boardData?.description || '',
     },
   })
 

@@ -46,7 +46,7 @@ export const Board = ({
         offsetScrollbars
         id="test"
         viewportRef={ref}>
-        <Group justify="flex-start" wrap="nowrap" gap="lg" pb="md" px="md">
+        <Group justify="flex-start" wrap="nowrap" gap="lg" pb="md" px="sm">
           <>
             <LayoutGroup id={`board-${boardData.readableId}-columns`}>
               {boardData.columns.length === 0 && (

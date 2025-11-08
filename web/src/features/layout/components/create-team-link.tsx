@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 export function CreateTeamLink() {
   return (
-    <Button component={Link} variant="outline" href="/teams/new">
+    <Button component={Link} variant="light" radius="md" href="/teams/new">
       Create new team
     </Button>
   )
