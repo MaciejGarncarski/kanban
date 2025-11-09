@@ -33,20 +33,39 @@ export class UpdateColumnHandler
         'User is not authorized to update this team',
       );
     }
+    const currentColumn = await this.columnRepository.findById(columnId);
+
+    if (!currentColumn) {
+      throw new BadRequestException('Column not found');
+    }
 
     if (position) {
       const allColumns = await this.columnRepository.findAllByBoardId(
         column.boardId,
       );
-      const filtered = allColumns
-        .filter((c) => c.id !== columnId)
-        .filter(Boolean);
-      const insertIndex = position > 0 ? position - 1 : 0;
-      filtered.splice(insertIndex, 0, column);
+      const currentColumn = allColumns.find((c) => c.id === columnId);
 
-      const newPositions = filtered.map((c, idx) => {
-        return { ...c, position: idx + 1 };
-      });
+      if (!currentColumn) {
+        throw new Error('Column not found');
+      }
+
+      const filtered = allColumns.filter((c) => c.id !== columnId);
+
+      let insertIndex = position - 1;
+
+      if (currentColumn.position < position) {
+        insertIndex -= 1;
+      }
+
+      if (insertIndex < 0) insertIndex = 0;
+      if (insertIndex > filtered.length) insertIndex = filtered.length;
+
+      filtered.splice(insertIndex, 0, currentColumn);
+
+      const newPositions = filtered.map((c, idx) => ({
+        ...c,
+        position: idx + 1,
+      }));
 
       for (const col of newPositions) {
         await this.columnRepository.save(new ColumnEntity({ ...col }));

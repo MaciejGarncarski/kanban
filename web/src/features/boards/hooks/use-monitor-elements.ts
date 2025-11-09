@@ -48,8 +48,9 @@ export function useMonitorElements({
               (column) => column.id === destinationTargetId,
             ) + 1
 
+          // its ok
           const destinationIndex =
-            closestEdgeOfTarget === 'left' ? indexOfTarget : indexOfTarget + 1
+            closestEdgeOfTarget === 'right' ? indexOfTarget + 1 : indexOfTarget
 
           columnMutation.mutate({
             body: {

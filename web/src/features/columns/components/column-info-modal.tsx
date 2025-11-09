@@ -1,7 +1,14 @@
 import { useDeleteColumn } from '@/features/columns/hooks/use-delete-column'
 import { useUpdateColumn } from '@/features/columns/hooks/use-update-column'
 import { useRoleByTeamId } from '@/features/teams/hooks/use-role-by-team-id'
-import { ActionIcon, Button, Group, Modal, TextInput } from '@mantine/core'
+import {
+  ActionIcon,
+  Button,
+  Group,
+  Modal,
+  Text,
+  TextInput,
+} from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { useDisclosure } from '@mantine/hooks'
 import { CheckIcon, EditIcon, MenuIcon, TrashIcon, XIcon } from 'lucide-react'
@@ -30,6 +37,9 @@ export function ColumnInfoModal({
       }, 1000)
     },
   })
+
+  const [deleteOpened, { open: openDelete, close: closeDelete }] =
+    useDisclosure(false)
 
   const form = useForm({
     mode: 'uncontrolled',
@@ -91,10 +101,11 @@ export function ColumnInfoModal({
               key={form.key('name')}
               {...form.getInputProps('name')}
             />
-            <Group justify="space-between">
+            <Group justify="space-between" mt="md">
               <Button
                 mt="md"
                 bg="red"
+                radius="md"
                 onClick={() => {
                   setIsEditing(false)
                   form.reset()
@@ -103,6 +114,7 @@ export function ColumnInfoModal({
                 Cancel
               </Button>
               <Button
+                radius="md"
                 mt="md"
                 leftSection={<CheckIcon size={20} />}
                 type="submit">
@@ -116,7 +128,8 @@ export function ColumnInfoModal({
               <strong>Name:</strong> {name}
             </div>
             <div>
-              <strong>Created At:</strong> {createdAt}
+              <strong>Created At:</strong>{' '}
+              {new Date(createdAt).toLocaleString()}
             </div>
             {isAdmin && (
               <Group justify="space-between" mt="md">
@@ -131,8 +144,7 @@ export function ColumnInfoModal({
                   mt="md"
                   color="red"
                   radius={'md'}
-                  loading={deleteColumn.isPending}
-                  onClick={handleDelete}
+                  onClick={openDelete}
                   leftSection={<TrashIcon size={20} />}>
                   Delete
                 </Button>
@@ -140,6 +152,30 @@ export function ColumnInfoModal({
             )}
           </>
         )}
+      </Modal>
+
+      <Modal
+        opened={deleteOpened}
+        onClose={closeDelete}
+        title="Delete Column"
+        centered
+        radius={'md'}>
+        <Text>
+          Are you sure you want to delete the column? This action cannot be
+          undone.
+        </Text>
+        <div>
+          <Button
+            mt="md"
+            ml="auto"
+            color="red"
+            radius={'md'}
+            onClick={handleDelete}
+            loading={deleteColumn.isPending}
+            leftSection={<TrashIcon size={20} />}>
+            Delete
+          </Button>
+        </div>
       </Modal>
 
       <ActionIcon variant="light" onClick={open}>

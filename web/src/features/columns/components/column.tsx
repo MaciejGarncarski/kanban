@@ -102,11 +102,11 @@ export const Column = ({
                 transition:
                   'border 150ms, background-color 150ms, opacity 150ms',
                 opacity: isDraggedOver ? 0.8 : 1,
-                borderRadius: '5px',
+                borderRadius: '8px',
                 border:
                   !isDraggingColumn && isDraggedOver
-                    ? '1px dashed #228be6'
-                    : '1px dashed transparent',
+                    ? '1px solid rgba(34, 139, 230, 0.5)'
+                    : '1px solid transparent',
               }}>
               {cards.map(({ id, title, assignedTo, description, dueDate }) => (
                 <TaskCard
