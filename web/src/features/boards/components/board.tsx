@@ -59,7 +59,7 @@ export const Board = ({
                   <Center>No columns found.</Center>
                 </Card>
               )}
-              <AnimatePresence mode="wait">
+              <AnimatePresence mode="popLayout" initial={false}>
                 {boardData?.columns.map(
                   ({ name, cards, id: columnId, createdAt }) => {
                     return (

@@ -15,7 +15,7 @@ import {
   useCombobox,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { useDisclosure } from '@mantine/hooks'
+import { useDisclosure, useMounted } from '@mantine/hooks'
 import { Plus } from 'lucide-react'
 import { DateTimePicker } from '@mantine/dates'
 import { useTeamUsers } from '@/features/teams/hooks/use-team-users'
@@ -28,9 +28,12 @@ type Props = {
 }
 
 export function AddTaskCardModal({ readableTeamId, columnId }: Props) {
+  const mounted = useMounted()
+
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   })
+
   const { mutate, isPending } = useCreateCard()
   const { data } = useTeamUsers({ readableTeamId })
 
@@ -175,16 +178,29 @@ export function AddTaskCardModal({ readableTeamId, columnId }: Props) {
         </Modal>
       </Portal>
 
-      <motion.div layout layoutId={`add-task-button-${columnId}`}>
-        <Button
-          variant="light"
-          onClick={open}
-          radius="md"
-          size="sm"
-          leftSection={<Plus size={16} />}>
-          Add Task
-        </Button>
-      </motion.div>
+      {mounted ? (
+        <motion.div layout={'position'}>
+          <Button
+            variant="light"
+            onClick={open}
+            radius="md"
+            size="sm"
+            leftSection={<Plus size={16} />}>
+            Add Task
+          </Button>
+        </motion.div>
+      ) : (
+        <div>
+          <Button
+            variant="light"
+            onClick={open}
+            radius="md"
+            size="sm"
+            leftSection={<Plus size={16} />}>
+            Add Task
+          </Button>
+        </div>
+      )}
     </>
   )
 }

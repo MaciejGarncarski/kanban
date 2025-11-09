@@ -87,9 +87,6 @@ export const Column = ({
         </Group>
         <AnimatePresence mode="popLayout" initial={false}>
           <MotionScrollArea
-            layoutScroll
-            layout
-            layoutId={columnId + '-scrollarea'}
             scrollbars="y"
             h={'34rem'}
             viewportRef={cardStackRef}>
