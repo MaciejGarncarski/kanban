@@ -11,6 +11,7 @@ import {
   useCombobox,
   ComboboxStore,
   CheckIcon,
+  Box,
 } from '@mantine/core'
 import { useRouter } from 'next/navigation'
 
@@ -130,8 +131,12 @@ const TeamSwitchOptions = ({
   return teamsData.teams.map(({ description, readableId, name }) => (
     <Combobox.Option value={readableId} key={readableId}>
       <Group gap="sm" wrap="nowrap">
-        {readableId === readableTeamId && (
-          <CheckIcon size={12} style={{ flexGrow: 0, flexShrink: 0 }} />
+        {readableId === readableTeamId ? (
+          <Box w="12">
+            <CheckIcon size={12} style={{ flexGrow: 0, flexShrink: 0 }} />
+          </Box>
+        ) : (
+          <Box w="12"></Box>
         )}
         <Flex direction={'column'}>
           <Text>{name}</Text>

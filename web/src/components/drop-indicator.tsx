@@ -12,7 +12,7 @@ export function DropIndicator({
       height: '6px',
       borderRadius: '4px',
       width: '100%',
-      top: 0,
+      top: '-12px',
       left: 0,
     },
     bottom: {
@@ -21,7 +21,7 @@ export function DropIndicator({
       height: '6px',
       borderRadius: '4px',
       width: '100%',
-      bottom: 0,
+      bottom: '-12px',
       left: 0,
     },
     left: {

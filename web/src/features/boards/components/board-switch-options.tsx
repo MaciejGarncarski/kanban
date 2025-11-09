@@ -1,7 +1,7 @@
 'use client'
 
 import { useBoards } from '@/features/boards/hooks/use-boards'
-import { CheckIcon, Combobox, Flex, Group, Text } from '@mantine/core'
+import { Box, CheckIcon, Combobox, Flex, Group, Text } from '@mantine/core'
 
 type Props = {
   readableTeamId: string
@@ -18,8 +18,12 @@ export function BoardSwitchOptions({ readableTeamId, readableBoardId }: Props) {
   return data.boards.map(({ description, readableId, name }) => (
     <Combobox.Option value={readableId} key={readableId}>
       <Group gap="sm" wrap="nowrap">
-        {readableId === readableBoardId && (
-          <CheckIcon size={12} style={{ flexGrow: 0, flexShrink: 0 }} />
+        {readableId === readableBoardId ? (
+          <Box w="12">
+            <CheckIcon size={12} style={{ flexGrow: 0, flexShrink: 0 }} />
+          </Box>
+        ) : (
+          <Box w="12"></Box>
         )}
         <Flex direction={'column'}>
           <Text>{name}</Text>
