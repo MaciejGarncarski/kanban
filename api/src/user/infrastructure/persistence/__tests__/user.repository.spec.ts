@@ -83,4 +83,15 @@ describe('UserRepository', () => {
     expect(found?.name).toBe(fullName);
     expect(found?.email).toBe(email.toLowerCase());
   });
+
+  describe('getUserRoleByTeamId', () => {
+    it('should throw bad request exception if user is not in team', async () => {
+      await expect(
+        repo.getUserRoleByTeamId(
+          '00000000-0000-0000-0000-000000000000',
+          '00000000-0000-0000-0000-000000000000',
+        ),
+      ).rejects.toThrow('User is not authorized to access this team');
+    });
+  });
 });

@@ -13,7 +13,7 @@ import {
   TeamRepositoryInterface,
   UpdateTeamDto,
 } from 'src/team/domain/ports/team.interface';
-import { TeamEntity } from 'src/team/domain/team.entity';
+import { TeamAggregate } from 'src/team/domain/team.entity';
 import { teamRoles } from 'src/team/domain/types/team.types';
 
 @Injectable()
@@ -48,39 +48,44 @@ export class TeamRepository implements TeamRepositoryInterface {
     userId: string,
     teamData: InsertTeamDto,
     teamMembersIds: string[],
-  ): Promise<TeamEntity> {
-    const team = await this.db.transaction(async (tx): Promise<TeamEntity> => {
-      const [createdTeam] = await tx.insert(teams).values(teamData).returning();
+  ): Promise<TeamAggregate> {
+    const team = await this.db.transaction(
+      async (tx): Promise<TeamAggregate> => {
+        const [createdTeam] = await tx
+          .insert(teams)
+          .values(teamData)
+          .returning();
 
-      await tx.insert(team_members).values({
-        team_id: createdTeam.id,
-        user_id: userId,
-        role: teamRoles.ADMIN,
-      });
+        await tx.insert(team_members).values({
+          team_id: createdTeam.id,
+          user_id: userId,
+          role: teamRoles.ADMIN,
+        });
 
-      if (teamMembersIds.length > 0) {
-        await tx.insert(team_members).values(
-          teamMembersIds.map((memberId) => ({
-            team_id: createdTeam.id,
-            user_id: memberId,
-            role: teamRoles.MEMBER,
-          })),
-        );
-      }
+        if (teamMembersIds.length > 0) {
+          await tx.insert(team_members).values(
+            teamMembersIds.map((memberId) => ({
+              team_id: createdTeam.id,
+              user_id: memberId,
+              role: teamRoles.MEMBER,
+            })),
+          );
+        }
 
-      return new TeamEntity({
-        id: createdTeam.id,
-        name: createdTeam.name,
-        readableId: createdTeam.readable_id,
-        description: createdTeam.description,
-        createdAt: new Date(createdTeam.created_at),
-      });
-    });
+        return new TeamAggregate({
+          id: createdTeam.id,
+          name: createdTeam.name,
+          readableId: createdTeam.readable_id,
+          description: createdTeam.description,
+          createdAt: new Date(createdTeam.created_at),
+        });
+      },
+    );
 
     return team;
   }
 
-  async deleteTeam(readableTeamId: string): Promise<void> {
+  async deleteTeam(readableTeamId: string): Promise<null | true> {
     const foundTeam = await this.db
       .select()
       .from(teams)
@@ -89,7 +94,7 @@ export class TeamRepository implements TeamRepositoryInterface {
       .then((rows) => rows[0]);
 
     if (!foundTeam) {
-      return;
+      return null;
     }
 
     await this.db
@@ -99,6 +104,8 @@ export class TeamRepository implements TeamRepositoryInterface {
     await this.db.delete(boards).where(eq(boards.team_id, foundTeam.id));
 
     await this.db.delete(teams).where(eq(teams.readable_id, readableTeamId));
+
+    return true;
   }
 
   async updateTeam(
@@ -138,7 +145,7 @@ export class TeamRepository implements TeamRepositoryInterface {
     });
   }
 
-  async findById(readableTeamId: string): Promise<TeamEntity | null> {
+  async findById(readableTeamId: string): Promise<TeamAggregate | null> {
     const team = await this.db
       .select()
       .from(teams)
@@ -150,7 +157,7 @@ export class TeamRepository implements TeamRepositoryInterface {
       return null;
     }
 
-    return new TeamEntity({
+    return new TeamAggregate({
       id: team.id,
       name: team.name,
       readableId: team.readable_id,

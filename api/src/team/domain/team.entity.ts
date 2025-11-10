@@ -1,6 +1,6 @@
 import { BoardAggregate } from 'src/board/domain/board.entity';
 
-export class TeamEntity {
+export class TeamAggregate {
   readonly id: string;
   readonly name: string;
   readonly description: string | null;
@@ -16,7 +16,7 @@ export class TeamEntity {
     readableId: string;
   }) {
     if (!props) {
-      throw new Error('Props are required to create a TeamEntity');
+      throw new Error('Props are required to create a TeamAggregate ');
     }
 
     this.id = props.id;

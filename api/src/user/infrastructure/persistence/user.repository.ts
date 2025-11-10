@@ -149,14 +149,8 @@ export class UserRepository implements UserRepositoryInterface {
     return allUsers.map((user) => UserMapper.toDomain(user));
   }
 
-  async lastTen() {
-    const lastTenUsers = await this.db.select().from(users).limit(10);
-    return lastTenUsers.map((user) => UserMapper.toDomain(user));
-  }
-
   async create(data: typeof users.$inferInsert) {
     const [createdUser] = await this.db.insert(users).values(data).returning();
-
     return UserMapper.toDomain(createdUser);
   }
 

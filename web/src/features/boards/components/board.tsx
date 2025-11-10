@@ -38,7 +38,7 @@ export const Board = ({
   return (
     <LayoutGroup id={readableBoardId}>
       <Flex direction="column" gap="md">
-        <Title order={2} size="20" px="sm">
+        <Title order={2} size="20" px="xs">
           {boardData?.description || 'No description.'}
         </Title>
         <ScrollAreaAutosize

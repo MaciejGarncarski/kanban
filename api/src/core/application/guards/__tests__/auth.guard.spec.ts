@@ -107,4 +107,77 @@ describe('AuthGuard', () => {
       new UnauthorizedException('No refresh token provided'),
     );
   });
+
+  it('should refresh access token if expired and valid refresh token is provided', async () => {
+    const expiredToken = 'expired-token';
+    const refreshToken = 'valid-refresh-token';
+    mockRequest.signedCookies = { accessToken: expiredToken, refreshToken };
+
+    jest.spyOn(jwtService, 'verify').mockImplementation(() => {
+      const error: any = new Error('jwt expired');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      error.name = 'TokenExpiredError';
+      throw error;
+    });
+
+    const newAccessToken = 'new-access-token';
+    const newRefreshToken = 'new-refresh-token';
+    (commandBus.execute as jest.Mock).mockResolvedValue({
+      accessToken: newAccessToken,
+      newRefreshToken,
+    });
+
+    jest.spyOn(jwtService, 'verify').mockReturnValue({ sub: 'user999' });
+
+    const result = await guard.canActivate(mockContext);
+    expect(result).toBe(true);
+    expect(mockRequest.userId).toBe('user999');
+  });
+
+  it('should throw UnauthorizedException if refresh token is invalid', async () => {
+    const expiredToken = 'expired-token';
+    const refreshToken = 'invalid-refresh-token';
+    mockRequest.signedCookies = { accessToken: expiredToken, refreshToken };
+
+    jest.spyOn(jwtService, 'verify').mockImplementation(() => {
+      const error: any = new Error('jwt expired');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      error.name = 'TokenExpiredError';
+      throw error;
+    });
+
+    (commandBus.execute as jest.Mock).mockRejectedValue(
+      new Error('Invalid refresh token'),
+    );
+
+    await expect(guard.canActivate(mockContext)).rejects.toThrow(
+      new UnauthorizedException('Could not refresh access token'),
+    );
+  });
+
+  it('should throw UnauthorizedException for other token errors', async () => {
+    const badToken = 'bad-token';
+    mockRequest.signedCookies = { accessToken: badToken, refreshToken: 'test' };
+
+    jest.spyOn(jwtService, 'verify').mockImplementation(() => {
+      // eslint-disable-next-line @typescript-eslint/only-throw-error
+      throw 'not an error instance';
+    });
+
+    await expect(guard.canActivate(mockContext)).rejects.toThrow(
+      new UnauthorizedException('Invalid or expired token'),
+    );
+  });
+
+  it('should return true for valid access token in cookies', async () => {
+    const token = 'valid-token';
+    mockRequest.cookies = { accessToken: token };
+
+    const payload = { sub: 'userCookie' };
+    jest.spyOn(jwtService, 'verify').mockReturnValue(payload);
+
+    const result = await guard.canActivate(mockContext);
+    expect(result).toBe(true);
+    expect(mockRequest.userId).toBe(payload.sub);
+  });
 });

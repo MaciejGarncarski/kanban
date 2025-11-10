@@ -8,7 +8,6 @@ export interface UserRepositoryInterface {
   findByEmail(email: string): Promise<UserEntity | null>;
   findAllByTeamId(teamId: string): Promise<UserEntity[]>;
   all(): Promise<UserEntity[]>;
-  lastTen(): Promise<UserEntity[]>;
   create(data: NewUserRecord): Promise<UserEntity>;
   findAllByBoardId(boardId: string): Promise<UserEntity[]>;
   isUserInTeamByColumn(userId: string, columnId: string): Promise<boolean>;

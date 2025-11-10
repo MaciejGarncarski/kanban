@@ -80,4 +80,25 @@ describe('refresh-token-handler integration', () => {
     expect(result).toHaveProperty('accessToken');
     expect(typeof result.accessToken).toBe('string');
   });
+
+  it('should not refresh access token with revoked refresh token', async () => {
+    const email = faker.internet.email();
+    const password = faker.internet.password();
+
+    const user = await userRepo.create({
+      email,
+      name: faker.person.fullName(),
+      password_hash: await hash(password),
+    });
+
+    const { tokenPlain, entity } = await refreshTokenRepo.create(user.id);
+
+    await refreshTokenRepo.revoke(entity.id);
+
+    const command = new RefreshAccessTokenCommand(tokenPlain);
+
+    await expect(handler.execute(command)).rejects.toThrow(
+      'Token not found or inactive',
+    );
+  });
 });

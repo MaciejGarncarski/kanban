@@ -39,7 +39,20 @@ export class UpdateCardHandler {
       if (columnId && columnId === cardToMove.columnId) {
         const allCards = await this.cardRepo.findAllByColumnId(columnId);
         const filtered = allCards.filter((c) => c.id !== cardId);
-        const insertIndex = position > 0 ? position - 1 : 0;
+        const currentCard = allCards.find((c) => c.id === cardId);
+
+        if (!currentCard) {
+          throw new NotFoundException('Card not found in the specified column');
+        }
+
+        let insertIndex = position - 1;
+
+        if (currentCard.position < position) {
+          insertIndex -= 1;
+        }
+
+        if (insertIndex < 0) insertIndex = 0;
+        if (insertIndex > filtered.length) insertIndex = filtered.length;
 
         filtered.splice(insertIndex, 0, cardToMove);
 

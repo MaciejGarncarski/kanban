@@ -67,4 +67,11 @@ describe('LogoutHandler', () => {
     const found = await refreshTokenRepo.findActiveByToken(token.tokenPlain);
     expect(found).toBeNull();
   });
+
+  it('should handle non-existing token gracefully', async () => {
+    const result = await handler.execute(
+      new LogoutCommand('non-existing-token'),
+    );
+    expect(result).toBeUndefined();
+  });
 });

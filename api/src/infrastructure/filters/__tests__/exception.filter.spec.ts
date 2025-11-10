@@ -94,6 +94,20 @@ describe('GlobalHttpExceptionFilter', () => {
     );
   });
 
+  it('should handle HttpException with string message', () => {
+    const exception = new HttpException('Not Found', HttpStatus.NOT_FOUND);
+
+    filter.catch(exception, mockHost as ArgumentsHost);
+
+    expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.NOT_FOUND);
+    expect(mockResponse.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Not Found',
+        error: 'HttpException',
+      }),
+    );
+  });
+
   it('should handle DrizzleQueryError specifically', () => {
     const drizzleError = new DrizzleQueryError('Query failed', [null]);
 
@@ -105,6 +119,22 @@ describe('GlobalHttpExceptionFilter', () => {
     expect(mockResponse.json).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'Database query failed',
+        error: 'InternalServerError',
+      }),
+    );
+  });
+
+  it('should handle DrizzleQueryError with constraint violation', () => {
+    const drizzleError = new DrizzleQueryError('Unique constraint violated', [
+      null,
+    ]);
+
+    filter.catch(drizzleError, mockHost as ArgumentsHost);
+
+    expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
+    expect(mockResponse.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Invalid data or constraint violation',
         error: 'InternalServerError',
       }),
     );
