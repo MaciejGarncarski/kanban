@@ -3,7 +3,7 @@ export class UpdateTeamCommand {
     public readonly readableTeamId: string,
     public readonly userId: string,
     public readonly name?: string,
-    public readonly description?: string,
+    public readonly description?: string | null,
     public readonly members?: string[],
   ) {}
 }

@@ -24,6 +24,7 @@ import {
   users,
 } from 'src/infrastructure/persistence/db/schema';
 import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
+import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
 import { teamRoles } from 'src/team/domain/types/team.types';
 import { GetRoleByColumnIdHandler } from 'src/user/application/queries/handlers/get-role-by-column-id.handler';
 import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
@@ -55,6 +56,7 @@ describe('update-card-handler integration', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [TestConfigModule, CqrsModule],
       providers: [
+        ProfanityCheckService,
         UpdateCardHandler,
         BoardRepository,
         CardRepository,

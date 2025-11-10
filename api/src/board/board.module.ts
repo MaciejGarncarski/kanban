@@ -6,6 +6,7 @@ import { GetBoardByIdHandler } from 'src/board/application/queries/handlers/get-
 import { GetBoardsByTeamHandler } from 'src/board/application/queries/handlers/get-boards-by-team.handler';
 import { BoardController } from 'src/board/infrastructure/controllers/board.controller';
 import { BoardRepository } from 'src/board/infrastructure/persistence/board.repository';
+import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
 import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
 
 const CommandHandlers = [
@@ -18,6 +19,11 @@ const Repositories = [BoardRepository, UserRepository];
 
 @Module({
   controllers: [BoardController],
-  providers: [...QueryHandlers, ...CommandHandlers, ...Repositories],
+  providers: [
+    ...QueryHandlers,
+    ...CommandHandlers,
+    ...Repositories,
+    ProfanityCheckService,
+  ],
 })
 export class BoardModule {}

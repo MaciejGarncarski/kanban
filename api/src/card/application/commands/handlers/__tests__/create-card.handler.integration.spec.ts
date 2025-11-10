@@ -22,6 +22,7 @@ import {
   users,
 } from 'src/infrastructure/persistence/db/schema';
 import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
+import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
 import { teamRoles } from 'src/team/domain/types/team.types';
 import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
 import { v7 } from 'uuid';
@@ -53,6 +54,7 @@ describe('create-column-handler integration', () => {
       imports: [TestConfigModule],
       providers: [
         CreateCardHandler,
+        ProfanityCheckService,
         BoardRepository,
         CardRepository,
         { provide: DB_PROVIDER, useValue: db },
@@ -254,6 +256,128 @@ describe('create-column-handler integration', () => {
     // Act & Assert
     await expect(handler.execute(command)).rejects.toThrow(
       'User is not a member of the team',
+    );
+  });
+
+  it('should throw an error if name contains profanity', async () => {
+    // Arrange
+    const [newUser] = await db
+      .insert(users)
+      .values({
+        email: faker.internet.email(),
+        name: faker.person.fullName(),
+        password_hash: await hash(faker.internet.password()),
+      })
+      .returning();
+
+    const [newTeam] = await db
+      .insert(teams)
+      .values({
+        id: v7(),
+        name: faker.company.name(),
+        description: faker.lorem.sentence(),
+        readable_id: generateReadableId(),
+      })
+      .returning();
+
+    await db.insert(team_members).values({
+      team_id: newTeam.id,
+      user_id: newUser.id,
+      role: teamRoles.ADMIN,
+    });
+
+    const [newBoard] = await db
+      .insert(boards)
+      .values({
+        id: v7(),
+        name: faker.lorem.words(2),
+        description: faker.lorem.sentence(),
+        team_id: newTeam.id,
+        readable_id: generateReadableId(),
+      })
+      .returning();
+
+    const [newColumn] = await db
+      .insert(columns)
+      .values({
+        id: v7(),
+        name: faker.lorem.words(2),
+        board_id: newBoard.id,
+        position: 1,
+      })
+      .returning();
+
+    const command = new CreateCardCommand(
+      newUser.id,
+      'fuck',
+      faker.lorem.sentence(),
+      newColumn.id,
+    );
+
+    // Act & Assert
+    await expect(handler.execute(command)).rejects.toThrow(
+      'Card title contains inappropriate language',
+    );
+  });
+
+  it('should throw an error if description contains profanity', async () => {
+    // Arrange
+    const [newUser] = await db
+      .insert(users)
+      .values({
+        email: faker.internet.email(),
+        name: faker.person.fullName(),
+        password_hash: await hash(faker.internet.password()),
+      })
+      .returning();
+
+    const [newTeam] = await db
+      .insert(teams)
+      .values({
+        id: v7(),
+        name: faker.company.name(),
+        description: faker.lorem.sentence(),
+        readable_id: generateReadableId(),
+      })
+      .returning();
+
+    await db.insert(team_members).values({
+      team_id: newTeam.id,
+      user_id: newUser.id,
+      role: teamRoles.ADMIN,
+    });
+
+    const [newBoard] = await db
+      .insert(boards)
+      .values({
+        id: v7(),
+        name: faker.lorem.words(2),
+        description: faker.lorem.sentence(),
+        team_id: newTeam.id,
+        readable_id: generateReadableId(),
+      })
+      .returning();
+
+    const [newColumn] = await db
+      .insert(columns)
+      .values({
+        id: v7(),
+        name: faker.lorem.words(2),
+        board_id: newBoard.id,
+        position: 1,
+      })
+      .returning();
+
+    const command = new CreateCardCommand(
+      newUser.id,
+      faker.lorem.words(3),
+      'fuck',
+      newColumn.id,
+    );
+
+    // Act & Assert
+    await expect(handler.execute(command)).rejects.toThrow(
+      'Card description contains inappropriate language',
     );
   });
 });

@@ -18,6 +18,7 @@ import {
   teams,
 } from 'src/infrastructure/persistence/db/schema';
 import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
+import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
 import { teamRoles } from 'src/team/domain/types/team.types';
 import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
 import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
@@ -47,6 +48,7 @@ describe('update-board-handler integration', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [TestConfigModule],
       providers: [
+        ProfanityCheckService,
         UpdateBoardHandler,
         BoardRepository,
         { provide: DB_PROVIDER, useValue: db },
@@ -115,5 +117,21 @@ describe('update-board-handler integration', () => {
     expect(updatedBoard).toBeDefined();
     expect(updatedBoard.name).toBe(updatedName);
     expect(updatedBoard.description).toBe(updatedDescription);
+  });
+
+  it('should throw error when board name is profane', async () => {
+    const command = new UpdateBoardCommand(v7(), 'fuck');
+
+    await expect(handler.execute(command)).rejects.toThrow(
+      'Board title contains inappropriate language.',
+    );
+  });
+
+  it('should throw error when board description is profane', async () => {
+    const command = new UpdateBoardCommand(v7(), 'A valid name', 'fuck');
+
+    await expect(handler.execute(command)).rejects.toThrow(
+      'Board description contains inappropriate language.',
+    );
   });
 });

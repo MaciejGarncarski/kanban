@@ -1,8 +1,13 @@
-import { NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CommandHandler, QueryBus } from '@nestjs/cqrs';
 import { UpdateCardCommand } from 'src/card/application/commands/update-card.command';
 import { CardEntity } from 'src/card/domain/card.entity';
 import { CardRepository } from 'src/card/infrastructure/persistence/card.repository';
+import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
 import { TeamRole, teamRoles } from 'src/team/domain/types/team.types';
 import { GetRoleByColumnIdQuery } from 'src/user/application/queries/get-role-by-column-id.query';
 
@@ -11,6 +16,7 @@ export class UpdateCardHandler {
   constructor(
     private readonly cardRepo: CardRepository,
     private readonly queryBus: QueryBus,
+    private readonly profanityCheckService: ProfanityCheckService,
   ) {}
 
   async execute(command: UpdateCardCommand) {
@@ -34,6 +40,27 @@ export class UpdateCardHandler {
     const role = await this.queryBus.execute<GetRoleByColumnIdQuery, TeamRole>(
       new GetRoleByColumnIdQuery(cardToMove.columnId, userId),
     );
+
+    if (title) {
+      const isTitleProfane = await this.profanityCheckService.isProfane(title);
+
+      if (isTitleProfane) {
+        throw new BadRequestException(
+          'Card title contains inappropriate language.',
+        );
+      }
+    }
+
+    if (description) {
+      const isDescriptionProfane =
+        await this.profanityCheckService.isProfane(description);
+
+      if (isDescriptionProfane) {
+        throw new BadRequestException(
+          'Card description contains inappropriate language.',
+        );
+      }
+    }
 
     if (position !== undefined) {
       if (columnId && columnId === cardToMove.columnId) {

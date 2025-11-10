@@ -8,6 +8,7 @@ import { hash } from '@node-rs/argon2';
 import { UserResponseDto } from 'src/user/application/dtos/user.response.dto';
 import { plainToInstance } from 'class-transformer';
 import { JWTPayload } from 'src/auth/domain/token.types';
+import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
 
 export type RegisterHandlerReturn = {
   user: UserResponseDto;
@@ -22,6 +23,7 @@ export class RegisterUserHandler implements ICommandHandler<RegisterCommand> {
     private readonly refreshTokenRepo: RefreshTokenRepository,
     private readonly userRepo: UserRepository,
     private jwtService: JwtService,
+    private profanityCheckService: ProfanityCheckService,
   ) {}
 
   async execute(command: RegisterCommand): Promise<RegisterHandlerReturn> {
@@ -33,6 +35,14 @@ export class RegisterUserHandler implements ICommandHandler<RegisterCommand> {
 
     if (userByEmail) {
       throw new BadRequestException('Email already in use');
+    }
+
+    const isNameAProfanity = await this.profanityCheckService.isProfane(
+      command.name,
+    );
+
+    if (isNameAProfanity) {
+      throw new BadRequestException('Name contains inappropriate language');
     }
 
     const passwordHash = await hash(command.password);

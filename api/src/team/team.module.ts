@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
 import { CreateTeamHandler } from 'src/team/application/commands/handlers/create-team.handler';
 import { DeleteTeamHandler } from 'src/team/application/commands/handlers/delete-team.handler';
 import { UpdateTeamHandler } from 'src/team/application/commands/handlers/update-team.handler';
@@ -16,7 +17,12 @@ const QueryHandlers = [GetTeamsHandler];
 const Repositories = [TeamRepository, UserRepository];
 
 @Module({
-  providers: [...QueryHandlers, ...CommandHandlers, ...Repositories],
+  providers: [
+    ...QueryHandlers,
+    ...CommandHandlers,
+    ...Repositories,
+    ProfanityCheckService,
+  ],
   controllers: [TeamController],
 })
 export class TeamModule {}

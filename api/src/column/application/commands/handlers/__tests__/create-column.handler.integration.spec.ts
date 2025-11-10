@@ -21,6 +21,7 @@ import {
   users,
 } from 'src/infrastructure/persistence/db/schema';
 import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
+import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
 import { teamRoles } from 'src/team/domain/types/team.types';
 import { v7 } from 'uuid';
 
@@ -50,6 +51,7 @@ describe('create-column-handler integration', () => {
       providers: [
         CreateColumnHandler,
         BoardRepository,
+        ProfanityCheckService,
         RefreshTokenRepository,
         { provide: DB_PROVIDER, useValue: db },
         { provide: ColumnRepository, useValue: columnRepo },

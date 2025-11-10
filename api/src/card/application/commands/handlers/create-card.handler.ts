@@ -2,6 +2,7 @@ import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreateCardCommand } from 'src/card/application/commands/create-card.command';
 import { CardRepository } from 'src/card/infrastructure/persistence/card.repository';
+import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
 import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
 
 @CommandHandler(CreateCardCommand)
@@ -9,11 +10,29 @@ export class CreateCardHandler implements ICommandHandler<CreateCardCommand> {
   constructor(
     private readonly cardRepository: CardRepository,
     private readonly userRepository: UserRepository,
+    private readonly profanityCheckService: ProfanityCheckService,
   ) {}
 
   async execute(command: CreateCardCommand) {
     const { title, description, columnId, assignedTo, dueDate, userId } =
       command;
+
+    const isTitleProfane = await this.profanityCheckService.isProfane(title);
+
+    if (isTitleProfane) {
+      throw new BadRequestException(
+        'Card title contains inappropriate language.',
+      );
+    }
+
+    const isDescriptionProfane =
+      await this.profanityCheckService.isProfane(description);
+
+    if (isDescriptionProfane) {
+      throw new BadRequestException(
+        'Card description contains inappropriate language.',
+      );
+    }
 
     const alreadyExists = await this.cardRepository.findByTitleAndColumnId(
       title,

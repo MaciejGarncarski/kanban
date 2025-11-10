@@ -21,6 +21,7 @@ import {
   users,
 } from 'src/infrastructure/persistence/db/schema';
 import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
+import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
 import { teamRoles } from 'src/team/domain/types/team.types';
 import { GetRoleByColumnIdHandler } from 'src/user/application/queries/handlers/get-role-by-column-id.handler';
 import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
@@ -53,6 +54,7 @@ describe('update-column-handler integration', () => {
       imports: [TestConfigModule, CqrsModule],
       providers: [
         UpdateColumnHandler,
+        ProfanityCheckService,
         GetRoleByColumnIdHandler,
         BoardRepository,
         { provide: DB_PROVIDER, useValue: db },
@@ -378,5 +380,64 @@ describe('update-column-handler integration', () => {
     const sorted = updated.sort((a, b) => a.position - b.position);
     expect(sorted[0].id).toBe(col2.id);
     expect(sorted[1].id).toBe(col1.id);
+  });
+
+  it('should throw error when column name is profane', async () => {
+    // Arrange
+
+    const [newUser] = await db
+      .insert(users)
+      .values({
+        email: faker.internet.email(),
+        name: faker.person.fullName(),
+        password_hash: await hash(faker.internet.password()),
+      })
+      .returning();
+
+    const [newTeam] = await db
+      .insert(teams)
+      .values({
+        id: v7(),
+        name: faker.company.name(),
+        description: faker.lorem.sentence(),
+        readable_id: generateReadableId(),
+      })
+      .returning();
+
+    await db.insert(team_members).values({
+      team_id: newTeam.id,
+      user_id: newUser.id,
+      role: teamRoles.ADMIN,
+    });
+
+    const [newBoard] = await db
+      .insert(boards)
+      .values({
+        id: v7(),
+        name: faker.lorem.words(2),
+        description: faker.lorem.sentence(),
+        team_id: newTeam.id,
+        readable_id: generateReadableId(),
+      })
+      .returning();
+
+    const columnTitle = faker.lorem.words(3);
+
+    const [newColumn] = await db
+      .insert(columns)
+      .values({
+        id: v7(),
+        name: columnTitle,
+        board_id: newBoard.id,
+        position: 1,
+      })
+      .returning();
+
+    const command = new UpdateColumnCommand(newUser.id, newColumn.id, 'fuck');
+
+    // Act & Assert
+    await expect(handler.execute(command)).rejects.toThrow(
+      'Column name contains inappropriate language.',
+    );
   });
 });

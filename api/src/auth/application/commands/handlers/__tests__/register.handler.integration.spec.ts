@@ -12,6 +12,7 @@ import { JWTPayload } from 'src/auth/domain/token.types';
 import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
 import { type DB } from 'src/infrastructure/persistence/db/client';
 import { DB_PROVIDER } from 'src/infrastructure/persistence/db/db.provider';
+import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
 import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
 import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
 
@@ -42,6 +43,7 @@ describe('register-user-handler integration', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [TestConfigModule],
       providers: [
+        ProfanityCheckService,
         RegisterUserHandler,
         RefreshTokenRepository,
         { provide: DB_PROVIDER, useValue: db },
@@ -117,6 +119,16 @@ describe('register-user-handler integration', () => {
 
     await expect(handler.execute(command2)).rejects.toThrow(
       'Email already in use',
+    );
+  });
+
+  it('should throw error if name contains profanity', async () => {
+    const email = faker.internet.email();
+    const password = faker.internet.password();
+    const command = new RegisterCommand(email, 'fuck', password, password);
+
+    await expect(handler.execute(command)).rejects.toThrow(
+      'Name contains inappropriate language',
     );
   });
 });

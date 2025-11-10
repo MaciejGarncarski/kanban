@@ -4,17 +4,30 @@ import { plainToInstance } from 'class-transformer';
 import { CreateColumnCommand } from 'src/column/application/commands/create-column.command';
 import { CreateColumnResponseDto } from 'src/column/application/dtos/create-column-response.dto';
 import { ColumnRepository } from 'src/column/infrastructure/persistence/column.repository';
+import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
 
 @CommandHandler(CreateColumnCommand)
 export class CreateColumnHandler
   implements ICommandHandler<CreateColumnCommand>
 {
-  constructor(private readonly columnRepository: ColumnRepository) {}
+  constructor(
+    private readonly columnRepository: ColumnRepository,
+
+    private readonly profanityCheckService: ProfanityCheckService,
+  ) {}
 
   async execute(
     command: CreateColumnCommand,
   ): Promise<CreateColumnResponseDto> {
     const { title, readableBoardId } = command;
+
+    const isTitleProfane = await this.profanityCheckService.isProfane(title);
+
+    if (isTitleProfane) {
+      throw new BadRequestException(
+        'Column title contains inappropriate language.',
+      );
+    }
 
     const alreadyExists = await this.columnRepository.existsByNameAndBoardId(
       title,

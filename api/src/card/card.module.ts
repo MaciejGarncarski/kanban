@@ -4,6 +4,7 @@ import { DeleteCardHandler } from 'src/card/application/commands/handlers/delete
 import { UpdateCardHandler } from 'src/card/application/commands/handlers/update-card.handler';
 import { CardController } from 'src/card/infrastructure/controllers/card.controller';
 import { CardRepository } from 'src/card/infrastructure/persistence/card.repository';
+import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
 import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
 
 const CommandHandlers = [
@@ -16,6 +17,11 @@ const Repositories = [CardRepository, UserRepository];
 
 @Module({
   controllers: [CardController],
-  providers: [...QueryHandlers, ...CommandHandlers, ...Repositories],
+  providers: [
+    ...QueryHandlers,
+    ...CommandHandlers,
+    ...Repositories,
+    ProfanityCheckService,
+  ],
 })
 export class CardModule {}

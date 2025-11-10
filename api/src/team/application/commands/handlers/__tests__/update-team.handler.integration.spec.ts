@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
 import { hash } from '@node-rs/argon2';
 import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
+import { _ } from 'node_modules/@faker-js/faker/dist/airline-CLphikKp.cjs';
 import { Pool } from 'pg';
 import { createJWTService } from 'src/__tests__/utils/create-jwt-service';
 import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
@@ -9,6 +10,7 @@ import { TestConfigModule } from 'src/__tests__/utils/get-test-env';
 import { DB } from 'src/infrastructure/persistence/db/client';
 import { DB_PROVIDER } from 'src/infrastructure/persistence/db/db.provider';
 import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
+import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
 import { UpdateTeamHandler } from 'src/team/application/commands/handlers/update-team.handler';
 import { UpdateTeamCommand } from 'src/team/application/commands/update-team.command';
 import { TeamRepository } from 'src/team/infrastructure/persistence/team.repository';
@@ -42,6 +44,7 @@ describe('UpdateTeamHandler Integration Tests', () => {
       imports: [TestConfigModule],
       providers: [
         UpdateTeamHandler,
+        ProfanityCheckService,
         { provide: TeamRepository, useValue: teamRepo },
         { provide: DB_PROVIDER, useValue: db },
         { provide: UserRepository, useValue: userRepo },
@@ -87,5 +90,62 @@ describe('UpdateTeamHandler Integration Tests', () => {
     expect(updatedTeam).toBeDefined();
     expect(updatedTeam?.name).toBe('changed name');
     expect(updatedTeam?.description).toBe('changed description');
+  });
+
+  it('should throw BadRequestException for profane team name', async () => {
+    // Arrange
+    const user = await userRepo.create({
+      email: faker.internet.email(),
+      password_hash: await hash(faker.internet.password()),
+      name: faker.person.fullName(),
+    });
+
+    const team = await teamRepo.createTeam(
+      user.id,
+      {
+        name: 'Test Team',
+        description: 'A team for testing',
+        readable_id: generateReadableId(),
+      },
+      [],
+    );
+
+    // Act & Assert
+    await expect(
+      handler.execute(
+        new UpdateTeamCommand(
+          team.readableId,
+          user.id,
+          'fuck',
+          'changed description',
+        ),
+      ),
+    ).rejects.toThrow('Team name contains inappropriate language.');
+  });
+
+  it('should throw BadRequestException for profane team description', async () => {
+    // Arrange
+    const user = await userRepo.create({
+      email: faker.internet.email(),
+      password_hash: await hash(faker.internet.password()),
+      name: faker.person.fullName(),
+    });
+
+    const team = await teamRepo.createTeam(
+      user.id,
+      {
+        name: 'Test Team',
+        description: 'A team for testing',
+        readable_id: generateReadableId(),
+      },
+      [],
+    );
+
+    // Act & Assert
+    await expect(
+      handler.execute(
+        new UpdateTeamCommand(team.readableId, user.id, 'ok', 'fuck'),
+      ),
+    ).rejects.toThrow('Team description contains inappropriate language.');
   });
 });

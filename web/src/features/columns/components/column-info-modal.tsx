@@ -116,6 +116,7 @@ export function ColumnInfoModal({
               <Button
                 radius="md"
                 mt="md"
+                loading={mutateColumn.isPending}
                 leftSection={<CheckIcon size={20} />}
                 type="submit">
                 Save

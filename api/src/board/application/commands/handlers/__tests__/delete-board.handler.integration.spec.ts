@@ -18,6 +18,7 @@ import {
   teams,
 } from 'src/infrastructure/persistence/db/schema';
 import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
+import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
 import { teamRoles } from 'src/team/domain/types/team.types';
 import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
 import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
@@ -47,6 +48,7 @@ describe('delete-board-handler integration', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [TestConfigModule],
       providers: [
+        ProfanityCheckService,
         DeleteBoardHandler,
         BoardRepository,
         { provide: DB_PROVIDER, useValue: db },

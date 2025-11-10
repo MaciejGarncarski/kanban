@@ -28,6 +28,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** Get all users */
         get: operations["UserController_getAllUsers"];
         put?: never;
         post?: never;
@@ -44,6 +45,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** Get users by readable team ID */
         get: operations["UserController_getUsers"];
         put?: never;
         post?: never;
@@ -60,6 +62,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** Get user role by readable team ID */
         get: operations["UserController_getRoleByTeamId"];
         put?: never;
         post?: never;
@@ -252,6 +255,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
+        /** Create a new card */
         post: operations["CardController_createCard"];
         delete?: never;
         options?: never;
@@ -269,9 +273,11 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
+        /** Delete a card */
         delete: operations["CardController_deleteCard"];
         options?: never;
         head?: never;
+        /** Update a card */
         patch: operations["CardController_updateCard"];
         trace?: never;
     };
@@ -284,6 +290,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
+        /** Create a new column */
         post: operations["ColumnController_createColumn"];
         delete?: never;
         options?: never;
@@ -301,9 +308,11 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
+        /** Delete a column */
         delete: operations["ColumnController_deleteColumn"];
         options?: never;
         head?: never;
+        /** Update a column */
         patch: operations["ColumnController_updateColumn"];
         trace?: never;
     };
@@ -577,8 +586,8 @@ export interface components {
             id: string;
             /** @example To Do */
             name: string;
-            /** @example a1b2c3d4 */
-            readableBoardId: string;
+            /** @example a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6 */
+            boardId: string;
             /**
              * @description User account creation date
              * @example 2025-10-17T15:42:05.351Z

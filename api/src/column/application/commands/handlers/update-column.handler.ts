@@ -3,6 +3,7 @@ import { CommandHandler, ICommandHandler, QueryBus } from '@nestjs/cqrs';
 import { UpdateColumnCommand } from 'src/column/application/commands/update-column.command';
 import { ColumnEntity } from 'src/column/domain/column.entity';
 import { ColumnRepository } from 'src/column/infrastructure/persistence/column.repository';
+import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
 import { TeamRole, teamRoles } from 'src/team/domain/types/team.types';
 import { GetRoleByColumnIdQuery } from 'src/user/application/queries/get-role-by-column-id.query';
 
@@ -13,6 +14,7 @@ export class UpdateColumnHandler
   constructor(
     private readonly queryBus: QueryBus,
     private readonly columnRepository: ColumnRepository,
+    private readonly profanityCheckService: ProfanityCheckService,
   ) {}
 
   async execute(command: UpdateColumnCommand): Promise<ColumnEntity> {
@@ -33,6 +35,17 @@ export class UpdateColumnHandler
         'User is not authorized to update this team',
       );
     }
+
+    if (name) {
+      const isTitleProfane = await this.profanityCheckService.isProfane(name);
+
+      if (isTitleProfane) {
+        throw new BadRequestException(
+          'Column name contains inappropriate language.',
+        );
+      }
+    }
+
     const currentColumn = await this.columnRepository.findById(columnId);
 
     if (!currentColumn) {

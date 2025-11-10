@@ -76,7 +76,7 @@ export function EditTeamModal({ isOpen, onClose, readableTeamId }: Props) {
       {
         body: {
           name,
-          description: description,
+          description: description.trim(),
           members: [...selectedUsers, userData.id],
         },
         params: { path: { readableTeamId } },
