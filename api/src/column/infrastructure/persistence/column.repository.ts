@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { and, count, desc, eq } from 'drizzle-orm';
 import { CardEntity } from 'src/card/domain/card.entity';
 import { ColumnEntity } from 'src/column/domain/column.entity';
@@ -9,6 +9,7 @@ import {
   boards,
   cards,
   columns,
+  teams,
 } from 'src/infrastructure/persistence/db/schema';
 
 @Injectable()
@@ -222,5 +223,20 @@ export class ColumnRepository implements ColumnRepositoryInterface {
     }
 
     return Array.from(columnMap.values());
+  }
+  async findReadableTeamIdByColumnId(columnId: string): Promise<string> {
+    const record = await this.db
+      .select({ teamReadableId: teams.readable_id })
+      .from(columns)
+      .innerJoin(boards, eq(columns.board_id, boards.id))
+      .innerJoin(teams, eq(boards.team_id, teams.id))
+      .where(eq(columns.id, columnId))
+      .limit(1);
+
+    if (record.length === 0) {
+      throw new BadRequestException('Column not found');
+    }
+
+    return record[0].teamReadableId;
   }
 }

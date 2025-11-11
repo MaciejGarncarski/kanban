@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
+import { SendToTeamMembersHandler } from 'src/notifications/application/events/handlers/send-to-team-members.handler';
+import { NotificationsService } from 'src/notifications/infrastructure/services/notifications.service';
 import { CreateTeamHandler } from 'src/team/application/commands/handlers/create-team.handler';
 import { DeleteTeamHandler } from 'src/team/application/commands/handlers/delete-team.handler';
 import { UpdateTeamHandler } from 'src/team/application/commands/handlers/update-team.handler';
@@ -14,13 +16,16 @@ const CommandHandlers = [
   UpdateTeamHandler,
 ];
 const QueryHandlers = [GetTeamsHandler];
+const EventsHandlers = [SendToTeamMembersHandler];
 const Repositories = [TeamRepository, UserRepository];
 
 @Module({
   providers: [
     ...QueryHandlers,
     ...CommandHandlers,
+    ...EventsHandlers,
     ...Repositories,
+    NotificationsService,
     ProfanityCheckService,
   ],
   controllers: [TeamController],

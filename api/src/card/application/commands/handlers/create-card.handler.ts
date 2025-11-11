@@ -1,8 +1,9 @@
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { CreateCardCommand } from 'src/card/application/commands/create-card.command';
 import { CardRepository } from 'src/card/infrastructure/persistence/card.repository';
 import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
+import { SendToTeamMembersEvent } from 'src/notifications/application/events/send-to-team-members.event';
 import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
 
 @CommandHandler(CreateCardCommand)
@@ -10,6 +11,7 @@ export class CreateCardHandler implements ICommandHandler<CreateCardCommand> {
   constructor(
     private readonly cardRepository: CardRepository,
     private readonly userRepository: UserRepository,
+    private readonly eventBus: EventBus,
     private readonly profanityCheckService: ProfanityCheckService,
   ) {}
 
@@ -64,6 +66,12 @@ export class CreateCardHandler implements ICommandHandler<CreateCardCommand> {
       assignedTo,
       dueDate,
     });
+
+    const readableTeamId = await this.cardRepository.getReadableTeamIdByCardId(
+      card.id,
+    );
+
+    this.eventBus.publish(new SendToTeamMembersEvent(readableTeamId));
 
     return card;
   }

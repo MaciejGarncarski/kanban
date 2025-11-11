@@ -1,9 +1,15 @@
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
-import { CommandHandler, ICommandHandler, QueryBus } from '@nestjs/cqrs';
+import {
+  CommandHandler,
+  EventBus,
+  ICommandHandler,
+  QueryBus,
+} from '@nestjs/cqrs';
 import { UpdateColumnCommand } from 'src/column/application/commands/update-column.command';
 import { ColumnEntity } from 'src/column/domain/column.entity';
 import { ColumnRepository } from 'src/column/infrastructure/persistence/column.repository';
 import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
+import { SendToTeamMembersEvent } from 'src/notifications/application/events/send-to-team-members.event';
 import { TeamRole, teamRoles } from 'src/team/domain/types/team.types';
 import { GetRoleByColumnIdQuery } from 'src/user/application/queries/get-role-by-column-id.query';
 
@@ -13,6 +19,7 @@ export class UpdateColumnHandler
 {
   constructor(
     private readonly queryBus: QueryBus,
+    private readonly eventBus: EventBus,
     private readonly columnRepository: ColumnRepository,
     private readonly profanityCheckService: ProfanityCheckService,
   ) {}
@@ -24,6 +31,9 @@ export class UpdateColumnHandler
     if (!column) {
       throw new BadRequestException('Column not found');
     }
+
+    const readableTeamId =
+      await this.columnRepository.findReadableTeamIdByColumnId(columnId);
 
     const userRole = await this.queryBus.execute<
       GetRoleByColumnIdQuery,
@@ -84,6 +94,8 @@ export class UpdateColumnHandler
         await this.columnRepository.save(new ColumnEntity({ ...col }));
       }
 
+      this.eventBus.publish(new SendToTeamMembersEvent(readableTeamId));
+
       return filtered[insertIndex];
     }
 
@@ -97,7 +109,7 @@ export class UpdateColumnHandler
     });
 
     await this.columnRepository.save(updatedData);
-
+    this.eventBus.publish(new SendToTeamMembersEvent(readableTeamId));
     return updatedData;
   }
 }

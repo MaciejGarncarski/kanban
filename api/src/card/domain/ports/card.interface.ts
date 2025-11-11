@@ -18,4 +18,5 @@ export interface CardRepositoryInterface {
   getTeamIdByCardId(cardId: string): Promise<string>;
   deleteCard(cardId: string): Promise<void>;
   updateCard(card: CardEntity): Promise<CardEntity>;
+  getReadableTeamIdByCardId(cardId: string): Promise<string>;
 }

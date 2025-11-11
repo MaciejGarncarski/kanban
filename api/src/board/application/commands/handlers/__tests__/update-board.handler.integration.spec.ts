@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { CqrsModule } from '@nestjs/cqrs';
 import { Test, TestingModule } from '@nestjs/testing';
 import { StartedPostgreSqlContainer } from '@testcontainers/postgresql/build/postgresql-container';
 import { eq } from 'drizzle-orm';
@@ -46,7 +47,7 @@ describe('update-board-handler integration', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [TestConfigModule],
+      imports: [TestConfigModule, CqrsModule],
       providers: [
         ProfanityCheckService,
         UpdateBoardHandler,
@@ -56,6 +57,8 @@ describe('update-board-handler integration', () => {
         createJWTService(),
       ],
     }).compile();
+
+    await module.init();
 
     handler = module.get<UpdateBoardHandler>(UpdateBoardHandler);
     userRepo = module.get<UserRepositoryInterface>(UserRepository);

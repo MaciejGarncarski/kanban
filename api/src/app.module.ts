@@ -20,6 +20,7 @@ import { BoardModule } from 'src/board/board.module';
 import { CardModule } from 'src/card/card.module';
 import { ColumnModule } from 'src/column/column.module';
 import { AppController } from 'src/infrastructure/controllers/app.controller';
+import { NotificationsModule } from 'src/notifications/notifications.module';
 
 const API_MODULES = [
   UserModule,
@@ -28,6 +29,7 @@ const API_MODULES = [
   BoardModule,
   CardModule,
   ColumnModule,
+  NotificationsModule,
 ];
 
 @Module({

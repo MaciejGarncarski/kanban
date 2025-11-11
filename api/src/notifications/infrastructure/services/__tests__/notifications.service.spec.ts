@@ -2,42 +2,38 @@ import { faker } from '@faker-js/faker';
 import { CqrsModule } from '@nestjs/cqrs';
 import { Test, TestingModule } from '@nestjs/testing';
 import { hash } from '@node-rs/argon2';
-import { StartedPostgreSqlContainer } from '@testcontainers/postgresql/build/postgresql-container';
+import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { Pool } from 'pg';
+import { Subject } from 'rxjs';
 import { createJWTService } from 'src/__tests__/utils/create-jwt-service';
 import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
 import { TestConfigModule } from 'src/__tests__/utils/get-test-env';
-import { BoardRepository } from 'src/board/infrastructure/persistence/board.repository';
-import { DeleteColumnCommand } from 'src/column/application/commands/delete-columnd.command';
-import { DeleteColumnHandler } from 'src/column/application/commands/handlers/delete-column.handler';
-import { ColumnRepository } from 'src/column/infrastructure/persistence/column.repository';
-import { type DB } from 'src/infrastructure/persistence/db/client';
+import { DB } from 'src/infrastructure/persistence/db/client';
 import { DB_PROVIDER } from 'src/infrastructure/persistence/db/db.provider';
 import {
-  boards,
-  columns,
   team_members,
   teams,
   users,
 } from 'src/infrastructure/persistence/db/schema';
 import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
+import { SendToTeamMembersHandler } from 'src/notifications/application/events/handlers/send-to-team-members.handler';
+import { NotificationsService } from 'src/notifications/infrastructure/services/notifications.service';
 import { teamRoles } from 'src/team/domain/types/team.types';
-import { v7 } from 'uuid';
+import { TeamRepository } from 'src/team/infrastructure/persistence/team.repository';
 
-describe('delete-column-handler integration', () => {
-  let handler: DeleteColumnHandler;
+describe('NotificationsService', () => {
+  let service: NotificationsService;
   let container: StartedPostgreSqlContainer;
   let pool: Pool;
+  let teamRepository: TeamRepository;
   let db: DB;
-  let columnRepo: ColumnRepository;
 
   beforeAll(async () => {
     const { pgContainer, pgPool, testDb } = await getTestDb();
     container = pgContainer;
     pool = pgPool;
-
+    teamRepository = new TeamRepository(testDb);
     db = testDb;
-    columnRepo = new ColumnRepository(testDb);
   });
 
   afterAll(async () => {
@@ -48,21 +44,32 @@ describe('delete-column-handler integration', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [TestConfigModule, CqrsModule],
       providers: [
-        DeleteColumnHandler,
-        BoardRepository,
+        SendToTeamMembersHandler,
+        NotificationsService,
         { provide: DB_PROVIDER, useValue: db },
-        { provide: ColumnRepository, useValue: columnRepo },
+        { provide: TeamRepository, useValue: teamRepository },
         createJWTService(),
       ],
     }).compile();
-    await module.init();
 
-    handler = module.get<DeleteColumnHandler>(DeleteColumnHandler);
+    await module.init();
+    teamRepository = module.get<TeamRepository>(TeamRepository);
+    service = module.get<NotificationsService>(NotificationsService);
   });
 
-  it('should create a new column', async () => {
-    // Arrange
+  it('should add and remove clients', () => {
+    const subject = new Subject<any>();
+    service.addClient('user-1', subject);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    expect((service as any).clients.has('user-1')).toBe(true);
 
+    service.removeClient('user-1');
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    expect((service as any).clients.has('user-1')).toBe(false);
+  });
+
+  it('should send to team members without errors', async () => {
+    // Arrange
     const [newUser] = await db
       .insert(users)
       .values({
@@ -72,13 +79,14 @@ describe('delete-column-handler integration', () => {
       })
       .returning();
 
+    const teamIdReadable = generateReadableId();
+
     const [newTeam] = await db
       .insert(teams)
       .values({
-        id: v7(),
         name: faker.company.name(),
         description: faker.lorem.sentence(),
-        readable_id: generateReadableId(),
+        readable_id: teamIdReadable,
       })
       .returning();
 
@@ -88,36 +96,8 @@ describe('delete-column-handler integration', () => {
       role: teamRoles.ADMIN,
     });
 
-    const [newBoard] = await db
-      .insert(boards)
-      .values({
-        id: v7(),
-        name: faker.lorem.words(2),
-        description: faker.lorem.sentence(),
-        team_id: newTeam.id,
-        readable_id: generateReadableId(),
-      })
-      .returning();
-
-    const columnTitle = faker.lorem.words(3);
-
-    const [newColumn] = await db
-      .insert(columns)
-      .values({
-        id: v7(),
-        name: columnTitle,
-        board_id: newBoard.id,
-        position: 1,
-      })
-      .returning();
-
-    const command = new DeleteColumnCommand(newColumn.id);
-
-    // Act
-    await handler.execute(command);
-    // Assert
-
-    const deletedColumn = await columnRepo.findById(newColumn.id);
-    expect(deletedColumn).toBeNull();
+    await expect(
+      service.sendToTeamMembers(teamIdReadable),
+    ).resolves.not.toThrow();
   });
 });

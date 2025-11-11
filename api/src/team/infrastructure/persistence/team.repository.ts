@@ -165,4 +165,26 @@ export class TeamRepository implements TeamRepositoryInterface {
       createdAt: new Date(team.created_at),
     });
   }
+
+  async getTeamMemberIdsByReadableId(
+    readableTeamId: string,
+  ): Promise<string[]> {
+    const team = await this.db
+      .select()
+      .from(teams)
+      .where(eq(teams.readable_id, readableTeamId))
+      .limit(1)
+      .then((rows) => rows[0]);
+
+    if (!team) {
+      return [];
+    }
+
+    const members = await this.db
+      .select()
+      .from(team_members)
+      .where(eq(team_members.team_id, team.id));
+
+    return members.map((member) => member.user_id);
+  }
 }

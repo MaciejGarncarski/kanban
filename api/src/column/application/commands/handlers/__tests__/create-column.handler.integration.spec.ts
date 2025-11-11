@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { CqrsModule } from '@nestjs/cqrs';
 import { Test, TestingModule } from '@nestjs/testing';
 import { hash } from '@node-rs/argon2';
 import { StartedPostgreSqlContainer } from '@testcontainers/postgresql/build/postgresql-container';
@@ -47,7 +48,7 @@ describe('create-column-handler integration', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [TestConfigModule],
+      imports: [TestConfigModule, CqrsModule],
       providers: [
         CreateColumnHandler,
         BoardRepository,
@@ -58,6 +59,8 @@ describe('create-column-handler integration', () => {
         createJWTService(),
       ],
     }).compile();
+
+    await module.init();
 
     handler = module.get<CreateColumnHandler>(CreateColumnHandler);
   });

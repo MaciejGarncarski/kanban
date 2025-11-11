@@ -3,11 +3,12 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CommandHandler, QueryBus } from '@nestjs/cqrs';
+import { CommandHandler, EventBus, QueryBus } from '@nestjs/cqrs';
 import { UpdateCardCommand } from 'src/card/application/commands/update-card.command';
 import { CardEntity } from 'src/card/domain/card.entity';
 import { CardRepository } from 'src/card/infrastructure/persistence/card.repository';
 import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
+import { SendToTeamMembersEvent } from 'src/notifications/application/events/send-to-team-members.event';
 import { TeamRole, teamRoles } from 'src/team/domain/types/team.types';
 import { GetRoleByColumnIdQuery } from 'src/user/application/queries/get-role-by-column-id.query';
 
@@ -16,6 +17,7 @@ export class UpdateCardHandler {
   constructor(
     private readonly cardRepo: CardRepository,
     private readonly queryBus: QueryBus,
+    private readonly eventBus: EventBus,
     private readonly profanityCheckService: ProfanityCheckService,
   ) {}
 
@@ -36,6 +38,9 @@ export class UpdateCardHandler {
     if (!cardToMove) {
       throw new NotFoundException('Card not found');
     }
+
+    const readableTeamId =
+      await this.cardRepo.getReadableTeamIdByCardId(cardId);
 
     const role = await this.queryBus.execute<GetRoleByColumnIdQuery, TeamRole>(
       new GetRoleByColumnIdQuery(cardToMove.columnId, userId),
@@ -90,6 +95,7 @@ export class UpdateCardHandler {
             ),
           ),
         );
+        this.eventBus.publish(new SendToTeamMembersEvent(readableTeamId));
         return;
       }
 
@@ -125,6 +131,7 @@ export class UpdateCardHandler {
             ),
           ),
         );
+        this.eventBus.publish(new SendToTeamMembersEvent(readableTeamId));
 
         return;
       }
@@ -147,5 +154,6 @@ export class UpdateCardHandler {
     });
 
     await this.cardRepo.updateCard(updatedCard);
+    this.eventBus.publish(new SendToTeamMembersEvent(readableTeamId));
   }
 }

@@ -1,6 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
+import { SendToTeamMembersEvent } from 'src/notifications/application/events/send-to-team-members.event';
 import { UpdateTeamCommand } from 'src/team/application/commands/update-team.command';
 import { TeamRepository } from 'src/team/infrastructure/persistence/team.repository';
 
@@ -9,6 +10,7 @@ export class UpdateTeamHandler implements ICommandHandler<UpdateTeamCommand> {
   constructor(
     private readonly teamRepository: TeamRepository,
     private readonly profanityCheckService: ProfanityCheckService,
+    private readonly eventBus: EventBus,
   ) {}
 
   async execute(command: UpdateTeamCommand): Promise<void> {
@@ -44,5 +46,7 @@ export class UpdateTeamHandler implements ICommandHandler<UpdateTeamCommand> {
       },
       members,
     );
+
+    this.eventBus.publish(new SendToTeamMembersEvent(readableTeamId));
   }
 }

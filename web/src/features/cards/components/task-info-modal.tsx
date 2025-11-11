@@ -80,56 +80,58 @@ export function TaskInfoModal({
         <InfoIcon size={16} />
       </ActionIcon>
 
-      <Modal
-        opened={opened}
-        onClose={close}
-        title={'Details'}
-        centered
-        radius={'md'}>
-        <Stack gap="sm">
-          <Title order={3} size="lg">
-            Title: {title}
-          </Title>
-          <Text maw={'100%'} style={{ wordWrap: 'break-word' }}>
-            Description: <span>{description}</span>
-          </Text>
-          <Stack gap="xs">
-            <Group gap="xs">
-              <Text>Assigned to:</Text>
-              {assignedToUser ? (
-                <Text>
-                  {assignedToUser.name} - {assignedToUser.email}
-                </Text>
-              ) : (
-                <Text>Unassigned</Text>
-              )}
-            </Group>
-            <Text>
-              Due date: {dueDate ? dueDate.toLocaleString() : 'No due date'}
+      {deleteOpened ? null : (
+        <Modal
+          opened={opened}
+          onClose={close}
+          title={'Details'}
+          centered
+          radius={'md'}>
+          <Stack gap="sm">
+            <Title order={3} size="lg">
+              Title: {title}
+            </Title>
+            <Text maw={'100%'} style={{ wordWrap: 'break-word' }}>
+              Description: <span>{description}</span>
             </Text>
+            <Stack gap="xs">
+              <Group gap="xs">
+                <Text>Assigned to:</Text>
+                {assignedToUser ? (
+                  <Text>
+                    {assignedToUser.name} - {assignedToUser.email}
+                  </Text>
+                ) : (
+                  <Text>Unassigned</Text>
+                )}
+              </Group>
+              <Text>
+                Due date: {dueDate ? dueDate.toLocaleString() : 'No due date'}
+              </Text>
+            </Stack>
+            {isAdmin && (
+              <Group justify="space-between">
+                <EditTaskModal
+                  readableTeamId={readableTeamId}
+                  cardId={cardId}
+                  title={title}
+                  description={description}
+                  dueDate={dueDate}
+                  assignedToId={assignedToId}
+                />
+                <Button
+                  mt="md"
+                  onClick={openDelete}
+                  bg="red"
+                  radius={'md'}
+                  leftSection={<TrashIcon size={20} />}>
+                  Delete
+                </Button>
+              </Group>
+            )}
           </Stack>
-          {isAdmin && (
-            <Group justify="space-between">
-              <EditTaskModal
-                readableTeamId={readableTeamId}
-                cardId={cardId}
-                title={title}
-                description={description}
-                dueDate={dueDate}
-                assignedToId={assignedToId}
-              />
-              <Button
-                mt="md"
-                onClick={openDelete}
-                bg="red"
-                radius={'md'}
-                leftSection={<TrashIcon size={20} />}>
-                Delete
-              </Button>
-            </Group>
-          )}
-        </Stack>
-      </Modal>
+        </Modal>
+      )}
     </>
   )
 }

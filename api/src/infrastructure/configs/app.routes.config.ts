@@ -6,6 +6,9 @@ const prefix = `/${v1}/`;
 
 export const routesV1 = {
   version: v1,
+  notifications: {
+    stream: `${prefix}notifications/stream`,
+  },
   healthcheck: {
     root: `${prefix}healthcheck`,
   },

@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { CqrsModule } from '@nestjs/cqrs';
 import { Test, TestingModule } from '@nestjs/testing';
 import { hash } from '@node-rs/argon2';
 import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
@@ -41,7 +42,7 @@ describe('UpdateTeamHandler Integration Tests', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [TestConfigModule],
+      imports: [TestConfigModule, CqrsModule],
       providers: [
         UpdateTeamHandler,
         ProfanityCheckService,
@@ -51,6 +52,8 @@ describe('UpdateTeamHandler Integration Tests', () => {
         createJWTService(),
       ],
     }).compile();
+
+    await module.init();
 
     handler = module.get<UpdateTeamHandler>(UpdateTeamHandler);
     userRepo = module.get<UserRepositoryInterface>(UserRepository);

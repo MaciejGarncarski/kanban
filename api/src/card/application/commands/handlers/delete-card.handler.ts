@@ -1,7 +1,13 @@
 import { UnauthorizedException } from '@nestjs/common';
-import { CommandHandler, ICommandHandler, QueryBus } from '@nestjs/cqrs';
+import {
+  CommandHandler,
+  EventBus,
+  ICommandHandler,
+  QueryBus,
+} from '@nestjs/cqrs';
 import { DeleteCardCommand } from 'src/card/application/commands/delete-card.command';
 import { CardRepository } from 'src/card/infrastructure/persistence/card.repository';
+import { SendToTeamMembersEvent } from 'src/notifications/application/events/send-to-team-members.event';
 import { TeamRole, teamRoles } from 'src/team/domain/types/team.types';
 import { GetRoleByTeamIdQuery } from 'src/user/application/queries/get-role-by-team-id.query';
 
@@ -9,6 +15,7 @@ import { GetRoleByTeamIdQuery } from 'src/user/application/queries/get-role-by-t
 export class DeleteCardHandler implements ICommandHandler<DeleteCardCommand> {
   constructor(
     private readonly queryBus: QueryBus,
+    private readonly eventBus: EventBus,
     private readonly cardRepository: CardRepository,
   ) {}
 
@@ -16,7 +23,8 @@ export class DeleteCardHandler implements ICommandHandler<DeleteCardCommand> {
     const { cardId, userId } = command;
     const teamId = await this.cardRepository.getTeamIdByCardId(cardId);
 
-    // readableid
+    const readableTeamId =
+      await this.cardRepository.getReadableTeamIdByCardId(cardId);
 
     const userRole = await this.queryBus.execute<
       GetRoleByTeamIdQuery,
@@ -28,6 +36,7 @@ export class DeleteCardHandler implements ICommandHandler<DeleteCardCommand> {
     }
 
     await this.cardRepository.deleteCard(cardId);
+    this.eventBus.publish(new SendToTeamMembersEvent(readableTeamId));
 
     return true;
   }

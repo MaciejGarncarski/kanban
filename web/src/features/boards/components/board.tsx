@@ -25,15 +25,11 @@ export const Board = ({
   readableTeamId: string
   readableBoardId: string
 }) => {
+  useRefetchNotification({ readableBoardId })
   useMonitorElements({ readableBoardId })
   const { data: boardData } = useBoardById({ readableBoardId })
   const { isDraggedOver, ref } = useDraggedOver({}, 'horizontal')
   const { isAdmin } = useRoleByTeamId(readableTeamId)
-  useRefetchNotification({ readableBoardId })
-
-  if (!boardData) {
-    return <div>Board not found</div>
-  }
 
   return (
     <LayoutGroup id={readableBoardId}>
