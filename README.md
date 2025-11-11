@@ -25,6 +25,13 @@ Kanban App is a simple and intuitive task management tool that helps teams and i
 - Drizzle ORM
 - Github Actions CI/CD
 
+## Features
+
+- Teams CRUD
+- Boards CRUD
+- Task cards CRUD
+- Server-Sent Events (SSE)
+
 ## Local development
 
 ### ENV
