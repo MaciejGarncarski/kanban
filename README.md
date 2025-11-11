@@ -1,4 +1,6 @@
 [![codecov](https://codecov.io/gh/maciejgarncarski/kanban/branch/main/graph/badge.svg)](https://codecov.io/gh/maciejgarncarski/kanban)
+[![CI](https://github.com/maciejgarncarski/kanban/actions/workflows/publish-docker.yml/badge.svg)](https://github.com/maciejgarncarski/kanban/actions)
+[![CD](https://github.com/maciejgarncarski/kanban/actions/workflows/deploy.yml/badge.svg)](https://github.com/maciejgarncarski/kanban/actions)
 
 # Kanban app
 
@@ -6,67 +8,64 @@ Kanban App is a simple and intuitive task management tool that helps teams and i
 
 <img src="https://raw.githubusercontent.com/MaciejGarncarski/kanban/refs/heads/main/.github/assets/presentation.gif">
 
-## Live demo
+## 🌍 Live demo
 
-[https://kanban.maciej-garncarski.pl](https://kanban.maciej-garncarski.pl)
+👉 [**kanban.maciej-garncarski.pl**](https://kanban.maciej-garncarski.pl)
 
-## Swagger
+API docs: [**Swagger UI**](https://kanban-api.maciej-garncarski.pl/api)
 
-[https://kanban-api.maciej-garncarski.pl/api](https://kanban-api.maciej-garncarski.pl/api)
+## 🧱 Tech Stack
 
-## Tech Used
+| Frontend      | Backend                          | DevOps / Infra          |
+| ------------- | -------------------------------- | ----------------------- |
+| ⚡ Next.js    | 🧠 NestJS (Hexagonal, CQRS, DDD) | 🐳 Docker               |
+| 🎨 Mantine UI | 🧩 Drizzle ORM                   | 🧾 GitHub Actions CI/CD |
+|               | 🔍 OpenAPI / Swagger             | 🐘 PostgreSQL           |
 
-- next.js
-- NestJS with Hexagonal, CQRS, DDD
-- Mantine UI
-- Docker
-- Postgres
-- OpenAPI, Swagger
-- Drizzle ORM
-- Github Actions CI/CD
+## ✨ Features
 
-## Features
+- 👥 **Teams CRUD**
+- 🧭 **Boards CRUD**
+- 🧾 **Task cards CRUD**
+- 🔄 **Real-time updates (Server-Sent Events)**
+- 🧱 **Hexagonal Architecture + CQRS + DDD**
+- 🧪 **CI/CD & full test coverage**
 
-- Teams CRUD
-- Boards CRUD
-- Task cards CRUD
-- Server-Sent Events (SSE)
+---
 
-## Local development
+## 🧰 Local Development
 
-### ENV
+### 1️⃣ Configure Environment
 
 Fill .env in /web and /api based on .env.example in each folder
 
-### Prepare database
+### 2️⃣ Start Database
 
 `docker compose -f ./docker/compose.dev.yml up --build`
 
-then in /api run
+#### Then initialize DB inside /api
 
 `pnpm db:reset`
 
-### Start dev servers
+### 3️⃣ Run dev servers
 
 Run separately in /web and /api
 
 `pnpm dev`
 
-## Run production locally
+## 🚀 Run Production Locally
 
-Set .env.production based on .env.production.example
-
-then run
+Prepare .env.production from example and run:
 
 `docker compose --env-file .env.production -f ./docker/compose.prod.yml up --build --pull never`
 
-### Reset DB Prod
+### To reset the production DB:
 
 `docker exec -it kanban-api-prod sh`
 
 `pnpm dlx tsx ./src/infrastructure/persistence/db/reset`
 
-## Running tests for API
+## 🧪 Testing
 
 ### Unit & Integration
 
@@ -74,6 +73,17 @@ run `pnpm test`
 
 ### E2E
 
-First [prepare database](#prepare-database)
+[Prepare database](#prepare-database) then run
 
 then run `pnpm test:e2e`
+
+## 🧠 Architecture
+
+```
+.
+├── api/         # NestJS backend (CQRS + DDD + Hexagonal)
+├── web/         # Next.js frontend (Mantine UI)
+├── docker/      # Dev & Prod Docker compose setups
+├── .github/     # CI/CD workflows
+└── README.md
+```
