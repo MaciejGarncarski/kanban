@@ -16,11 +16,11 @@ API docs: [**Swagger UI**](https://kanban-api.maciej-garncarski.pl/api)
 
 ## 🧱 Tech Stack
 
-| Frontend      | Backend                          | DevOps / Infra          |
-| ------------- | -------------------------------- | ----------------------- |
-| ⚡ Next.js    | 🧠 NestJS (Hexagonal, CQRS, DDD) | 🐳 Docker               |
-| 🎨 Mantine UI | 🧩 Drizzle ORM                   | 🧾 GitHub Actions CI/CD |
-|               | 🔍 OpenAPI / Swagger             | 🐘 PostgreSQL           |
+| Frontend          | Backend                          | DevOps / Infra          |
+| ----------------- | -------------------------------- | ----------------------- |
+| ⚡ Next.js        | 🧠 NestJS (Hexagonal, CQRS, DDD) | 🐳 Docker               |
+| 🎨 Mantine UI     | 🧩 Drizzle ORM                   | 🧾 GitHub Actions CI/CD |
+| 🛠️ TanStack Query | 🔍 OpenAPI / Swagger             | 🐘 PostgreSQL           |
 
 ## ✨ Features
 
