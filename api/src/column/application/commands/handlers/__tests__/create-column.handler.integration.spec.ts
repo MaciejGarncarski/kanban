@@ -104,7 +104,7 @@ describe('create-column-handler integration', () => {
       })
       .returning();
 
-    const columnTitle = faker.lorem.words(3);
+    const columnTitle = 'To Do';
 
     const command = new CreateColumnCommand(columnTitle, newBoard.readable_id);
 
