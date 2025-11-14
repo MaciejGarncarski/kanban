@@ -9,6 +9,8 @@ on:
 jobs:
   storybook-tests:
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.52.0-noble
     defaults:
       run:
         working-directory: ./web
