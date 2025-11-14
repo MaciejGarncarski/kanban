@@ -174,7 +174,7 @@ describe('create-column-handler integration', () => {
       })
       .returning();
 
-    const cardTitle = faker.lorem.words(3);
+    const cardTitle = 'test card title';
 
     const [newColumn] = await db
       .insert(columns)
