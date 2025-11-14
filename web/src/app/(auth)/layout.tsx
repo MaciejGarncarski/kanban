@@ -1,4 +1,3 @@
-import '@mantine/core/styles.css'
 import { Container, Flex, Text, Title } from '@mantine/core'
 import { ThemeSwitch } from '@/features/layout/components/theme-switch'
 

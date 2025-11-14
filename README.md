@@ -67,11 +67,21 @@ Prepare .env.production from example and run:
 
 ## 🧪 Testing
 
+### Storybook
+
+In /web
+
+`pnpm storybook`
+
 ### Unit & Integration
+
+In /api
 
 run `pnpm test`
 
 ### E2E
+
+In /api
 
 [Prepare database](#prepare-database) then run
 

@@ -9,7 +9,10 @@
     "lint": "eslint --fix .",
     "format": "prettier --write --cache .",
     "lint-format": "pnpm lint && pnpm format",
-    "openapi": "openapi-typescript http://localhost:3001/api-json -o ./src/api-client/api.ts"
+    "openapi": "openapi-typescript http://localhost:3001/api-json -o ./src/api-client/api.ts",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "test-storybook": "vitest --project=storybook"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "^1.7.7",
@@ -38,17 +41,29 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^4.1.2",
+    "@storybook/addon-a11y": "^10.0.7",
+    "@storybook/addon-docs": "^10.0.7",
+    "@storybook/addon-onboarding": "^10.0.7",
+    "@storybook/addon-vitest": "^10.0.7",
+    "@storybook/nextjs-vite": "^10.0.7",
     "@types/node": "^24.7.2",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "@vitest/browser-playwright": "^4.0.9",
+    "@vitest/coverage-v8": "^4.0.9",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "catalog:",
     "eslint-config-next": "16.0.3",
+    "eslint-plugin-storybook": "^10.0.7",
     "openapi-typescript": "^7.10.1",
+    "playwright": "^1.56.1",
     "postcss": "^8.5.6",
     "postcss-preset-mantine": "^1.18.0",
     "postcss-simple-vars": "^7.0.1",
     "prettier": "catalog:",
-    "typescript": "catalog:"
+    "storybook": "^10.0.7",
+    "typescript": "catalog:",
+    "vitest": "^4.0.9"
   }
 }

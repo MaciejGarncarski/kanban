@@ -1,7 +1,5 @@
 import type { Metadata } from 'next'
-import '@mantine/core/styles.css'
-import '@mantine/notifications/styles.css'
-import '@mantine/dates/styles.css'
+
 import { Button, Container, Flex } from '@mantine/core'
 import { logout } from '@/features/auth/api/logout.action'
 import { ThemeSwitch } from '@/features/layout/components/theme-switch'
