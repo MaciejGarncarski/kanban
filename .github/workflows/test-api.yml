@@ -74,7 +74,8 @@ jobs:
           if [ "${{ matrix.type }}" = "unit" ]; then
             pnpm test:cov
           elif [ "${{ matrix.type }}" = "e2e" ]; then
-            pnpm dlx tsx ./src/infrastructure/persistence/db/reset && pnpm test:e2e
+            pnpm exec tsx ./src/infrastructure/persistence/db/reset
+            pnpm test:e2e
           fi
 
       - name: Upload coverage to Codecov

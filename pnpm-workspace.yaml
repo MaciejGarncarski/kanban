@@ -24,3 +24,6 @@ minimumReleaseAge: 0
 
 syncInjectedDepsAfterScripts:
   - build
+
+onlyBuiltDependencies:
+  - esbuild
