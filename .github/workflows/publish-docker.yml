@@ -19,7 +19,7 @@ jobs:
             appname: maciejgarncarski/kanban-web
             image: ghcr.io/maciejgarncarski/kanban-web
             build_args: |
-              NEXT_PUBLIC_API_URL=https://kanban-api.maciej-garncarski.pl
+              NEXT_PUBLIC_API_URL=https://kanban-api.maciejg.dev
               NODE_ENV=production
 
     permissions:

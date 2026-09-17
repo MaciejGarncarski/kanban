@@ -10,9 +10,9 @@ Kanban App is a simple and intuitive task management tool that helps teams and i
 
 ## 🌍 Live demo
 
-👉 [**kanban.maciej-garncarski.pl**](https://kanban.maciej-garncarski.pl)
+👉 [**kanban.maciejg.dev**](https://kanban.maciejg.dev)
 
-API docs: [**Swagger UI**](https://kanban-api.maciej-garncarski.pl/api)
+API docs: [**Swagger UI**](https://kanban-api.maciejg.dev/api)
 
 ## 🧱 Tech Stack
 
