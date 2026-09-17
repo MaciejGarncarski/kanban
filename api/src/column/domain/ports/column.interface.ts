@@ -1,4 +1,4 @@
-import { ColumnEntity } from 'src/column/domain/column.entity';
+import { ColumnEntity } from '../column.entity.js';
 
 export interface ColumnRepositoryInterface {
   findById(columnId: string): Promise<ColumnEntity | null>;

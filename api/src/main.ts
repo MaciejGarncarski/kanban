@@ -1,17 +1,17 @@
-import { NestFactory, Reflector } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module.js';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import {
   BadRequestException,
-  ClassSerializerInterceptor,
-  ValidationPipe,
+  StandardSchemaValidationPipe,
 } from '@nestjs/common';
+import type { StandardSchemaV1 } from '@standard-schema/spec';
 import cookieParser from 'cookie-parser';
 import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { getEnvConfig } from 'src/infrastructure/configs/env.config';
-import { GlobalHttpExceptionFilter } from 'src/infrastructure/filters/exception.filter';
-import { TeamRole } from 'src/team/domain/types/team.types';
+import { getEnvConfig } from './infrastructure/configs/env.config.js';
+import { GlobalHttpExceptionFilter } from './infrastructure/filters/exception.filter.js';
+import { TeamRole } from './team/domain/types/team.types.js';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -55,33 +55,40 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, documentFactory);
 
   app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-      transformOptions: {
-        exposeUnsetFields: false,
-      },
-      exceptionFactory: (errors) => {
+    new StandardSchemaValidationPipe({
+      exceptionFactory: (issues: readonly StandardSchemaV1.Issue[]) => {
         if (process.env.NODE_ENV === 'development') {
-          console.error('Validation errors:', errors);
+          console.error('Validation errors:', issues);
         }
 
-        const formattedErrors = errors.map((err) => ({
-          field: err.property,
-          messages: Object.values(err.constraints || {}),
-        }));
+        const messagesByField = new Map<string, string[]>();
+        for (const issue of issues) {
+          // `unrecognized_keys` issues carry an empty path; Zod exposes the
+          // offending keys so the shape stays close to the previous
+          // forbidNonWhitelisted errors.
+          const keys = (issue as { keys?: unknown }).keys;
+          const field =
+            Array.isArray(keys) && keys.length > 0
+              ? keys.map(String).join(', ')
+              : (issue.path ?? []).map(String).join('.') || 'unknown';
+          messagesByField.set(field, [
+            ...(messagesByField.get(field) ?? []),
+            issue.message,
+          ]);
+        }
+
+        const validationErrors = [...messagesByField].map(
+          ([field, messages]) => ({ field, messages }),
+        );
 
         return new BadRequestException({
           statusCode: 400,
           message: 'Validation failed',
-          validationErrors: formattedErrors,
+          validationErrors,
         });
       },
     }),
   );
-  const reflector = app.get(Reflector);
-  app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector));
   app.useGlobalFilters(new GlobalHttpExceptionFilter());
 
   await app.listen(env.API_PORT ?? 3000);

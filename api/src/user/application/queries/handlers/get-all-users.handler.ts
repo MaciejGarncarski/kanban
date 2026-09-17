@@ -1,7 +1,7 @@
 import { type IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { GetAllUsersQuery } from 'src/user/application/queries/get-all-users.query';
-import { UserEntity } from 'src/user/domain/user.entity';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+import { GetAllUsersQuery } from '../get-all-users.query.js';
+import { UserEntity } from '../../../domain/user.entity.js';
+import { UserRepository } from '../../../infrastructure/persistence/user.repository.js';
 
 @QueryHandler(GetAllUsersQuery)
 export class GetAllUsersHandler implements IQueryHandler<GetAllUsersQuery> {

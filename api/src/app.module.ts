@@ -1,26 +1,26 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from 'src/user/user.module';
+import { AuthModule } from './auth/auth.module.js';
+import { UserModule } from './user/user.module.js';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CqrsModule } from '@nestjs/cqrs';
 import { seconds, ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
-import { DbModule } from 'src/infrastructure/persistence/db/db.module';
-import { validate } from 'src/infrastructure/configs/env.schema';
-import refreshTokenCookieConfig from 'src/infrastructure/configs/refresh-token-cookie.config';
-import accessTokenCookieConfig from 'src/infrastructure/configs/access-token-cookie.config';
+import { DbModule } from './infrastructure/persistence/db/db.module.js';
+import { validate } from './infrastructure/configs/env.schema.js';
+import refreshTokenCookieConfig from './infrastructure/configs/refresh-token-cookie.config.js';
+import accessTokenCookieConfig from './infrastructure/configs/access-token-cookie.config.js';
 import {
   getEnvConfig,
   registerEnv,
-} from 'src/infrastructure/configs/env.config';
-import { CorrelationIdMiddleware } from 'src/infrastructure/middlewares/correlation-id.middleware';
+} from './infrastructure/configs/env.config.js';
+import { CorrelationIdMiddleware } from './infrastructure/middlewares/correlation-id.middleware.js';
 import { JwtModule } from '@nestjs/jwt';
-import { TeamModule } from 'src/team/team.module';
-import { BoardModule } from 'src/board/board.module';
-import { CardModule } from 'src/card/card.module';
-import { ColumnModule } from 'src/column/column.module';
-import { AppController } from 'src/infrastructure/controllers/app.controller';
-import { NotificationsModule } from 'src/notifications/notifications.module';
+import { TeamModule } from './team/team.module.js';
+import { BoardModule } from './board/board.module.js';
+import { CardModule } from './card/card.module.js';
+import { ColumnModule } from './column/column.module.js';
+import { AppController } from './infrastructure/controllers/app.controller.js';
+import { NotificationsModule } from './notifications/notifications.module.js';
 
 const API_MODULES = [
   UserModule,

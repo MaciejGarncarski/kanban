@@ -1,4 +1,5 @@
-import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
+import { ProfanityCheckService } from '../profanity-check.service.js';
+import { type Mock, vi } from 'vitest';
 
 describe('ProfanityCheckService', () => {
   let service: ProfanityCheckService;
@@ -7,7 +8,7 @@ describe('ProfanityCheckService', () => {
     service = new ProfanityCheckService();
 
     // reset mocka przed każdym testem
-    global.fetch = jest.fn();
+    global.fetch = vi.fn();
   });
 
   it('should be defined', () => {
@@ -15,7 +16,7 @@ describe('ProfanityCheckService', () => {
   });
 
   it('should return false when response validation fails', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ invalidField: 'invalid' }),
     });
@@ -25,7 +26,7 @@ describe('ProfanityCheckService', () => {
   });
 
   it('should return false when response is not ok', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as Mock).mockResolvedValueOnce({
       ok: false,
       statusText: 'Internal Server Error',
     });
@@ -35,7 +36,7 @@ describe('ProfanityCheckService', () => {
   });
 
   it('should return false when text is clean', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ isProfanity: false, score: 0 }),
     });
@@ -51,7 +52,7 @@ describe('ProfanityCheckService', () => {
   });
 
   it('should return true when text is profane', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ isProfanity: true, score: 1 }),
     });
@@ -62,16 +63,14 @@ describe('ProfanityCheckService', () => {
   });
 
   it('should handle fetch error gracefully', async () => {
-    (global.fetch as jest.Mock).mockRejectedValueOnce(
-      new Error('network error'),
-    );
+    (global.fetch as Mock).mockRejectedValueOnce(new Error('network error'));
 
     const result = await service.isProfane('test');
     expect(result).toBe(false); // fail-safe
   });
 
   it('should handle non-Error exceptions gracefully', async () => {
-    (global.fetch as jest.Mock).mockRejectedValueOnce('string error');
+    (global.fetch as Mock).mockRejectedValueOnce('string error');
 
     const result = await service.isProfane('test');
     expect(result).toBe(false); // fail-safe

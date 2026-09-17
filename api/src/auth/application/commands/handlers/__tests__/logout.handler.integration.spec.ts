@@ -2,16 +2,19 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { hashSync } from '@node-rs/argon2';
 import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { Pool } from 'pg';
-import { createJWTService } from 'src/__tests__/utils/create-jwt-service';
-import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
-import { TestConfigModule } from 'src/__tests__/utils/get-test-env';
-import { LogoutHandler } from 'src/auth/application/commands/handlers/logout.handler';
-import { LogoutCommand } from 'src/auth/application/commands/logout.command';
-import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
-import { DB } from 'src/infrastructure/persistence/db/client';
-import { DB_PROVIDER } from 'src/infrastructure/persistence/db/db.provider';
-import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+import { createJWTService } from '../../../../../__tests__/utils/create-jwt-service.js';
+import {
+  getTestDb,
+  stopTestDb,
+} from '../../../../../__tests__/utils/get-test-db.js';
+import { TestConfigModule } from '../../../../../__tests__/utils/get-test-env.js';
+import { LogoutHandler } from '../logout.handler.js';
+import { LogoutCommand } from '../../logout.command.js';
+import { RefreshTokenRepository } from '../../../../infrastructure/persistence/refresh-token.repository.js';
+import { DB } from '../../../../../infrastructure/persistence/db/client.js';
+import { DB_PROVIDER } from '../../../../../infrastructure/persistence/db/db.provider.js';
+import { UserRepositoryInterface } from '../../../../../user/domain/ports/user.interface.js';
+import { UserRepository } from '../../../../../user/infrastructure/persistence/user.repository.js';
 
 describe('LogoutHandler', () => {
   let handler: LogoutHandler;

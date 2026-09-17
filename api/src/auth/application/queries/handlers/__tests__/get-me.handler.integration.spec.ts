@@ -2,15 +2,18 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { hash } from '@node-rs/argon2';
 import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { Pool } from 'pg';
-import { createJWTService } from 'src/__tests__/utils/create-jwt-service';
-import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
-import { TestConfigModule } from 'src/__tests__/utils/get-test-env';
-import { GetMeHandler } from 'src/auth/application/queries/handlers/get-me.handler';
-import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
-import { DB } from 'src/infrastructure/persistence/db/client';
-import { DB_PROVIDER } from 'src/infrastructure/persistence/db/db.provider';
-import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+import { createJWTService } from '../../../../../__tests__/utils/create-jwt-service.js';
+import {
+  getTestDb,
+  stopTestDb,
+} from '../../../../../__tests__/utils/get-test-db.js';
+import { TestConfigModule } from '../../../../../__tests__/utils/get-test-env.js';
+import { GetMeHandler } from '../get-me.handler.js';
+import { RefreshTokenRepository } from '../../../../infrastructure/persistence/refresh-token.repository.js';
+import { DB } from '../../../../../infrastructure/persistence/db/client.js';
+import { DB_PROVIDER } from '../../../../../infrastructure/persistence/db/db.provider.js';
+import { UserRepositoryInterface } from '../../../../../user/domain/ports/user.interface.js';
+import { UserRepository } from '../../../../../user/infrastructure/persistence/user.repository.js';
 import { v7 } from 'uuid';
 
 describe('GetMe', () => {

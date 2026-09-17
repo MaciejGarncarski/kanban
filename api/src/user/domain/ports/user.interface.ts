@@ -1,6 +1,6 @@
-import { TeamRole } from 'src/team/domain/types/team.types';
-import { UserEntity } from 'src/user/domain/user.entity';
-import { NewUserRecord } from 'src/user/infrastructure/persistence/mappers/user.mapper';
+import { TeamRole } from '../../../team/domain/types/team.types.js';
+import { UserEntity } from '../user.entity.js';
+import { NewUserRecord } from '../../infrastructure/persistence/mappers/user.mapper.js';
 
 export interface UserRepositoryInterface {
   find(id: string): Promise<UserEntity | null>;

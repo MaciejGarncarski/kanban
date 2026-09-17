@@ -1,16 +1,17 @@
 import { BadRequestException } from '@nestjs/common';
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
-import { plainToInstance } from 'class-transformer';
-import { CreateColumnCommand } from 'src/column/application/commands/create-column.command';
-import { CreateColumnResponseDto } from 'src/column/application/dtos/create-column-response.dto';
-import { ColumnRepository } from 'src/column/infrastructure/persistence/column.repository';
-import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
-import { SendToTeamMembersEvent } from 'src/notifications/application/events/send-to-team-members.event';
+import { CreateColumnCommand } from '../create-column.command.js';
+import {
+  CreateColumnResponseDto,
+  createColumnResponseSchema,
+} from '../../dtos/create-column-response.dto.js';
+import { parseResponse } from '../../../../infrastructure/validation/parse-response.js';
+import { ColumnRepository } from '../../../infrastructure/persistence/column.repository.js';
+import { ProfanityCheckService } from '../../../../infrastructure/services/profanity-check.service.js';
+import { SendToTeamMembersEvent } from '../../../../notifications/application/events/send-to-team-members.event.js';
 
 @CommandHandler(CreateColumnCommand)
-export class CreateColumnHandler
-  implements ICommandHandler<CreateColumnCommand>
-{
+export class CreateColumnHandler implements ICommandHandler<CreateColumnCommand> {
   constructor(
     private readonly columnRepository: ColumnRepository,
     private readonly eventBus: EventBus,
@@ -55,9 +56,10 @@ export class CreateColumnHandler
       title,
     );
 
-    const dto = plainToInstance(CreateColumnResponseDto, created, {
-      excludeExtraneousValues: true,
-    });
+    const dto = parseResponse<CreateColumnResponseDto>(
+      createColumnResponseSchema,
+      created,
+    );
 
     const readableTeamId =
       await this.columnRepository.findReadableTeamIdByColumnId(created.id);

@@ -1,9 +1,9 @@
 import { BadRequestException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { CreateBoardCommand } from 'src/board/application/commands/create-board.command';
-import { BoardAggregate } from 'src/board/domain/board.entity';
-import { BoardRepository } from 'src/board/infrastructure/persistence/board.repository';
-import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
+import { CreateBoardCommand } from '../create-board.command.js';
+import { BoardAggregate } from '../../../domain/board.entity.js';
+import { BoardRepository } from '../../../infrastructure/persistence/board.repository.js';
+import { ProfanityCheckService } from '../../../../infrastructure/services/profanity-check.service.js';
 
 @CommandHandler(CreateBoardCommand)
 export class CreateBoardHandler implements ICommandHandler<CreateBoardCommand> {

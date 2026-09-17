@@ -5,11 +5,14 @@ import {
   ICommandHandler,
   QueryBus,
 } from '@nestjs/cqrs';
-import { DeleteCardCommand } from 'src/card/application/commands/delete-card.command';
-import { CardRepository } from 'src/card/infrastructure/persistence/card.repository';
-import { SendToTeamMembersEvent } from 'src/notifications/application/events/send-to-team-members.event';
-import { TeamRole, teamRoles } from 'src/team/domain/types/team.types';
-import { GetRoleByTeamIdQuery } from 'src/user/application/queries/get-role-by-team-id.query';
+import { DeleteCardCommand } from '../delete-card.command.js';
+import { CardRepository } from '../../../infrastructure/persistence/card.repository.js';
+import { SendToTeamMembersEvent } from '../../../../notifications/application/events/send-to-team-members.event.js';
+import {
+  TeamRole,
+  teamRoles,
+} from '../../../../team/domain/types/team.types.js';
+import { GetRoleByTeamIdQuery } from '../../../../user/application/queries/get-role-by-team-id.query.js';
 
 @CommandHandler(DeleteCardCommand)
 export class DeleteCardHandler implements ICommandHandler<DeleteCardCommand> {

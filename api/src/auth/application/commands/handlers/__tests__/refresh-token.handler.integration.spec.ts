@@ -1,18 +1,21 @@
 import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
 import { hash } from '@node-rs/argon2';
-import { StartedPostgreSqlContainer } from '@testcontainers/postgresql/build/postgresql-container';
+import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { Pool } from 'pg';
-import { createJWTService } from 'src/__tests__/utils/create-jwt-service';
-import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
-import { TestConfigModule } from 'src/__tests__/utils/get-test-env';
-import { RefreshAccessTokenHandler } from 'src/auth/application/commands/handlers/refresh-access-token.handler';
-import { RefreshAccessTokenCommand } from 'src/auth/application/commands/refresh-access-token.command';
-import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
-import { type DB } from 'src/infrastructure/persistence/db/client';
-import { DB_PROVIDER } from 'src/infrastructure/persistence/db/db.provider';
-import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+import { createJWTService } from '../../../../../__tests__/utils/create-jwt-service.js';
+import {
+  getTestDb,
+  stopTestDb,
+} from '../../../../../__tests__/utils/get-test-db.js';
+import { TestConfigModule } from '../../../../../__tests__/utils/get-test-env.js';
+import { RefreshAccessTokenHandler } from '../refresh-access-token.handler.js';
+import { RefreshAccessTokenCommand } from '../../refresh-access-token.command.js';
+import { RefreshTokenRepository } from '../../../../infrastructure/persistence/refresh-token.repository.js';
+import { type DB } from '../../../../../infrastructure/persistence/db/client.js';
+import { DB_PROVIDER } from '../../../../../infrastructure/persistence/db/db.provider.js';
+import { UserRepositoryInterface } from '../../../../../user/domain/ports/user.interface.js';
+import { UserRepository } from '../../../../../user/infrastructure/persistence/user.repository.js';
 
 describe('refresh-token-handler integration', () => {
   let handler: RefreshAccessTokenHandler;

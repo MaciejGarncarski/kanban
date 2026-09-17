@@ -1,8 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { DeleteBoardCommand } from 'src/board/application/commands/delete-board.command';
-import { BoardRepository } from 'src/board/infrastructure/persistence/board.repository';
-import { teamRoles } from 'src/team/domain/types/team.types';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+import { DeleteBoardCommand } from '../delete-board.command.js';
+import { BoardRepository } from '../../../infrastructure/persistence/board.repository.js';
+import { teamRoles } from '../../../../team/domain/types/team.types.js';
+import { UserRepository } from '../../../../user/infrastructure/persistence/user.repository.js';
 
 @CommandHandler(DeleteBoardCommand)
 export class DeleteBoardHandler implements ICommandHandler<DeleteBoardCommand> {

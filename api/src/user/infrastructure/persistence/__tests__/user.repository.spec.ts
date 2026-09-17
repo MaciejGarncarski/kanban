@@ -1,13 +1,17 @@
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+import { UserRepository } from '../user.repository.js';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
-import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
+import {
+  getTestDb,
+  stopTestDb,
+} from '../../../../__tests__/utils/get-test-db.js';
 import { Pool } from 'pg';
 import { faker } from '@faker-js/faker';
-import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
-import { DB } from 'src/infrastructure/persistence/db/client';
+import { UserRepositoryInterface } from '../../../domain/ports/user.interface.js';
+import { DB } from '../../../../infrastructure/persistence/db/client.js';
+import { vi } from 'vitest';
 
-jest.setTimeout(60_000);
+vi.setConfig({ testTimeout: 60_000 });
 
 describe('UserRepository', () => {
   let repo: UserRepositoryInterface;

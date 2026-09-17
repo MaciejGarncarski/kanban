@@ -1,16 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
+import {
+  getTestDb,
+  stopTestDb,
+} from '../../../../__tests__/utils/get-test-db.js';
 import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { Pool } from 'pg';
 import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { Server } from 'node:net';
 import cookieParser from 'cookie-parser';
-import { testEnv } from 'src/__tests__/env';
-import { getCookieFromResponse } from 'src/__tests__/utils/get-cookie-from-response';
-import { userFixture } from 'src/__tests__/fixtures/user.fixture';
-import { routesV1 } from 'src/infrastructure/configs/app.routes.config';
-import { AppModule } from 'src/app.module';
+import { testEnv } from '../../../../__tests__/env.js';
+import { getCookieFromResponse } from '../../../../__tests__/utils/get-cookie-from-response.js';
+import { userFixture } from '../../../../__tests__/fixtures/user.fixture.js';
+import { routesV1 } from '../../../../infrastructure/configs/app.routes.config.js';
+import { AppModule } from '../../../../app.module.js';
 
 describe('AuthController e2e', () => {
   let container: StartedPostgreSqlContainer;

@@ -1,21 +1,24 @@
 import { faker } from '@faker-js/faker';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { StartedPostgreSqlContainer } from '@testcontainers/postgresql/build/postgresql-container';
+import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { Pool } from 'pg';
-import { createJWTService } from 'src/__tests__/utils/create-jwt-service';
-import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
-import { TestConfigModule } from 'src/__tests__/utils/get-test-env';
-import { SignInUserHandler } from 'src/auth/application/commands/handlers/sign-in-user.handler';
-import { SignInUserCommand } from 'src/auth/application/commands/sign-in-user.command';
-import { JWTPayload } from 'src/auth/domain/token.types';
-import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
-import { type DB } from 'src/infrastructure/persistence/db/client';
-import { DB_PROVIDER } from 'src/infrastructure/persistence/db/db.provider';
-import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
-import { UserEntity } from 'src/user/domain/user.entity';
-import { UserMapper } from 'src/user/infrastructure/persistence/mappers/user.mapper';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+import { createJWTService } from '../../../../../__tests__/utils/create-jwt-service.js';
+import {
+  getTestDb,
+  stopTestDb,
+} from '../../../../../__tests__/utils/get-test-db.js';
+import { TestConfigModule } from '../../../../../__tests__/utils/get-test-env.js';
+import { SignInUserHandler } from '../sign-in-user.handler.js';
+import { SignInUserCommand } from '../../sign-in-user.command.js';
+import { JWTPayload } from '../../../../domain/token.types.js';
+import { RefreshTokenRepository } from '../../../../infrastructure/persistence/refresh-token.repository.js';
+import { type DB } from '../../../../../infrastructure/persistence/db/client.js';
+import { DB_PROVIDER } from '../../../../../infrastructure/persistence/db/db.provider.js';
+import { UserRepositoryInterface } from '../../../../../user/domain/ports/user.interface.js';
+import { UserEntity } from '../../../../../user/domain/user.entity.js';
+import { UserMapper } from '../../../../../user/infrastructure/persistence/mappers/user.mapper.js';
+import { UserRepository } from '../../../../../user/infrastructure/persistence/user.repository.js';
 
 describe('sign-in-user-handler integration', () => {
   let handler: SignInUserHandler;

@@ -1,55 +1,42 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Type } from 'class-transformer';
+import { z } from 'zod';
 import {
-  IsArray,
-  IsDate,
-  IsOptional,
-  IsString,
-  IsUUID,
-  ValidateNested,
-} from 'class-validator';
-import { ColumnDto } from 'src/column/application/dtos/column.dto';
+  ColumnDto,
+  columnSchema,
+} from '../../../column/application/dtos/column.dto.js';
+
+export const boardDetailSchema = z.object({
+  readableId: z.string(),
+  name: z.string(),
+  description: z.string().nullish(),
+  teamId: z.string(),
+  readableTeamId: z.string(),
+  createdAt: z.coerce.date().nullish(),
+  columns: z.array(columnSchema),
+});
 
 export class BoardDetailDto {
   @ApiProperty()
-  @IsString()
-  @Expose()
   readableId: string;
 
   @ApiProperty()
-  @IsString()
-  @Expose()
   name: string;
 
   @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  @Expose()
   description: string;
 
   @ApiProperty()
-  @IsUUID()
-  @Expose()
   teamId: string;
 
   @ApiProperty()
-  @IsString()
-  @Expose()
   readableTeamId: string;
 
   @ApiProperty({ required: false })
-  @IsOptional()
-  @IsDate()
-  @Expose()
   createdAt: string;
 
   @ApiProperty({
     type: [ColumnDto],
     description: 'List of columns with their cards',
   })
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => ColumnDto)
-  @Expose()
   columns: ColumnDto[];
 }

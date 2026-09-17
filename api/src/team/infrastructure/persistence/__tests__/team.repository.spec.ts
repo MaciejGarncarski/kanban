@@ -1,9 +1,12 @@
 import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
-import { DB } from 'src/infrastructure/persistence/db/client';
-import { TeamRepository } from 'src/team/infrastructure/persistence/team.repository';
+import {
+  getTestDb,
+  stopTestDb,
+} from '../../../../__tests__/utils/get-test-db.js';
+import { DB } from '../../../../infrastructure/persistence/db/client.js';
+import { TeamRepository } from '../team.repository.js';
 
 describe('TeamRepository', () => {
   let repo: TeamRepository;

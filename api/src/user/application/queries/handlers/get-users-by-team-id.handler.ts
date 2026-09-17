@@ -1,7 +1,7 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { QueryHandler } from '@nestjs/cqrs';
-import { GetUsersByTeamIdQuery } from 'src/user/application/queries/get-users-by-team-id.query';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+import { GetUsersByTeamIdQuery } from '../get-users-by-team-id.query.js';
+import { UserRepository } from '../../../infrastructure/persistence/user.repository.js';
 
 @QueryHandler(GetUsersByTeamIdQuery)
 export class GetUsersByTeamIdHandler {

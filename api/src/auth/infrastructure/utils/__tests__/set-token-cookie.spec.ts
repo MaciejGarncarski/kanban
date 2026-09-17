@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { type Response } from 'express';
-import {
-  clearTokenCookie,
-  setTokenCookie,
-} from 'src/auth/infrastructure/utils/set-token-cookie';
-import { CookieConfig } from 'src/infrastructure/configs/cookie-config.type';
+import { clearTokenCookie, setTokenCookie } from '../set-token-cookie.js';
+import { CookieConfig } from '../../../../infrastructure/configs/cookie-config.type.js';
+import { vi } from 'vitest';
 
 describe('setTokenCookie', () => {
   let response: Response;
@@ -22,8 +20,8 @@ describe('setTokenCookie', () => {
 
   beforeEach(() => {
     response = {
-      cookie: jest.fn(),
-      clearCookie: jest.fn(),
+      cookie: vi.fn(),
+      clearCookie: vi.fn(),
     } as unknown as Response;
   });
 

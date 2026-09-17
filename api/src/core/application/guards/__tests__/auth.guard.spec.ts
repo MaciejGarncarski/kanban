@@ -1,10 +1,11 @@
 import { JwtService } from '@nestjs/jwt';
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { AuthGuard } from 'src/core/application/guards/auth.guard';
+import { AuthGuard } from '../auth.guard.js';
 import { CommandBus } from '@nestjs/cqrs';
-import { refreshTokenConfigTest } from 'src/infrastructure/configs/refresh-token-cookie.config';
-import { accessTokenConfigTest } from 'src/infrastructure/configs/access-token-cookie.config';
+import { refreshTokenConfigTest } from '../../../../infrastructure/configs/refresh-token-cookie.config.js';
+import { accessTokenConfigTest } from '../../../../infrastructure/configs/access-token-cookie.config.js';
+import { type Mock, vi } from 'vitest';
 
 describe('AuthGuard', () => {
   let guard: AuthGuard;
@@ -17,7 +18,7 @@ describe('AuthGuard', () => {
   beforeEach(() => {
     jwtService = new JwtService({ secret: 'test' });
     commandBus = {
-      execute: jest.fn(),
+      execute: vi.fn(),
     } as unknown as CommandBus;
 
     guard = new AuthGuard(
@@ -34,7 +35,7 @@ describe('AuthGuard', () => {
     };
 
     mockResponse = {
-      json: jest.fn(),
+      json: vi.fn(),
     };
 
     mockContext = {
@@ -56,7 +57,7 @@ describe('AuthGuard', () => {
     mockRequest.signedCookies = { accessToken: token };
 
     const payload = { sub: 'user123' };
-    jest.spyOn(jwtService, 'verify').mockReturnValue(payload);
+    vi.spyOn(jwtService, 'verify').mockReturnValue(payload);
 
     const result = await guard.canActivate(mockContext);
     expect(result).toBe(true);
@@ -68,7 +69,7 @@ describe('AuthGuard', () => {
     mockRequest.cookies = { accessToken: token };
 
     const payload = { sub: 'user456' };
-    jest.spyOn(jwtService, 'verify').mockReturnValue(payload);
+    vi.spyOn(jwtService, 'verify').mockReturnValue(payload);
 
     const result = await guard.canActivate(mockContext);
     expect(result).toBe(true);
@@ -80,7 +81,7 @@ describe('AuthGuard', () => {
     mockRequest.headers = { authorization: `Bearer ${token}` };
 
     const payload = { sub: 'user789' };
-    jest.spyOn(jwtService, 'verify').mockReturnValue(payload);
+    vi.spyOn(jwtService, 'verify').mockReturnValue(payload);
 
     const result = await guard.canActivate(mockContext);
     expect(result).toBe(true);
@@ -91,7 +92,7 @@ describe('AuthGuard', () => {
     const token = 'bad-token';
     mockRequest.headers = { authorization: `Bearer ${token}` };
 
-    jest.spyOn(jwtService, 'verify').mockImplementation(() => {
+    vi.spyOn(jwtService, 'verify').mockImplementation(() => {
       throw new Error('invalid');
     });
 
@@ -113,7 +114,7 @@ describe('AuthGuard', () => {
     const refreshToken = 'valid-refresh-token';
     mockRequest.signedCookies = { accessToken: expiredToken, refreshToken };
 
-    jest.spyOn(jwtService, 'verify').mockImplementation(() => {
+    vi.spyOn(jwtService, 'verify').mockImplementation(() => {
       const error: any = new Error('jwt expired');
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       error.name = 'TokenExpiredError';
@@ -122,12 +123,12 @@ describe('AuthGuard', () => {
 
     const newAccessToken = 'new-access-token';
     const newRefreshToken = 'new-refresh-token';
-    (commandBus.execute as jest.Mock).mockResolvedValue({
+    (commandBus.execute as Mock).mockResolvedValue({
       accessToken: newAccessToken,
       newRefreshToken,
     });
 
-    jest.spyOn(jwtService, 'verify').mockReturnValue({ sub: 'user999' });
+    vi.spyOn(jwtService, 'verify').mockReturnValue({ sub: 'user999' });
 
     const result = await guard.canActivate(mockContext);
     expect(result).toBe(true);
@@ -139,14 +140,14 @@ describe('AuthGuard', () => {
     const refreshToken = 'invalid-refresh-token';
     mockRequest.signedCookies = { accessToken: expiredToken, refreshToken };
 
-    jest.spyOn(jwtService, 'verify').mockImplementation(() => {
+    vi.spyOn(jwtService, 'verify').mockImplementation(() => {
       const error: any = new Error('jwt expired');
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       error.name = 'TokenExpiredError';
       throw error;
     });
 
-    (commandBus.execute as jest.Mock).mockRejectedValue(
+    (commandBus.execute as Mock).mockRejectedValue(
       new Error('Invalid refresh token'),
     );
 
@@ -159,7 +160,7 @@ describe('AuthGuard', () => {
     const badToken = 'bad-token';
     mockRequest.signedCookies = { accessToken: badToken, refreshToken: 'test' };
 
-    jest.spyOn(jwtService, 'verify').mockImplementation(() => {
+    vi.spyOn(jwtService, 'verify').mockImplementation(() => {
       // eslint-disable-next-line @typescript-eslint/only-throw-error
       throw 'not an error instance';
     });
@@ -174,7 +175,7 @@ describe('AuthGuard', () => {
     mockRequest.cookies = { accessToken: token };
 
     const payload = { sub: 'userCookie' };
-    jest.spyOn(jwtService, 'verify').mockReturnValue(payload);
+    vi.spyOn(jwtService, 'verify').mockReturnValue(payload);
 
     const result = await guard.canActivate(mockContext);
     expect(result).toBe(true);

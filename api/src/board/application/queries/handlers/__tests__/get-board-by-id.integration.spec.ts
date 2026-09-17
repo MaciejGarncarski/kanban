@@ -1,25 +1,28 @@
 import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
-import { StartedPostgreSqlContainer } from '@testcontainers/postgresql/build/postgresql-container';
+import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { Pool } from 'pg';
-import { userFixture } from 'src/__tests__/fixtures/user.fixture';
-import { createJWTService } from 'src/__tests__/utils/create-jwt-service';
-import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
-import { TestConfigModule } from 'src/__tests__/utils/get-test-env';
-import { GetBoardByIdQuery } from 'src/board/application/queries/get-board-by-id.query';
-import { GetBoardByIdHandler } from 'src/board/application/queries/handlers/get-board-by-id.handler';
-import { BoardRepository } from 'src/board/infrastructure/persistence/board.repository';
-import { type DB } from 'src/infrastructure/persistence/db/client';
-import { DB_PROVIDER } from 'src/infrastructure/persistence/db/db.provider';
+import { userFixture } from '../../../../../__tests__/fixtures/user.fixture.js';
+import { createJWTService } from '../../../../../__tests__/utils/create-jwt-service.js';
+import {
+  getTestDb,
+  stopTestDb,
+} from '../../../../../__tests__/utils/get-test-db.js';
+import { TestConfigModule } from '../../../../../__tests__/utils/get-test-env.js';
+import { GetBoardByIdQuery } from '../../get-board-by-id.query.js';
+import { GetBoardByIdHandler } from '../get-board-by-id.handler.js';
+import { BoardRepository } from '../../../../infrastructure/persistence/board.repository.js';
+import { type DB } from '../../../../../infrastructure/persistence/db/client.js';
+import { DB_PROVIDER } from '../../../../../infrastructure/persistence/db/db.provider.js';
 import {
   boards,
   team_members,
   teams,
-} from 'src/infrastructure/persistence/db/schema';
-import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
-import { teamRoles } from 'src/team/domain/types/team.types';
-import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+} from '../../../../../infrastructure/persistence/db/schema.js';
+import { generateReadableId } from '../../../../../infrastructure/persistence/generate-readable-id.js';
+import { teamRoles } from '../../../../../team/domain/types/team.types.js';
+import { UserRepositoryInterface } from '../../../../../user/domain/ports/user.interface.js';
+import { UserRepository } from '../../../../../user/infrastructure/persistence/user.repository.js';
 import { v7 } from 'uuid';
 
 describe('get-board-by-id-handler integration', () => {

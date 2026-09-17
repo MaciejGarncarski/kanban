@@ -1,10 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BadRequestException } from '@nestjs/common';
-import { SignInUserCommand } from 'src/auth/application/commands/sign-in-user.command';
+import { SignInUserCommand } from '../sign-in-user.command.js';
 import { JwtService } from '@nestjs/jwt';
-import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
-import { JWTPayload } from 'src/auth/domain/token.types';
+import { RefreshTokenRepository } from '../../../infrastructure/persistence/refresh-token.repository.js';
+import { UserRepository } from '../../../../user/infrastructure/persistence/user.repository.js';
+import { JWTPayload } from '../../../domain/token.types.js';
 
 export type SignInUserCommandReturn = {
   accessToken: string;

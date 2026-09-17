@@ -1,4 +1,4 @@
-import { RefreshTokenEntity } from 'src/auth/domain/refresh-token.entity';
+import { RefreshTokenEntity } from '../refresh-token.entity.js';
 
 export interface RefreshTokenRepositoryInterface {
   create(

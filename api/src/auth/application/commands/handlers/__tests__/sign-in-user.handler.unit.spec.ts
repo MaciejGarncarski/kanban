@@ -1,19 +1,20 @@
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { verify } from '@node-rs/argon2';
-import { SignInUserHandler } from 'src/auth/application/commands/handlers/sign-in-user.handler';
-import { SignInUserCommand } from 'src/auth/application/commands/sign-in-user.command';
-import { InMemoryRefreshTokenRepository } from 'src/auth/infrastructure/persistence/__tests__/mocks/in-memory-refresh-token.repository';
-import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
-import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
-import { UserEntity } from 'src/user/domain/user.entity';
-import { InMemoryUserRepository } from 'src/user/infrastructure/persistence/__tests__/mocks/in-memory-user.repository';
-import { UserMapper } from 'src/user/infrastructure/persistence/mappers/user.mapper';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+import { SignInUserHandler } from '../sign-in-user.handler.js';
+import { SignInUserCommand } from '../../sign-in-user.command.js';
+import { InMemoryRefreshTokenRepository } from '../../../../infrastructure/persistence/__tests__/mocks/in-memory-refresh-token.repository.js';
+import { RefreshTokenRepository } from '../../../../infrastructure/persistence/refresh-token.repository.js';
+import { UserRepositoryInterface } from '../../../../../user/domain/ports/user.interface.js';
+import { UserEntity } from '../../../../../user/domain/user.entity.js';
+import { InMemoryUserRepository } from '../../../../../user/infrastructure/persistence/__tests__/mocks/in-memory-user.repository.js';
+import { UserMapper } from '../../../../../user/infrastructure/persistence/mappers/user.mapper.js';
+import { UserRepository } from '../../../../../user/infrastructure/persistence/user.repository.js';
+import { type Mock, vi } from 'vitest';
 
-jest.mock('@node-rs/argon2', () => ({
-  hash: jest.fn(),
-  verify: jest.fn(),
+vi.mock('@node-rs/argon2', () => ({
+  hash: vi.fn(),
+  verify: vi.fn(),
 }));
 
 describe('sign-in-user-handler unit', () => {
@@ -31,7 +32,7 @@ describe('sign-in-user-handler unit', () => {
         { provide: UserRepository, useClass: InMemoryUserRepository },
         {
           provide: JwtService,
-          useValue: { sign: jest.fn().mockReturnValue('random-token') },
+          useValue: { sign: vi.fn().mockReturnValue('random-token') },
         },
       ],
     }).compile();
@@ -41,7 +42,7 @@ describe('sign-in-user-handler unit', () => {
   });
 
   it('should return signed in user tokens', async () => {
-    (verify as jest.Mock).mockResolvedValue(true);
+    (verify as Mock).mockResolvedValue(true);
 
     const mockData = {
       email: 'test@example.com',
@@ -66,7 +67,7 @@ describe('sign-in-user-handler unit', () => {
   });
 
   it('should throw error for invalid credentials', async () => {
-    (verify as jest.Mock).mockResolvedValue(false);
+    (verify as Mock).mockResolvedValue(false);
 
     const mockData = {
       email: 'test@example.com',

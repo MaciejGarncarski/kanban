@@ -1,5 +1,5 @@
 import { CookieOptions, Response } from 'express';
-import { CookieConfig } from 'src/infrastructure/configs/cookie-config.type';
+import { CookieConfig } from '../../../infrastructure/configs/cookie-config.type.js';
 
 export function setTokenCookie(
   response: Response,

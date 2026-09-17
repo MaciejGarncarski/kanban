@@ -1,50 +1,51 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
-import { IsOptional, IsPositive, IsString, MaxLength } from 'class-validator';
+import { z } from 'zod';
+
+export const updateCardParamSchema = z
+  .object({
+    cardId: z.string(),
+  })
+  .strict();
+
+export type UpdateCardParam = z.infer<typeof updateCardParamSchema>;
 
 export class UpdateCardParamDto {
   @ApiProperty({ example: 'card-uuid' })
-  @Expose()
-  @IsString()
   cardId: string;
 }
 
+export const updateCardRequestSchema = z
+  .object({
+    title: z.string().max(32, { error: 'Title is too long' }).optional(),
+    description: z
+      .string()
+      .max(500, { error: 'Description is too long' })
+      .optional(),
+    dueDate: z.string().optional(),
+    assignedTo: z.string().optional(),
+    position: z.number().positive().optional(),
+    columnId: z.string().optional(),
+  })
+  .strict();
+
+export type UpdateCardRequest = z.infer<typeof updateCardRequestSchema>;
+
 export class UpdateCardRequestDto {
   @ApiProperty({ example: 'New Title', required: false })
-  @IsString()
-  @Expose()
-  @IsOptional()
-  @MaxLength(32, { message: 'Title is too long' })
   readonly title?: string;
 
   @ApiProperty({ example: 'New Description', required: false })
-  @IsString()
-  @Expose()
-  @IsOptional()
-  @MaxLength(500, { message: 'Description is too long' })
   readonly description?: string;
 
   @ApiProperty({ example: '2024-12-31', required: false })
-  @IsString()
-  @Expose()
-  @IsOptional()
   readonly dueDate?: string;
 
   @ApiProperty({ example: 'user-uuid', required: false })
-  @IsString()
-  @Expose()
-  @IsOptional()
   readonly assignedTo?: string;
 
   @ApiProperty({ example: 3, required: false })
-  @IsPositive()
-  @Expose()
-  @IsOptional()
   readonly position?: number;
 
   @ApiProperty({ example: 'column-uuid', required: false })
-  @IsString()
-  @Expose()
-  @IsOptional()
   readonly columnId?: string;
 }

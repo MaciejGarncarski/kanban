@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ProfanityCheckPort } from 'src/core/application/ports/profanity-check.port';
+import { ProfanityCheckPort } from '../../core/application/ports/profanity-check.port.js';
 import z from 'zod';
 
 const responseDataSchema = z.object({

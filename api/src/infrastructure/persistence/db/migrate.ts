@@ -1,5 +1,5 @@
 import { Client } from 'pg';
-import { migrateDB } from 'src/infrastructure/persistence/db/migrate-db';
+import { migrateDB } from './migrate-db.js';
 
 async function runMigrations() {
   const connectionString = process.env.DATABASE_URL;

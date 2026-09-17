@@ -1,8 +1,8 @@
 import { registerAs } from '@nestjs/config';
-import { REFRESH_TOKEN_MAX_AGE } from 'src/shared/constants/cookie.const';
-import { testEnv } from 'src/__tests__/env';
-import { envSchema } from 'src/infrastructure/configs/env.schema';
-import { CookieConfig } from 'src/infrastructure/configs/cookie-config.type';
+import { REFRESH_TOKEN_MAX_AGE } from '../../shared/constants/cookie.const.js';
+import { testEnv } from '../../__tests__/env.js';
+import { envSchema } from './env.schema.js';
+import { CookieConfig } from './cookie-config.type.js';
 
 export const REFRESH_TOKEN_COOKIE_CONFIG_KEY = 'refresh-token-cookie';
 export default registerAs(REFRESH_TOKEN_COOKIE_CONFIG_KEY, (): CookieConfig => {

@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
-import { SendToTeamMembersHandler } from 'src/notifications/application/events/handlers/send-to-team-members.handler';
-import { NotificationsService } from 'src/notifications/infrastructure/services/notifications.service';
-import { CreateTeamHandler } from 'src/team/application/commands/handlers/create-team.handler';
-import { DeleteTeamHandler } from 'src/team/application/commands/handlers/delete-team.handler';
-import { UpdateTeamHandler } from 'src/team/application/commands/handlers/update-team.handler';
-import { GetTeamsHandler } from 'src/team/application/queries/handlers/get-teams.handler';
-import { TeamController } from 'src/team/infrastructure/controllers/team.controller';
-import { TeamRepository } from 'src/team/infrastructure/persistence/team.repository';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+import { ProfanityCheckService } from '../infrastructure/services/profanity-check.service.js';
+import { SendToTeamMembersHandler } from '../notifications/application/events/handlers/send-to-team-members.handler.js';
+import { NotificationsService } from '../notifications/infrastructure/services/notifications.service.js';
+import { CreateTeamHandler } from './application/commands/handlers/create-team.handler.js';
+import { DeleteTeamHandler } from './application/commands/handlers/delete-team.handler.js';
+import { UpdateTeamHandler } from './application/commands/handlers/update-team.handler.js';
+import { GetTeamsHandler } from './application/queries/handlers/get-teams.handler.js';
+import { TeamController } from './infrastructure/controllers/team.controller.js';
+import { TeamRepository } from './infrastructure/persistence/team.repository.js';
+import { UserRepository } from '../user/infrastructure/persistence/user.repository.js';
 
 const CommandHandlers = [
   CreateTeamHandler,

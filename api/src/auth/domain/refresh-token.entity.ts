@@ -1,4 +1,4 @@
-import { REFRESH_TOKEN_MAX_AGE } from 'src/shared/constants/cookie.const';
+import { REFRESH_TOKEN_MAX_AGE } from '../../shared/constants/cookie.const.js';
 import { v7 } from 'uuid';
 
 export class RefreshTokenEntity {

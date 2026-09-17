@@ -1,8 +1,11 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { plainToInstance } from 'class-transformer';
-import { GetTeamsResponseDto } from 'src/team/application/dtos/get-teams.response.dto';
-import { GetTeamsQuery } from 'src/team/application/queries/get-teams.query';
-import { TeamRepository } from 'src/team/infrastructure/persistence/team.repository';
+import {
+  GetTeamsResponseDto,
+  getTeamsResponseSchema,
+} from '../../dtos/get-teams.response.dto.js';
+import { parseResponse } from '../../../../infrastructure/validation/parse-response.js';
+import { GetTeamsQuery } from '../get-teams.query.js';
+import { TeamRepository } from '../../../infrastructure/persistence/team.repository.js';
 
 @QueryHandler(GetTeamsQuery)
 export class GetTeamsHandler implements IQueryHandler<GetTeamsQuery> {
@@ -11,8 +14,6 @@ export class GetTeamsHandler implements IQueryHandler<GetTeamsQuery> {
   async execute(query: GetTeamsQuery) {
     const teams = await this.teamRepository.getUserTeams(query.userId);
 
-    return plainToInstance(GetTeamsResponseDto, teams, {
-      excludeExtraneousValues: true,
-    });
+    return parseResponse<GetTeamsResponseDto>(getTeamsResponseSchema, teams);
   }
 }

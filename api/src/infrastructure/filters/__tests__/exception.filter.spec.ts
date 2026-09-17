@@ -1,8 +1,9 @@
 import { ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
 import { Response, Request } from 'express';
-import { ApiErrorResponse } from 'src/core/application/dtos/api-error.response.dto';
+import { ApiErrorResponse } from '../../../core/application/dtos/api-error.response.dto.js';
 import { DrizzleQueryError } from 'drizzle-orm';
-import { GlobalHttpExceptionFilter } from 'src/infrastructure/filters/exception.filter';
+import { GlobalHttpExceptionFilter } from '../exception.filter.js';
+import { vi } from 'vitest';
 
 describe('GlobalHttpExceptionFilter', () => {
   let filter: GlobalHttpExceptionFilter;
@@ -14,8 +15,8 @@ describe('GlobalHttpExceptionFilter', () => {
     filter = new GlobalHttpExceptionFilter();
 
     mockResponse = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
     };
 
     mockRequest = {
@@ -24,7 +25,7 @@ describe('GlobalHttpExceptionFilter', () => {
     };
 
     mockHost = {
-      switchToHttp: jest.fn().mockReturnValue({
+      switchToHttp: vi.fn().mockReturnValue({
         getRequest: () => mockRequest,
         getResponse: () => mockResponse,
       }),

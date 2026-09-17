@@ -1,9 +1,12 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { NotFoundException } from '@nestjs/common';
-import { BoardRepository } from 'src/board/infrastructure/persistence/board.repository';
-import { GetBoardByIdQuery } from 'src/board/application/queries/get-board-by-id.query';
-import { instanceToPlain, plainToInstance } from 'class-transformer';
-import { BoardDetailDto } from 'src/board/application/dtos/board-detail.dto';
+import { BoardRepository } from '../../../infrastructure/persistence/board.repository.js';
+import { GetBoardByIdQuery } from '../get-board-by-id.query.js';
+import {
+  BoardDetailDto,
+  boardDetailSchema,
+} from '../../dtos/board-detail.dto.js';
+import { parseResponse } from '../../../../infrastructure/validation/parse-response.js';
 
 @QueryHandler(GetBoardByIdQuery)
 export class GetBoardByIdHandler implements IQueryHandler<GetBoardByIdQuery> {
@@ -19,9 +22,7 @@ export class GetBoardByIdHandler implements IQueryHandler<GetBoardByIdQuery> {
       throw new NotFoundException('Board not found');
     }
 
-    const dto = plainToInstance(BoardDetailDto, instanceToPlain(board), {
-      excludeExtraneousValues: true,
-    });
+    const dto = parseResponse<BoardDetailDto>(boardDetailSchema, board);
 
     return dto;
   }

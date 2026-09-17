@@ -1,7 +1,8 @@
-import { RefreshTokenEntity } from 'src/auth/domain/refresh-token.entity';
-import { REFRESH_TOKEN_MAX_AGE } from 'src/shared/constants/cookie.const';
+import { RefreshTokenEntity } from '../refresh-token.entity.js';
+import { REFRESH_TOKEN_MAX_AGE } from '../../../shared/constants/cookie.const.js';
+import { vi } from 'vitest';
 
-jest.mock('src/shared/constants/cookie.const', () => ({
+vi.mock('src/shared/constants/cookie.const', () => ({
   REFRESH_TOKEN_MAX_AGE: 1000 * 60 * 60, // 1 hour
 }));
 

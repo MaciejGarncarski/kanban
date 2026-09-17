@@ -1,12 +1,13 @@
-import { fetchServer } from '@/api-client/api-client'
+import { fetchServerNoMiddleware } from '@/api-client/api-client'
 import { QueryClient } from '@tanstack/react-query'
 
 export function prefetchAllUsers(queryClient: QueryClient, cookies: string) {
-  return queryClient.fetchQuery({
+  return queryClient.query({
+    staleTime: 'static',
     queryKey: ['get', '/v1/user/all'],
     queryFn: async () => {
       try {
-        const res = await fetchServer.GET('/v1/user/all', {
+        const res = await fetchServerNoMiddleware.GET('/v1/user/all', {
           headers: {
             'x-skip-jwt-middleware': 'true',
             cookie: cookies,

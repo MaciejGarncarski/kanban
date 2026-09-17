@@ -13,27 +13,38 @@ import {
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
   ApiBadRequestResponse,
+  ApiBody,
   ApiOkResponse,
   ApiOperation,
 } from '@nestjs/swagger';
 import { type Request, type Response } from 'express';
 
-import { Auth } from 'src/auth/common/decorators/auth.decorator';
+import { Auth } from '../../../auth/common/decorators/auth.decorator.js';
 
-import { ApiErrorResponse } from 'src/core/application/dtos/api-error.response.dto';
-import { routesV1 } from 'src/infrastructure/configs/app.routes.config';
-import { CreateTeamCommand } from 'src/team/application/commands/create-team.command';
-import { DeleteTeamCommand } from 'src/team/application/commands/delete-team.command';
-import { UpdateTeamCommand } from 'src/team/application/commands/update-team.command';
-import { CreateTeamRequestDto } from 'src/team/application/dtos/create-team.request.dto';
-import { DeleteTeamRequestDto } from 'src/team/application/dtos/delete-team.request.dto';
-import { GetTeamsResponseDto } from 'src/team/application/dtos/get-teams.response.dto';
-import { TeamDto } from 'src/team/application/dtos/team.dto';
+import { ApiErrorResponse } from '../../../core/application/dtos/api-error.response.dto.js';
+import { routesV1 } from '../../../infrastructure/configs/app.routes.config.js';
+import { CreateTeamCommand } from '../../application/commands/create-team.command.js';
+import { DeleteTeamCommand } from '../../application/commands/delete-team.command.js';
+import { UpdateTeamCommand } from '../../application/commands/update-team.command.js';
 import {
-  UpdateTeamParamsDto,
+  CreateTeamRequestDto,
+  createTeamRequestSchema,
+  type CreateTeamRequest,
+} from '../../application/dtos/create-team.request.dto.js';
+import {
+  deleteTeamRequestSchema,
+  type DeleteTeamRequest,
+} from '../../application/dtos/delete-team.request.dto.js';
+import { GetTeamsResponseDto } from '../../application/dtos/get-teams.response.dto.js';
+import { TeamDto } from '../../application/dtos/team.dto.js';
+import {
   UpdateTeamRequestDto,
-} from 'src/team/application/dtos/update-team.request.dto';
-import { GetTeamsQuery } from 'src/team/application/queries/get-teams.query';
+  updateTeamParamsSchema,
+  updateTeamRequestSchema,
+  type UpdateTeamParams,
+  type UpdateTeamRequest,
+} from '../../application/dtos/update-team.request.dto.js';
+import { GetTeamsQuery } from '../../application/queries/get-teams.query.js';
 
 @Controller()
 export class TeamController {
@@ -78,7 +89,11 @@ export class TeamController {
   @ApiBadRequestResponse({
     type: ApiErrorResponse,
   })
-  async createTeam(@Req() req: Request, @Body() body: CreateTeamRequestDto) {
+  @ApiBody({ type: CreateTeamRequestDto })
+  async createTeam(
+    @Req() req: Request,
+    @Body({ schema: createTeamRequestSchema }) body: CreateTeamRequest,
+  ) {
     const result = await this.commandBus.execute<CreateTeamCommand, TeamDto>(
       new CreateTeamCommand(
         req.userId,
@@ -102,7 +117,10 @@ export class TeamController {
   @ApiBadRequestResponse({
     type: ApiErrorResponse,
   })
-  async deleteTeam(@Req() req: Request, @Param() params: DeleteTeamRequestDto) {
+  async deleteTeam(
+    @Req() req: Request,
+    @Param({ schema: deleteTeamRequestSchema }) params: DeleteTeamRequest,
+  ) {
     await this.commandBus.execute<DeleteTeamCommand, void>(
       new DeleteTeamCommand(req.userId, params.readableTeamId),
     );
@@ -119,10 +137,11 @@ export class TeamController {
   @ApiBadRequestResponse({
     type: ApiErrorResponse,
   })
+  @ApiBody({ type: UpdateTeamRequestDto })
   async updateTeam(
     @Req() req: Request,
-    @Param() params: UpdateTeamParamsDto,
-    @Body() body: UpdateTeamRequestDto,
+    @Param({ schema: updateTeamParamsSchema }) params: UpdateTeamParams,
+    @Body({ schema: updateTeamRequestSchema }) body: UpdateTeamRequest,
   ) {
     await this.commandBus.execute<UpdateTeamCommand, void>(
       new UpdateTeamCommand(

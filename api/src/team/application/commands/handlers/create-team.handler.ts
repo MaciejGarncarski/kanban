@@ -1,11 +1,11 @@
 import { BadRequestException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { instanceToPlain, plainToInstance } from 'class-transformer';
-import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
-import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
-import { CreateTeamCommand } from 'src/team/application/commands/create-team.command';
-import { TeamDto } from 'src/team/application/dtos/team.dto';
-import { TeamRepository } from 'src/team/infrastructure/persistence/team.repository';
+import { generateReadableId } from '../../../../infrastructure/persistence/generate-readable-id.js';
+import { ProfanityCheckService } from '../../../../infrastructure/services/profanity-check.service.js';
+import { CreateTeamCommand } from '../create-team.command.js';
+import { TeamDto, teamSchema } from '../../dtos/team.dto.js';
+import { parseResponse } from '../../../../infrastructure/validation/parse-response.js';
+import { TeamRepository } from '../../../infrastructure/persistence/team.repository.js';
 
 @CommandHandler(CreateTeamCommand)
 export class CreateTeamHandler implements ICommandHandler<CreateTeamCommand> {
@@ -41,8 +41,6 @@ export class CreateTeamHandler implements ICommandHandler<CreateTeamCommand> {
       members,
     );
 
-    return plainToInstance(TeamDto, instanceToPlain(team), {
-      excludeExtraneousValues: true,
-    });
+    return parseResponse<TeamDto>(teamSchema, team);
   }
 }

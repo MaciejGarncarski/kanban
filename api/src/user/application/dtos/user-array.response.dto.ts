@@ -1,13 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Type } from 'class-transformer';
-import { UserResponseDto } from 'src/user/application/dtos/user.response.dto';
+import { z } from 'zod';
+import { UserResponseDto, userResponseSchema } from './user.response.dto.js';
+
+export const userArrayResponseSchema = z.object({
+  users: z.array(userResponseSchema),
+});
 
 export class UserArrayResponseDto {
   @ApiProperty({
     type: [UserResponseDto],
     description: 'Array of users',
   })
-  @Type(() => UserResponseDto)
-  @Expose()
   users: UserResponseDto[];
 }

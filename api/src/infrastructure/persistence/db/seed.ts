@@ -1,12 +1,12 @@
 import { Client, Pool } from 'pg';
-import * as schema from './schema';
+import * as schema from './schema.js';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { userFixture } from 'src/__tests__/fixtures/user.fixture';
+import { userFixture } from '../../../__tests__/fixtures/user.fixture.js';
 import { hash } from '@node-rs/argon2';
 import { v7 } from 'uuid';
-import { teamRoles } from 'src/team/domain/types/team.types';
+import { teamRoles } from '../../../team/domain/types/team.types.js';
 import { nanoid } from 'nanoid';
-import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
+import { generateReadableId } from '../generate-readable-id.js';
 
 const connectionString = process.env.DATABASE_URL!;
 
@@ -17,7 +17,7 @@ export async function seed(pool?: Pool) {
         port: pool.options.port,
         user: pool.options.user,
         password: pool.options.password,
-        database: 'kanban',
+        database: pool.options.database ?? 'kanban',
       })
     : new Client({ connectionString });
 

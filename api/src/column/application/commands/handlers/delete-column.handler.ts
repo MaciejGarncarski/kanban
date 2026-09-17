@@ -1,7 +1,7 @@
 import { CommandHandler, EventBus } from '@nestjs/cqrs';
-import { DeleteColumnCommand } from 'src/column/application/commands/delete-columnd.command';
-import { ColumnRepository } from 'src/column/infrastructure/persistence/column.repository';
-import { SendToTeamMembersEvent } from 'src/notifications/application/events/send-to-team-members.event';
+import { DeleteColumnCommand } from '../delete-columnd.command.js';
+import { ColumnRepository } from '../../../infrastructure/persistence/column.repository.js';
+import { SendToTeamMembersEvent } from '../../../../notifications/application/events/send-to-team-members.event.js';
 
 @CommandHandler(DeleteColumnCommand)
 export class DeleteColumnHandler {

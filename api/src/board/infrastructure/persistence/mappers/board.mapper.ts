@@ -1,12 +1,12 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
-import { BoardAggregate } from 'src/board/domain/board.entity';
-import { ColumnEntity } from 'src/column/domain/column.entity';
-import { CardEntity } from 'src/card/domain/card.entity';
+import { BoardAggregate } from '../../../domain/board.entity.js';
+import { ColumnEntity } from '../../../../column/domain/column.entity.js';
+import { CardEntity } from '../../../../card/domain/card.entity.js';
 import {
   boards,
   columns,
   cards,
-} from 'src/infrastructure/persistence/db/schema';
+} from '../../../../infrastructure/persistence/db/schema.js';
 
 export type BoardRecord = InferSelectModel<typeof boards>;
 export type NewBoardRecord = InferInsertModel<typeof boards>;

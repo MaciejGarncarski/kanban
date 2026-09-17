@@ -1,9 +1,12 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { UnauthorizedException } from '@nestjs/common';
-import { GetMeQuery } from 'src/auth/application/queries/get-me.query';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
-import { plainToInstance } from 'class-transformer';
-import { UserResponseDto } from 'src/user/application/dtos/user.response.dto';
+import { GetMeQuery } from '../get-me.query.js';
+import { UserRepository } from '../../../../user/infrastructure/persistence/user.repository.js';
+import {
+  UserResponseDto,
+  userResponseSchema,
+} from '../../../../user/application/dtos/user.response.dto.js';
+import { parseResponse } from '../../../../infrastructure/validation/parse-response.js';
 
 @QueryHandler(GetMeQuery)
 export class GetMeHandler implements IQueryHandler<GetMeQuery> {
@@ -16,8 +19,6 @@ export class GetMeHandler implements IQueryHandler<GetMeQuery> {
       throw new UnauthorizedException('User not found');
     }
 
-    return plainToInstance(UserResponseDto, user, {
-      excludeExtraneousValues: true,
-    });
+    return parseResponse<UserResponseDto>(userResponseSchema, user);
   }
 }

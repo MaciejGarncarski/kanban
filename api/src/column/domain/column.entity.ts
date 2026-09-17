@@ -1,4 +1,4 @@
-import { CardEntity } from 'src/card/domain/card.entity';
+import { CardEntity } from '../../card/domain/card.entity.js';
 
 export class ColumnEntity {
   readonly id: string;

@@ -1,4 +1,4 @@
-import { BoardAggregate } from 'src/board/domain/board.entity';
+import { BoardAggregate } from '../board.entity.js';
 
 export interface BoardRepositoryInterface {
   findByTeamId(

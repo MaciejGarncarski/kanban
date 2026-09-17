@@ -3,20 +3,22 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { Test, TestingModule } from '@nestjs/testing';
 import { hash } from '@node-rs/argon2';
 import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
-import { _ } from 'node_modules/@faker-js/faker/dist/airline-CLphikKp.cjs';
 import { Pool } from 'pg';
-import { createJWTService } from 'src/__tests__/utils/create-jwt-service';
-import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
-import { TestConfigModule } from 'src/__tests__/utils/get-test-env';
-import { DB } from 'src/infrastructure/persistence/db/client';
-import { DB_PROVIDER } from 'src/infrastructure/persistence/db/db.provider';
-import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
-import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
-import { UpdateTeamHandler } from 'src/team/application/commands/handlers/update-team.handler';
-import { UpdateTeamCommand } from 'src/team/application/commands/update-team.command';
-import { TeamRepository } from 'src/team/infrastructure/persistence/team.repository';
-import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+import { createJWTService } from '../../../../../__tests__/utils/create-jwt-service.js';
+import {
+  getTestDb,
+  stopTestDb,
+} from '../../../../../__tests__/utils/get-test-db.js';
+import { TestConfigModule } from '../../../../../__tests__/utils/get-test-env.js';
+import { DB } from '../../../../../infrastructure/persistence/db/client.js';
+import { DB_PROVIDER } from '../../../../../infrastructure/persistence/db/db.provider.js';
+import { generateReadableId } from '../../../../../infrastructure/persistence/generate-readable-id.js';
+import { ProfanityCheckService } from '../../../../../infrastructure/services/profanity-check.service.js';
+import { UpdateTeamHandler } from '../update-team.handler.js';
+import { UpdateTeamCommand } from '../../update-team.command.js';
+import { TeamRepository } from '../../../../infrastructure/persistence/team.repository.js';
+import { UserRepositoryInterface } from '../../../../../user/domain/ports/user.interface.js';
+import { UserRepository } from '../../../../../user/infrastructure/persistence/user.repository.js';
 
 describe('UpdateTeamHandler Integration Tests', () => {
   let handler: UpdateTeamHandler;

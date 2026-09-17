@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { testEnv } from 'src/__tests__/env';
-import { accessTokenConfigTest } from 'src/infrastructure/configs/access-token-cookie.config';
-import { registerEnvTest } from 'src/infrastructure/configs/env.config';
-import { refreshTokenConfigTest } from 'src/infrastructure/configs/refresh-token-cookie.config';
+import { testEnv } from '../env.js';
+import { accessTokenConfigTest } from '../../infrastructure/configs/access-token-cookie.config.js';
+import { registerEnvTest } from '../../infrastructure/configs/env.config.js';
+import { refreshTokenConfigTest } from '../../infrastructure/configs/refresh-token-cookie.config.js';
 
 @Module({
   imports: [

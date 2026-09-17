@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { randomBytes } from 'crypto';
-import { sha256 } from 'src/shared/utils/sha256.utils';
-import { RefreshTokenRepositoryInterface } from 'src/auth/domain/ports/refresh-token.interface';
-import { RefreshTokenEntity } from 'src/auth/domain/refresh-token.entity';
+import { sha256 } from '../../../../../shared/utils/sha256.utils.js';
+import { RefreshTokenRepositoryInterface } from '../../../../domain/ports/refresh-token.interface.js';
+import { RefreshTokenEntity } from '../../../../domain/refresh-token.entity.js';
 
 interface StoredToken {
   entity: RefreshTokenEntity;
@@ -11,9 +11,7 @@ interface StoredToken {
 }
 
 @Injectable()
-export class InMemoryRefreshTokenRepository
-  implements RefreshTokenRepositoryInterface
-{
+export class InMemoryRefreshTokenRepository implements RefreshTokenRepositoryInterface {
   private tokens: StoredToken[] = [];
 
   async create(userId: string, customToken?: string) {

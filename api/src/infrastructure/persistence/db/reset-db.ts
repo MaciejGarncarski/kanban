@@ -1,6 +1,6 @@
 import { Client, Pool } from 'pg';
-import { seed } from 'src/infrastructure/persistence/db/seed';
-import { migrateDB } from 'src/infrastructure/persistence/db/migrate-db';
+import { seed } from './seed.js';
+import { migrateDB } from './migrate-db.js';
 
 function log(message: string) {
   if (process.env.NODE_ENV !== 'test') {

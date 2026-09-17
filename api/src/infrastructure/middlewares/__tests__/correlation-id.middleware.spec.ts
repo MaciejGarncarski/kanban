@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { CorrelationIdMiddleware } from 'src/infrastructure/middlewares/correlation-id.middleware';
+import { CorrelationIdMiddleware } from '../correlation-id.middleware.js';
+import { type Mock, vi } from 'vitest';
 
 describe('CorrelationIdMiddleware', () => {
   let middleware: CorrelationIdMiddleware;
@@ -8,48 +9,54 @@ describe('CorrelationIdMiddleware', () => {
     middleware = new CorrelationIdMiddleware();
   });
 
-  it('should set correlation ID from headers if present', (done) => {
+  it('should set correlation ID from headers if present', async () => {
     const req: Partial<Request> = {
       headers: {
         'x-correlation-id': 'test-correlation-id',
       },
     };
     const res: Partial<Response> = {
-      set: jest.fn(),
-    };
-    const next: NextFunction = () => {
-      expect(res.set).toHaveBeenCalledWith(
-        'X-Correlation-ID',
-        'test-correlation-id',
-      );
-      done();
+      set: vi.fn(),
     };
 
-    middleware.use(req as Request, res as Response, next);
+    await new Promise<void>((resolve) => {
+      const next: NextFunction = () => {
+        expect(res.set).toHaveBeenCalledWith(
+          'X-Correlation-ID',
+          'test-correlation-id',
+        );
+        resolve();
+      };
+
+      middleware.use(req as Request, res as Response, next);
+    });
   });
 
-  it('should generate a new correlation ID if not present in headers', (done) => {
+  it('should generate a new correlation ID if not present in headers', async () => {
     const req: Partial<Request> = {
       headers: {},
     };
     const res: Partial<Response> = {
-      set: jest.fn(),
-    };
-    const next: NextFunction = () => {
-      expect(res.set).toHaveBeenCalledWith(
-        'X-Correlation-ID',
-        expect.any(String),
-      );
-
-      const correlationId = (res.set as jest.Mock).mock.calls[0] as [
-        string,
-        string,
-      ];
-
-      expect(correlationId[1]).toHaveLength(36); // UUID length
-      done();
+      set: vi.fn(),
     };
 
-    middleware.use(req as Request, res as Response, next);
+    await new Promise<void>((resolve) => {
+      const next: NextFunction = () => {
+        expect(res.set).toHaveBeenCalledWith(
+          'X-Correlation-ID',
+          expect.any(String),
+        );
+
+        const correlationId = (res.set as Mock).mock.calls[0] as [
+          string,
+          string,
+        ];
+
+        expect(correlationId[1]).toHaveLength(36); // UUID length
+        resolve();
+      };
+
+      middleware.use(req as Request, res as Response, next);
+    });
   });
 });

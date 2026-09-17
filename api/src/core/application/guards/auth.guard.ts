@@ -8,12 +8,12 @@ import {
 import { CommandBus } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
 import { type Request, type Response } from 'express';
-import { RefreshAccessTokenReturn } from 'src/auth/application/commands/handlers/refresh-access-token.handler';
-import { RefreshAccessTokenCommand } from 'src/auth/application/commands/refresh-access-token.command';
-import { JWTPayload } from 'src/auth/domain/token.types';
-import { setTokenCookie } from 'src/auth/infrastructure/utils/set-token-cookie';
-import accessTokenCookieConfig from 'src/infrastructure/configs/access-token-cookie.config';
-import refreshTokenCookieConfig from 'src/infrastructure/configs/refresh-token-cookie.config';
+import { RefreshAccessTokenReturn } from '../../../auth/application/commands/handlers/refresh-access-token.handler.js';
+import { RefreshAccessTokenCommand } from '../../../auth/application/commands/refresh-access-token.command.js';
+import { JWTPayload } from '../../../auth/domain/token.types.js';
+import { setTokenCookie } from '../../../auth/infrastructure/utils/set-token-cookie.js';
+import accessTokenCookieConfig from '../../../infrastructure/configs/access-token-cookie.config.js';
+import refreshTokenCookieConfig from '../../../infrastructure/configs/refresh-token-cookie.config.js';
 import { type ConfigType } from '@nestjs/config';
 
 @Injectable()
@@ -82,8 +82,7 @@ export class AuthGuard implements CanActivate {
 
   private extractRefreshToken(request: Request): string | null {
     const refreshTokenCookieSigned = request.signedCookies?.['refreshToken'] as
-      | string
-      | undefined;
+      string | undefined;
 
     if (refreshTokenCookieSigned) {
       return refreshTokenCookieSigned;
@@ -94,16 +93,14 @@ export class AuthGuard implements CanActivate {
 
   private extractAccessToken(request: Request): string | null {
     const accessTokenCookieSigned = request.signedCookies?.['accessToken'] as
-      | string
-      | undefined;
+      string | undefined;
 
     if (accessTokenCookieSigned) {
       return accessTokenCookieSigned;
     }
 
     const accessTokenCookie = request.cookies?.['accessToken'] as
-      | string
-      | undefined;
+      string | undefined;
 
     if (accessTokenCookie) {
       return accessTokenCookie;

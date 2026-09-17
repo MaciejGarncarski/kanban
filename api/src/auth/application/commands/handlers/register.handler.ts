@@ -1,14 +1,17 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
-import { RegisterCommand } from 'src/auth/application/commands/register.command';
+import { RefreshTokenRepository } from '../../../infrastructure/persistence/refresh-token.repository.js';
+import { UserRepository } from '../../../../user/infrastructure/persistence/user.repository.js';
+import { RegisterCommand } from '../register.command.js';
 import { hash } from '@node-rs/argon2';
-import { UserResponseDto } from 'src/user/application/dtos/user.response.dto';
-import { plainToInstance } from 'class-transformer';
-import { JWTPayload } from 'src/auth/domain/token.types';
-import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
+import {
+  UserResponseDto,
+  userResponseSchema,
+} from '../../../../user/application/dtos/user.response.dto.js';
+import { parseResponse } from '../../../../infrastructure/validation/parse-response.js';
+import { JWTPayload } from '../../../domain/token.types.js';
+import { ProfanityCheckService } from '../../../../infrastructure/services/profanity-check.service.js';
 
 export type RegisterHandlerReturn = {
   user: UserResponseDto;
@@ -65,9 +68,7 @@ export class RegisterUserHandler implements ICommandHandler<RegisterCommand> {
       accessToken,
       refreshToken: tokenHash,
       refreshTokenPlain: tokenPlain,
-      user: plainToInstance(UserResponseDto, user, {
-        excludeExtraneousValues: true,
-      }),
+      user: parseResponse<UserResponseDto>(userResponseSchema, user),
     };
   }
 }

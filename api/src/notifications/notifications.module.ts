@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { SendToTeamMembersHandler } from 'src/notifications/application/events/handlers/send-to-team-members.handler';
-import { NotificationsController } from 'src/notifications/infrastructure/controllers/notifications.controller';
-import { NotificationsService } from 'src/notifications/infrastructure/services/notifications.service';
-import { TeamRepository } from 'src/team/infrastructure/persistence/team.repository';
+import { SendToTeamMembersHandler } from './application/events/handlers/send-to-team-members.handler.js';
+import { NotificationsController } from './infrastructure/controllers/notifications.controller.js';
+import { NotificationsService } from './infrastructure/services/notifications.service.js';
+import { TeamRepository } from '../team/infrastructure/persistence/team.repository.js';
 
 const CommandHandlers = [];
 const QueryHandlers = [];

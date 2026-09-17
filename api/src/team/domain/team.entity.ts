@@ -1,4 +1,4 @@
-import { BoardAggregate } from 'src/board/domain/board.entity';
+import { BoardAggregate } from '../../board/domain/board.entity.js';
 
 export class TeamAggregate {
   readonly id: string;

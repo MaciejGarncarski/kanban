@@ -4,13 +4,16 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CommandHandler, EventBus, QueryBus } from '@nestjs/cqrs';
-import { UpdateCardCommand } from 'src/card/application/commands/update-card.command';
-import { CardEntity } from 'src/card/domain/card.entity';
-import { CardRepository } from 'src/card/infrastructure/persistence/card.repository';
-import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
-import { SendToTeamMembersEvent } from 'src/notifications/application/events/send-to-team-members.event';
-import { TeamRole, teamRoles } from 'src/team/domain/types/team.types';
-import { GetRoleByColumnIdQuery } from 'src/user/application/queries/get-role-by-column-id.query';
+import { UpdateCardCommand } from '../update-card.command.js';
+import { CardEntity } from '../../../domain/card.entity.js';
+import { CardRepository } from '../../../infrastructure/persistence/card.repository.js';
+import { ProfanityCheckService } from '../../../../infrastructure/services/profanity-check.service.js';
+import { SendToTeamMembersEvent } from '../../../../notifications/application/events/send-to-team-members.event.js';
+import {
+  TeamRole,
+  teamRoles,
+} from '../../../../team/domain/types/team.types.js';
+import { GetRoleByColumnIdQuery } from '../../../../user/application/queries/get-role-by-column-id.query.js';
 
 @CommandHandler(UpdateCardCommand)
 export class UpdateCardHandler {

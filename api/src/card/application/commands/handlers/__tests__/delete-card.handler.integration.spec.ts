@@ -2,19 +2,22 @@ import { faker } from '@faker-js/faker';
 import { CqrsModule } from '@nestjs/cqrs';
 import { Test, TestingModule } from '@nestjs/testing';
 import { hash } from '@node-rs/argon2';
-import { StartedPostgreSqlContainer } from '@testcontainers/postgresql/build/postgresql-container';
+import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { eq } from 'drizzle-orm';
 import { Pool } from 'pg';
-import { createJWTService } from 'src/__tests__/utils/create-jwt-service';
-import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
-import { TestConfigModule } from 'src/__tests__/utils/get-test-env';
-import { BoardRepository } from 'src/board/infrastructure/persistence/board.repository';
-import { DeleteCardCommand } from 'src/card/application/commands/delete-card.command';
-import { DeleteCardHandler } from 'src/card/application/commands/handlers/delete-card.handler';
-import { CardRepository } from 'src/card/infrastructure/persistence/card.repository';
-import { ColumnRepository } from 'src/column/infrastructure/persistence/column.repository';
-import { type DB } from 'src/infrastructure/persistence/db/client';
-import { DB_PROVIDER } from 'src/infrastructure/persistence/db/db.provider';
+import { createJWTService } from '../../../../../__tests__/utils/create-jwt-service.js';
+import {
+  getTestDb,
+  stopTestDb,
+} from '../../../../../__tests__/utils/get-test-db.js';
+import { TestConfigModule } from '../../../../../__tests__/utils/get-test-env.js';
+import { BoardRepository } from '../../../../../board/infrastructure/persistence/board.repository.js';
+import { DeleteCardCommand } from '../../delete-card.command.js';
+import { DeleteCardHandler } from '../delete-card.handler.js';
+import { CardRepository } from '../../../../infrastructure/persistence/card.repository.js';
+import { ColumnRepository } from '../../../../../column/infrastructure/persistence/column.repository.js';
+import { type DB } from '../../../../../infrastructure/persistence/db/client.js';
+import { DB_PROVIDER } from '../../../../../infrastructure/persistence/db/db.provider.js';
 import {
   boards,
   cards,
@@ -22,12 +25,12 @@ import {
   team_members,
   teams,
   users,
-} from 'src/infrastructure/persistence/db/schema';
-import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
-import { teamRoles } from 'src/team/domain/types/team.types';
-import { GetRoleByColumnIdHandler } from 'src/user/application/queries/handlers/get-role-by-column-id.handler';
-import { GetRoleByTeamIdHandler } from 'src/user/application/queries/handlers/get-role-by-team-id.handler';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+} from '../../../../../infrastructure/persistence/db/schema.js';
+import { generateReadableId } from '../../../../../infrastructure/persistence/generate-readable-id.js';
+import { teamRoles } from '../../../../../team/domain/types/team.types.js';
+import { GetRoleByColumnIdHandler } from '../../../../../user/application/queries/handlers/get-role-by-column-id.handler.js';
+import { GetRoleByTeamIdHandler } from '../../../../../user/application/queries/handlers/get-role-by-team-id.handler.js';
+import { UserRepository } from '../../../../../user/infrastructure/persistence/user.repository.js';
 import { v7 } from 'uuid';
 
 describe('delete-card-handler integration', () => {

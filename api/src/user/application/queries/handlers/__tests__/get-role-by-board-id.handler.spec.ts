@@ -3,23 +3,26 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { hash } from '@node-rs/argon2';
 import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { Pool } from 'pg';
-import { createJWTService } from 'src/__tests__/utils/create-jwt-service';
-import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
-import { TestConfigModule } from 'src/__tests__/utils/get-test-env';
-import { DB } from 'src/infrastructure/persistence/db/client';
-import { DB_PROVIDER } from 'src/infrastructure/persistence/db/db.provider';
+import { createJWTService } from '../../../../../__tests__/utils/create-jwt-service.js';
+import {
+  getTestDb,
+  stopTestDb,
+} from '../../../../../__tests__/utils/get-test-db.js';
+import { TestConfigModule } from '../../../../../__tests__/utils/get-test-env.js';
+import { DB } from '../../../../../infrastructure/persistence/db/client.js';
+import { DB_PROVIDER } from '../../../../../infrastructure/persistence/db/db.provider.js';
 import {
   boards,
   team_members,
   teams,
   users,
-} from 'src/infrastructure/persistence/db/schema';
-import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
-import { teamRoles } from 'src/team/domain/types/team.types';
-import { GetRoleByBoardIdQuery } from 'src/user/application/queries/get-role-by-board-id.query';
-import { GetRoleByBoardIdHandler } from 'src/user/application/queries/handlers/get-role-by-board-id.handler';
-import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+} from '../../../../../infrastructure/persistence/db/schema.js';
+import { generateReadableId } from '../../../../../infrastructure/persistence/generate-readable-id.js';
+import { teamRoles } from '../../../../../team/domain/types/team.types.js';
+import { GetRoleByBoardIdQuery } from '../../get-role-by-board-id.query.js';
+import { GetRoleByBoardIdHandler } from '../get-role-by-board-id.handler.js';
+import { UserRepositoryInterface } from '../../../../domain/ports/user.interface.js';
+import { UserRepository } from '../../../../infrastructure/persistence/user.repository.js';
 import { v7 } from 'uuid';
 
 describe('GetRoleByBoardIdHandler', () => {

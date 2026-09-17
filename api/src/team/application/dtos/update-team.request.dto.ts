@@ -1,32 +1,42 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
-import { IsArray, IsOptional, IsString, MaxLength } from 'class-validator';
+import { z } from 'zod';
+
+export const updateTeamRequestSchema = z
+  .object({
+    name: z
+      .string({ error: 'Name must be a string' })
+      .max(32, { error: 'Name is too long' })
+      .optional(),
+    description: z
+      .string({ error: 'Description must be a string' })
+      .max(500, { error: 'Description is too long' })
+      .optional(),
+    members: z.array(z.string()).optional(),
+  })
+  .strict();
+
+export type UpdateTeamRequest = z.infer<typeof updateTeamRequestSchema>;
 
 export class UpdateTeamRequestDto {
   @ApiProperty({ description: 'Name of the team' })
-  @IsString()
-  @Expose()
-  @MaxLength(32, { message: 'Name is too long' })
-  @IsOptional()
   name?: string;
 
   @ApiProperty({ description: 'Description of the team', required: false })
-  @IsOptional()
-  @IsString()
-  @Expose()
-  @MaxLength(500, { message: 'Description is too long' })
   description?: string;
 
   @ApiProperty({ description: 'Array of member user IDs', required: false })
-  @IsOptional()
-  @Expose()
-  @IsArray()
   members?: string[];
 }
 
+export const updateTeamParamsSchema = z
+  .object({
+    readableTeamId: z.string(),
+  })
+  .strict();
+
+export type UpdateTeamParams = z.infer<typeof updateTeamParamsSchema>;
+
 export class UpdateTeamParamsDto {
   @ApiProperty({ description: 'ID of the team' })
-  @IsString()
-  @Expose()
   readableTeamId: string;
 }

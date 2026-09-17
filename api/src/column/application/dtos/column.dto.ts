@@ -1,47 +1,38 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Type } from 'class-transformer';
+import { z } from 'zod';
 import {
-  IsString,
-  IsUUID,
-  IsNumber,
-  IsArray,
-  ValidateNested,
-} from 'class-validator';
-import { CardDto } from 'src/card/application/dtos/card.dto';
+  CardDto,
+  cardSchema,
+} from '../../../card/application/dtos/card.dto.js';
+
+export const columnSchema = z.object({
+  id: z.string(),
+  boardId: z.string(),
+  name: z.string(),
+  position: z.number(),
+  createdAt: z.coerce.date().nullish(),
+  cards: z.array(cardSchema),
+});
 
 export class ColumnDto {
   @ApiProperty()
-  @IsUUID()
-  @Expose()
   id: string;
 
   @ApiProperty()
-  @IsUUID()
-  @Expose()
   boardId: string;
 
   @ApiProperty()
-  @IsString()
-  @Expose()
   name: string;
 
   @ApiProperty()
-  @IsNumber()
-  @Expose()
   position: number;
 
   @ApiProperty({
     example: '2025-10-17T15:42:05.351Z',
     description: 'User account creation date',
   })
-  @Expose()
-  @Type(() => Date)
   createdAt: string;
 
   @ApiProperty({ type: [CardDto] })
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => CardDto)
-  @Expose()
   cards: CardDto[];
 }

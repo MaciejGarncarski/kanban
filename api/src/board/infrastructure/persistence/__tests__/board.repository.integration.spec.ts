@@ -2,9 +2,12 @@ import { faker } from '@faker-js/faker';
 import { hash } from '@node-rs/argon2';
 import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { Pool } from 'pg';
-import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
-import { BoardRepository } from 'src/board/infrastructure/persistence/board.repository';
-import { DB } from 'src/infrastructure/persistence/db/client';
+import {
+  getTestDb,
+  stopTestDb,
+} from '../../../../__tests__/utils/get-test-db.js';
+import { BoardRepository } from '../board.repository.js';
+import { DB } from '../../../../infrastructure/persistence/db/client.js';
 import {
   boards,
   cards,
@@ -12,9 +15,9 @@ import {
   team_members,
   teams,
   users,
-} from 'src/infrastructure/persistence/db/schema';
-import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
-import { teamRoles } from 'src/team/domain/types/team.types';
+} from '../../../../infrastructure/persistence/db/schema.js';
+import { generateReadableId } from '../../../../infrastructure/persistence/generate-readable-id.js';
+import { teamRoles } from '../../../../team/domain/types/team.types.js';
 
 describe('BoardRepository', () => {
   let repository: BoardRepository;

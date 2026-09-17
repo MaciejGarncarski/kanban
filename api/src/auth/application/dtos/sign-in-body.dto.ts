@@ -1,13 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsEmail } from 'class-validator';
-import { userFixture } from 'src/__tests__/fixtures/user.fixture';
+import { z } from 'zod';
+import { userFixture } from '../../../__tests__/fixtures/user.fixture.js';
+
+export const signInBodySchema = z
+  .object({
+    email: z.email(),
+    password: z.string({ error: 'Password must be a string' }),
+  })
+  .strict();
+
+export type SignInBody = z.infer<typeof signInBodySchema>;
 
 export class SignInBodyDto {
   @ApiProperty({ example: userFixture.email, description: 'User email' })
-  @IsEmail({}, { message: 'Invalid email address' })
   email: string;
 
   @ApiProperty({ example: userFixture.password, description: 'User password' })
-  @IsString({ message: 'Password must be a string' })
   password: string;
 }

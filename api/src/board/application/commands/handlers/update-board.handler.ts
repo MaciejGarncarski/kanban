@@ -1,10 +1,10 @@
 import { BadRequestException } from '@nestjs/common';
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
-import { UpdateBoardCommand } from 'src/board/application/commands/update-board.command';
-import { BoardAggregate } from 'src/board/domain/board.entity';
-import { BoardRepository } from 'src/board/infrastructure/persistence/board.repository';
-import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
-import { SendToTeamMembersEvent } from 'src/notifications/application/events/send-to-team-members.event';
+import { UpdateBoardCommand } from '../update-board.command.js';
+import { BoardAggregate } from '../../../domain/board.entity.js';
+import { BoardRepository } from '../../../infrastructure/persistence/board.repository.js';
+import { ProfanityCheckService } from '../../../../infrastructure/services/profanity-check.service.js';
+import { SendToTeamMembersEvent } from '../../../../notifications/application/events/send-to-team-members.event.js';
 
 @CommandHandler(UpdateBoardCommand)
 export class UpdateBoardHandler implements ICommandHandler<UpdateBoardCommand> {

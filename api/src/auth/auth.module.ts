@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
-import { SignInUserHandler } from 'src/auth/application/commands/handlers/sign-in-user.handler';
-import { RefreshAccessTokenHandler } from 'src/auth/application/commands/handlers/refresh-access-token.handler';
-import { LogoutHandler } from 'src/auth/application/commands/handlers/logout.handler';
-import { AuthController } from 'src/auth/infrastructure/controllers/auth.controller';
-import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
-import { GetMeHandler } from 'src/auth/application/queries/handlers/get-me.handler';
-import { RegisterUserHandler } from 'src/auth/application/commands/handlers/register.handler';
-import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
+import { UserRepository } from '../user/infrastructure/persistence/user.repository.js';
+import { SignInUserHandler } from './application/commands/handlers/sign-in-user.handler.js';
+import { RefreshAccessTokenHandler } from './application/commands/handlers/refresh-access-token.handler.js';
+import { LogoutHandler } from './application/commands/handlers/logout.handler.js';
+import { AuthController } from './infrastructure/controllers/auth.controller.js';
+import { RefreshTokenRepository } from './infrastructure/persistence/refresh-token.repository.js';
+import { GetMeHandler } from './application/queries/handlers/get-me.handler.js';
+import { RegisterUserHandler } from './application/commands/handlers/register.handler.js';
+import { ProfanityCheckService } from '../infrastructure/services/profanity-check.service.js';
 
 const CommandHandlers = [
   RegisterUserHandler,

@@ -1,4 +1,4 @@
-import { CardEntity } from 'src/card/domain/card.entity';
+import { CardEntity } from '../card.entity.js';
 
 export interface CardRepositoryInterface {
   findAllByColumnId(columnId: string): Promise<CardEntity[]>;

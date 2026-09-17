@@ -61,3 +61,8 @@ export const fetchServer = createFetchClient<paths>({
 })
 
 fetchServer.use(jwtMiddleware)
+
+export const fetchServerNoMiddleware = createFetchClient<paths>({
+  baseUrl: process.env.SSR_API_URL,
+  credentials: 'include',
+})

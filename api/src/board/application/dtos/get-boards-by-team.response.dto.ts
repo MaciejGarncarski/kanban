@@ -1,16 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Type } from 'class-transformer';
-import { IsArray, ValidateNested } from 'class-validator';
-import { BoardSummaryDto } from 'src/board/application/dtos/board-summary.dto';
+import { z } from 'zod';
+import { BoardSummaryDto, boardSummarySchema } from './board-summary.dto.js';
+
+export const getBoardsByTeamResponseSchema = z.object({
+  boards: z.array(boardSummarySchema),
+});
 
 export class GetBoardsByTeamResponseDto {
   @ApiProperty({
     type: [BoardSummaryDto],
     description: 'List of boards for the team',
   })
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => BoardSummaryDto)
-  @Expose()
   boards: BoardSummaryDto[];
 }

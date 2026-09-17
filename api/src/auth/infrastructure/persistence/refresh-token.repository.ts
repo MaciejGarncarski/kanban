@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
-import { RefreshTokenRepositoryInterface } from 'src/auth/domain/ports/refresh-token.interface';
-import { RefreshTokenEntity } from 'src/auth/domain/refresh-token.entity';
-import { refreshTokens } from 'src/infrastructure/persistence/db/schema';
-import { sha256 } from 'src/shared/utils/sha256.utils';
-import { RefreshTokenMapper } from 'src/auth/infrastructure/persistence/mappers/refresh-token.mapper';
+import { RefreshTokenRepositoryInterface } from '../../domain/ports/refresh-token.interface.js';
+import { RefreshTokenEntity } from '../../domain/refresh-token.entity.js';
+import { refreshTokens } from '../../../infrastructure/persistence/db/schema.js';
+import { sha256 } from '../../../shared/utils/sha256.utils.js';
+import { RefreshTokenMapper } from './mappers/refresh-token.mapper.js';
 import { randomBytes } from 'crypto';
-import { type DB } from 'src/infrastructure/persistence/db/client';
-import { InjectDb } from 'src/infrastructure/persistence/db/db.provider';
+import { type DB } from '../../../infrastructure/persistence/db/client.js';
+import { InjectDb } from '../../../infrastructure/persistence/db/db.provider.js';
 
 @Injectable()
 export class RefreshTokenRepository implements RefreshTokenRepositoryInterface {

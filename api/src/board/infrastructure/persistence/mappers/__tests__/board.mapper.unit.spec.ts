@@ -1,11 +1,11 @@
-import { BoardAggregate } from 'src/board/domain/board.entity';
+import { BoardAggregate } from '../../../../domain/board.entity.js';
 import {
   BoardMapper,
   BoardRecord,
   CardRecord,
   ColumnRecord,
-} from 'src/board/infrastructure/persistence/mappers/board.mapper';
-import { ColumnEntity } from 'src/column/domain/column.entity';
+} from '../board.mapper.js';
+import { ColumnEntity } from '../../../../../column/domain/column.entity.js';
 
 describe('BoardMapper', () => {
   describe('toDomain', () => {

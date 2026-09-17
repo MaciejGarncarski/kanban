@@ -4,22 +4,25 @@ import { hashSync } from '@node-rs/argon2';
 import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { eq } from 'drizzle-orm';
 import { Pool } from 'pg';
-import { userFixture } from 'src/__tests__/fixtures/user.fixture';
-import { createJWTService } from 'src/__tests__/utils/create-jwt-service';
-import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
-import { TestConfigModule } from 'src/__tests__/utils/get-test-env';
-import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
-import { DB } from 'src/infrastructure/persistence/db/client';
-import { DB_PROVIDER } from 'src/infrastructure/persistence/db/db.provider';
+import { userFixture } from '../../../../../__tests__/fixtures/user.fixture.js';
+import { createJWTService } from '../../../../../__tests__/utils/create-jwt-service.js';
+import {
+  getTestDb,
+  stopTestDb,
+} from '../../../../../__tests__/utils/get-test-db.js';
+import { TestConfigModule } from '../../../../../__tests__/utils/get-test-env.js';
+import { RefreshTokenRepository } from '../../../../../auth/infrastructure/persistence/refresh-token.repository.js';
+import { DB } from '../../../../../infrastructure/persistence/db/client.js';
+import { DB_PROVIDER } from '../../../../../infrastructure/persistence/db/db.provider.js';
 import {
   cards,
   comments,
   team_members,
   users,
-} from 'src/infrastructure/persistence/db/schema';
-import { GetAllUsersHandler } from 'src/user/application/queries/handlers/get-all-users.handler';
-import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+} from '../../../../../infrastructure/persistence/db/schema.js';
+import { GetAllUsersHandler } from '../get-all-users.handler.js';
+import { UserRepositoryInterface } from '../../../../domain/ports/user.interface.js';
+import { UserRepository } from '../../../../infrastructure/persistence/user.repository.js';
 
 describe('GetAllUsersHandler', () => {
   let handler: GetAllUsersHandler;

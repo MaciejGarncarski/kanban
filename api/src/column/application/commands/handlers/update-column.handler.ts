@@ -5,18 +5,19 @@ import {
   ICommandHandler,
   QueryBus,
 } from '@nestjs/cqrs';
-import { UpdateColumnCommand } from 'src/column/application/commands/update-column.command';
-import { ColumnEntity } from 'src/column/domain/column.entity';
-import { ColumnRepository } from 'src/column/infrastructure/persistence/column.repository';
-import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
-import { SendToTeamMembersEvent } from 'src/notifications/application/events/send-to-team-members.event';
-import { TeamRole, teamRoles } from 'src/team/domain/types/team.types';
-import { GetRoleByColumnIdQuery } from 'src/user/application/queries/get-role-by-column-id.query';
+import { UpdateColumnCommand } from '../update-column.command.js';
+import { ColumnEntity } from '../../../domain/column.entity.js';
+import { ColumnRepository } from '../../../infrastructure/persistence/column.repository.js';
+import { ProfanityCheckService } from '../../../../infrastructure/services/profanity-check.service.js';
+import { SendToTeamMembersEvent } from '../../../../notifications/application/events/send-to-team-members.event.js';
+import {
+  TeamRole,
+  teamRoles,
+} from '../../../../team/domain/types/team.types.js';
+import { GetRoleByColumnIdQuery } from '../../../../user/application/queries/get-role-by-column-id.query.js';
 
 @CommandHandler(UpdateColumnCommand)
-export class UpdateColumnHandler
-  implements ICommandHandler<UpdateColumnCommand>
-{
+export class UpdateColumnHandler implements ICommandHandler<UpdateColumnCommand> {
   constructor(
     private readonly queryBus: QueryBus,
     private readonly eventBus: EventBus,

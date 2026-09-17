@@ -1,6 +1,6 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
-import { RefreshTokenEntity } from 'src/auth/domain/refresh-token.entity';
-import { refreshTokens } from 'src/infrastructure/persistence/db/schema';
+import { RefreshTokenEntity } from '../../../domain/refresh-token.entity.js';
+import { refreshTokens } from '../../../../infrastructure/persistence/db/schema.js';
 
 export type RefreshTokenRecord = InferSelectModel<typeof refreshTokens>;
 export type NewRefreshTokenRecord = InferInsertModel<typeof refreshTokens>;

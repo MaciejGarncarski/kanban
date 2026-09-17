@@ -1,13 +1,26 @@
 packages:
-  - "api"
-  - "web"
-syncInjectedDepsAfterScripts:
-  - build
-injectWorkspacePackages: true
+  - api
+  - web
+
+allowBuilds:
+  '@scarf/scarf': true
+  '@swc/core': true
+  cpu-features: true
+  esbuild: true
+  protobufjs: true
+  ssh2: true
+  unrs-resolver: true
 
 catalog:
-  typescript: ^5.9.3
-  prettier: "^3.6.2"
-  eslint: "^9.38.0"
-  zod: "^4.1.12"
-  nanoid: "^3.3.11"
+  eslint: ^9.39.5
+  nanoid: ^3.3.19
+  prettier: ^3.9.7
+  typescript: ^6
+  zod: ^4.6.5
+
+injectWorkspacePackages: true
+
+minimumReleaseAge: 0
+
+syncInjectedDepsAfterScripts:
+  - build

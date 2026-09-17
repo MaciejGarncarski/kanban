@@ -1,5 +1,5 @@
 import { Inject } from '@nestjs/common';
-import { db } from './client';
+import { db } from './client.js';
 import { ConfigService } from '@nestjs/config';
 import { Pool } from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';

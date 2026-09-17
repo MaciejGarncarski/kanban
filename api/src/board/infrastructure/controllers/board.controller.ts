@@ -14,33 +14,53 @@ import {
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
   ApiBadRequestResponse,
+  ApiBody,
   ApiOkResponse,
   ApiOperation,
 } from '@nestjs/swagger';
-import { Auth } from 'src/auth/common/decorators/auth.decorator';
-import { DeleteBoardCommand } from 'src/board/application/commands/delete-board.command';
-import { BoardDetailDto } from 'src/board/application/dtos/board-detail.dto';
-import { DeleteBoardRequestDto } from 'src/board/application/dtos/delete-board.request.dto';
-import { GetBoardByIdDto } from 'src/board/application/dtos/ger-board-by-id.request.dto';
-import { GetBoardsByTeamRequestDto } from 'src/board/application/dtos/get-boards-by-team.request.dto';
-import { GetBoardsByTeamResponseDto } from 'src/board/application/dtos/get-boards-by-team.response.dto';
-import { GetBoardByIdQuery } from 'src/board/application/queries/get-board-by-id.query';
-import { GetBoardsByTeamQuery } from 'src/board/application/queries/get-boards-by-team.query';
-import { ApiErrorResponse } from 'src/core/application/dtos/api-error.response.dto';
-import { routesV1 } from 'src/infrastructure/configs/app.routes.config';
-import { type Request } from 'express';
-import { CreateBoardRequestDto } from 'src/board/application/dtos/create-board.request.dto';
-import { CreateBoardCommand } from 'src/board/application/commands/create-board.command';
-import { BoardAggregate } from 'src/board/domain/board.entity';
-import { plainToInstance } from 'class-transformer';
-import { BoardSummaryDto } from 'src/board/application/dtos/board-summary.dto';
+import { Auth } from '../../../auth/common/decorators/auth.decorator.js';
+import { DeleteBoardCommand } from '../../application/commands/delete-board.command.js';
+import { BoardDetailDto } from '../../application/dtos/board-detail.dto.js';
 import {
-  UpdateBoardParamsDto,
+  deleteBoardRequestSchema,
+  type DeleteBoardRequest,
+} from '../../application/dtos/delete-board.request.dto.js';
+import {
+  getBoardByIdRequestSchema,
+  type GetBoardByIdRequest,
+} from '../../application/dtos/ger-board-by-id.request.dto.js';
+import {
+  getBoardsByTeamRequestSchema,
+  type GetBoardsByTeamRequest,
+} from '../../application/dtos/get-boards-by-team.request.dto.js';
+import { GetBoardsByTeamResponseDto } from '../../application/dtos/get-boards-by-team.response.dto.js';
+import { GetBoardByIdQuery } from '../../application/queries/get-board-by-id.query.js';
+import { GetBoardsByTeamQuery } from '../../application/queries/get-boards-by-team.query.js';
+import { ApiErrorResponse } from '../../../core/application/dtos/api-error.response.dto.js';
+import { routesV1 } from '../../../infrastructure/configs/app.routes.config.js';
+import { type Request } from 'express';
+import {
+  CreateBoardRequestDto,
+  createBoardRequestSchema,
+  type CreateBoardRequest,
+} from '../../application/dtos/create-board.request.dto.js';
+import { CreateBoardCommand } from '../../application/commands/create-board.command.js';
+import { BoardAggregate } from '../../domain/board.entity.js';
+import {
+  BoardSummaryDto,
+  boardSummarySchema,
+} from '../../application/dtos/board-summary.dto.js';
+import { parseResponse } from '../../../infrastructure/validation/parse-response.js';
+import {
   UpdateBoardRequestDto,
-} from 'src/board/application/dtos/update-board.request.dto';
-import { UpdateBoardCommand } from 'src/board/application/commands/update-board.command';
-import { GetRoleByBoardIdQuery } from 'src/user/application/queries/get-role-by-board-id.query';
-import { TeamRole, teamRoles } from 'src/team/domain/types/team.types';
+  updateBoardParamsSchema,
+  updateBoardRequestSchema,
+  type UpdateBoardParams,
+  type UpdateBoardRequest,
+} from '../../application/dtos/update-board.request.dto.js';
+import { UpdateBoardCommand } from '../../application/commands/update-board.command.js';
+import { GetRoleByBoardIdQuery } from '../../../user/application/queries/get-role-by-board-id.query.js';
+import { TeamRole, teamRoles } from '../../../team/domain/types/team.types.js';
 
 @Controller()
 export class BoardController {
@@ -63,7 +83,8 @@ export class BoardController {
     type: ApiErrorResponse,
   })
   async getAllBoardsByTeamId(
-    @Param() params: GetBoardsByTeamRequestDto,
+    @Param({ schema: getBoardsByTeamRequestSchema })
+    params: GetBoardsByTeamRequest,
     @Req() req: Request,
   ): Promise<GetBoardsByTeamResponseDto> {
     const data = await this.queryBus.execute<
@@ -87,7 +108,7 @@ export class BoardController {
     type: ApiErrorResponse,
   })
   async getBoardById(
-    @Param() params: GetBoardByIdDto,
+    @Param({ schema: getBoardByIdRequestSchema }) params: GetBoardByIdRequest,
     @Req() req: Request,
   ): Promise<BoardDetailDto> {
     const userId = req.userId;
@@ -113,8 +134,7 @@ export class BoardController {
     type: ApiErrorResponse,
   })
   async deleteBoardById(
-    @Param()
-    params: DeleteBoardRequestDto,
+    @Param({ schema: deleteBoardRequestSchema }) params: DeleteBoardRequest,
     @Req() req: Request,
   ): Promise<void> {
     await this.commandBus.execute(
@@ -132,10 +152,14 @@ export class BoardController {
     type: BoardSummaryDto,
     description: 'Successfully created board',
   })
+  @ApiBody({ type: CreateBoardRequestDto })
   @ApiBadRequestResponse({
     type: ApiErrorResponse,
   })
-  async createBoard(@Req() req: Request, @Body() body: CreateBoardRequestDto) {
+  async createBoard(
+    @Req() req: Request,
+    @Body({ schema: createBoardRequestSchema }) body: CreateBoardRequest,
+  ) {
     const created = await this.commandBus.execute<
       CreateBoardCommand,
       BoardAggregate
@@ -148,7 +172,7 @@ export class BoardController {
       ),
     );
 
-    return plainToInstance(BoardSummaryDto, created);
+    return parseResponse<BoardSummaryDto>(boardSummarySchema, created);
   }
 
   @Auth()
@@ -160,12 +184,13 @@ export class BoardController {
     type: BoardSummaryDto,
     description: 'Successfully updated board',
   })
+  @ApiBody({ type: UpdateBoardRequestDto })
   @ApiBadRequestResponse({
     type: ApiErrorResponse,
   })
   async updateBoard(
-    @Param() params: UpdateBoardParamsDto,
-    @Body() body: UpdateBoardRequestDto,
+    @Param({ schema: updateBoardParamsSchema }) params: UpdateBoardParams,
+    @Body({ schema: updateBoardRequestSchema }) body: UpdateBoardRequest,
     @Req() req: Request,
   ) {
     const userRole = await this.queryBus.execute<
@@ -188,6 +213,6 @@ export class BoardController {
       ),
     );
 
-    return plainToInstance(BoardSummaryDto, result);
+    return parseResponse<BoardSummaryDto>(boardSummarySchema, result);
   }
 }

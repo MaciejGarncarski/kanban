@@ -1,7 +1,7 @@
 import { ConfigService, registerAs } from '@nestjs/config';
 import { ConfigType } from '@nestjs/config';
-import { testEnv } from 'src/__tests__/env';
-import { envSchema } from 'src/infrastructure/configs/env.schema';
+import { testEnv } from '../../__tests__/env.js';
+import { envSchema } from './env.schema.js';
 
 export const registerEnv = registerAs('ENV', () => {
   return envSchema.parse(process.env);

@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import { type DB } from 'src/infrastructure/persistence/db/client';
-import { InjectDb } from 'src/infrastructure/persistence/db/db.provider';
+import { type DB } from '../../../infrastructure/persistence/db/client.js';
+import { InjectDb } from '../../../infrastructure/persistence/db/db.provider.js';
 import {
   boards,
   team_members,
   teams,
-} from 'src/infrastructure/persistence/db/schema';
-import { GetTeamsResponseDto } from 'src/team/application/dtos/get-teams.response.dto';
+} from '../../../infrastructure/persistence/db/schema.js';
+import { GetTeamsResponseDto } from '../../application/dtos/get-teams.response.dto.js';
 import {
   InsertTeamDto,
   TeamRepositoryInterface,
   UpdateTeamDto,
-} from 'src/team/domain/ports/team.interface';
-import { TeamAggregate } from 'src/team/domain/team.entity';
-import { teamRoles } from 'src/team/domain/types/team.types';
+} from '../../domain/ports/team.interface.js';
+import { TeamAggregate } from '../../domain/team.entity.js';
+import { teamRoles } from '../../domain/types/team.types.js';
 
 @Injectable()
 export class TeamRepository implements TeamRepositoryInterface {

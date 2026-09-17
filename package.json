@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "infra:up": "docker compose -f ./docker/compose.dev.yml up -d",
+    "infra:down": "docker compose -f ./docker/compose.dev.yml down"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.18.2",
+  "packageManager": "pnpm@12.4.2",
   "devDependencies": {
-    "@types/node": "^24.10.0"
+    "@types/node": "^26.6.1"
   }
 }

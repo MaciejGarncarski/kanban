@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { CreateColumnHandler } from 'src/column/application/commands/handlers/create-column.handler';
-import { DeleteColumnHandler } from 'src/column/application/commands/handlers/delete-column.handler';
-import { UpdateColumnHandler } from 'src/column/application/commands/handlers/update-column.handler';
-import { ColumnController } from 'src/column/infrastructure/controllers/column.controller';
-import { ColumnRepository } from 'src/column/infrastructure/persistence/column.repository';
-import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
-import { GetRoleByBoardIdHandler } from 'src/user/application/queries/handlers/get-role-by-board-id.handler';
-import { GetRoleByColumnIdHandler } from 'src/user/application/queries/handlers/get-role-by-column-id.handler';
-import { GetRoleByTeamIdHandler } from 'src/user/application/queries/handlers/get-role-by-team-id.handler';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+import { CreateColumnHandler } from './application/commands/handlers/create-column.handler.js';
+import { DeleteColumnHandler } from './application/commands/handlers/delete-column.handler.js';
+import { UpdateColumnHandler } from './application/commands/handlers/update-column.handler.js';
+import { ColumnController } from './infrastructure/controllers/column.controller.js';
+import { ColumnRepository } from './infrastructure/persistence/column.repository.js';
+import { ProfanityCheckService } from '../infrastructure/services/profanity-check.service.js';
+import { GetRoleByBoardIdHandler } from '../user/application/queries/handlers/get-role-by-board-id.handler.js';
+import { GetRoleByColumnIdHandler } from '../user/application/queries/handlers/get-role-by-column-id.handler.js';
+import { GetRoleByTeamIdHandler } from '../user/application/queries/handlers/get-role-by-team-id.handler.js';
+import { UserRepository } from '../user/infrastructure/persistence/user.repository.js';
 
 const CommandHandlers = [
   CreateColumnHandler,

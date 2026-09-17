@@ -2,14 +2,17 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { Test, TestingModule } from '@nestjs/testing';
 import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { Pool } from 'pg';
-import { createJWTService } from 'src/__tests__/utils/create-jwt-service';
-import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
-import { TestConfigModule } from 'src/__tests__/utils/get-test-env';
-import { DB } from 'src/infrastructure/persistence/db/client';
-import { DB_PROVIDER } from 'src/infrastructure/persistence/db/db.provider';
-import { SendToTeamMembersHandler } from 'src/notifications/application/events/handlers/send-to-team-members.handler';
-import { NotificationsService } from 'src/notifications/infrastructure/services/notifications.service';
-import { TeamRepository } from 'src/team/infrastructure/persistence/team.repository';
+import { createJWTService } from '../../../../../__tests__/utils/create-jwt-service.js';
+import {
+  getTestDb,
+  stopTestDb,
+} from '../../../../../__tests__/utils/get-test-db.js';
+import { TestConfigModule } from '../../../../../__tests__/utils/get-test-env.js';
+import { DB } from '../../../../../infrastructure/persistence/db/client.js';
+import { DB_PROVIDER } from '../../../../../infrastructure/persistence/db/db.provider.js';
+import { SendToTeamMembersHandler } from '../send-to-team-members.handler.js';
+import { NotificationsService } from '../../../../infrastructure/services/notifications.service.js';
+import { TeamRepository } from '../../../../../team/infrastructure/persistence/team.repository.js';
 
 describe('SendToTeamMembersHandler', () => {
   let handler: SendToTeamMembersHandler;

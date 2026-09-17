@@ -1,11 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
-import { IsString } from 'class-validator';
-import { teamRoles } from 'src/team/domain/types/team.types';
+import { z } from 'zod';
+import { teamRoles } from '../../../team/domain/types/team.types.js';
+
+export const roleResponseSchema = z.object({
+  role: z.string(),
+});
 
 export class RoleResponseDto {
   @ApiProperty({ enum: [teamRoles.ADMIN, teamRoles.MEMBER] })
-  @Expose()
-  @IsString()
   role: string;
 }

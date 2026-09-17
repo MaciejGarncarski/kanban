@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
-import { CreateBoardHandler } from 'src/board/application/commands/handlers/create-board.handler';
-import { DeleteBoardHandler } from 'src/board/application/commands/handlers/delete-board.handler';
-import { UpdateBoardHandler } from 'src/board/application/commands/handlers/update-board.handler';
-import { GetBoardByIdHandler } from 'src/board/application/queries/handlers/get-board-by-id.handler';
-import { GetBoardsByTeamHandler } from 'src/board/application/queries/handlers/get-boards-by-team.handler';
-import { BoardController } from 'src/board/infrastructure/controllers/board.controller';
-import { BoardRepository } from 'src/board/infrastructure/persistence/board.repository';
-import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+import { CreateBoardHandler } from './application/commands/handlers/create-board.handler.js';
+import { DeleteBoardHandler } from './application/commands/handlers/delete-board.handler.js';
+import { UpdateBoardHandler } from './application/commands/handlers/update-board.handler.js';
+import { GetBoardByIdHandler } from './application/queries/handlers/get-board-by-id.handler.js';
+import { GetBoardsByTeamHandler } from './application/queries/handlers/get-boards-by-team.handler.js';
+import { BoardController } from './infrastructure/controllers/board.controller.js';
+import { BoardRepository } from './infrastructure/persistence/board.repository.js';
+import { ProfanityCheckService } from '../infrastructure/services/profanity-check.service.js';
+import { UserRepository } from '../user/infrastructure/persistence/user.repository.js';
 
 const CommandHandlers = [
   DeleteBoardHandler,

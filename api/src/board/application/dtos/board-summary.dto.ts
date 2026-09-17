@@ -1,37 +1,31 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
-import { IsString, IsUUID, IsOptional, IsDate } from 'class-validator';
+import { z } from 'zod';
+
+export const boardSummarySchema = z.object({
+  readableId: z.string(),
+  name: z.string(),
+  description: z.string().nullish(),
+  teamId: z.string(),
+  readableTeamId: z.string(),
+  createdAt: z.coerce.date().nullish(),
+});
 
 export class BoardSummaryDto {
   @ApiProperty()
-  @IsString()
-  @Expose()
   readableId: string;
 
   @ApiProperty()
-  @IsString()
-  @Expose()
   name: string;
 
   @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  @Expose()
   description: string;
 
   @ApiProperty()
-  @IsUUID()
-  @Expose()
   teamId: string;
 
   @ApiProperty()
-  @IsString()
-  @Expose()
   readableTeamId: string;
 
   @ApiProperty({ required: false })
-  @IsOptional()
-  @IsDate()
-  @Expose()
   createdAt: string;
 }

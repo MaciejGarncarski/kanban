@@ -5,21 +5,24 @@ import { hash } from '@node-rs/argon2';
 import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { Pool } from 'pg';
 import { Subject } from 'rxjs';
-import { createJWTService } from 'src/__tests__/utils/create-jwt-service';
-import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
-import { TestConfigModule } from 'src/__tests__/utils/get-test-env';
-import { DB } from 'src/infrastructure/persistence/db/client';
-import { DB_PROVIDER } from 'src/infrastructure/persistence/db/db.provider';
+import { createJWTService } from '../../../../__tests__/utils/create-jwt-service.js';
+import {
+  getTestDb,
+  stopTestDb,
+} from '../../../../__tests__/utils/get-test-db.js';
+import { TestConfigModule } from '../../../../__tests__/utils/get-test-env.js';
+import { DB } from '../../../../infrastructure/persistence/db/client.js';
+import { DB_PROVIDER } from '../../../../infrastructure/persistence/db/db.provider.js';
 import {
   team_members,
   teams,
   users,
-} from 'src/infrastructure/persistence/db/schema';
-import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
-import { SendToTeamMembersHandler } from 'src/notifications/application/events/handlers/send-to-team-members.handler';
-import { NotificationsService } from 'src/notifications/infrastructure/services/notifications.service';
-import { teamRoles } from 'src/team/domain/types/team.types';
-import { TeamRepository } from 'src/team/infrastructure/persistence/team.repository';
+} from '../../../../infrastructure/persistence/db/schema.js';
+import { generateReadableId } from '../../../../infrastructure/persistence/generate-readable-id.js';
+import { SendToTeamMembersHandler } from '../../../application/events/handlers/send-to-team-members.handler.js';
+import { NotificationsService } from '../notifications.service.js';
+import { teamRoles } from '../../../../team/domain/types/team.types.js';
+import { TeamRepository } from '../../../../team/infrastructure/persistence/team.repository.js';
 
 describe('NotificationsService', () => {
   let service: NotificationsService;

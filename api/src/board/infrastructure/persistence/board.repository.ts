@@ -4,14 +4,14 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
-import { CreateBoardCommand } from 'src/board/application/commands/create-board.command';
-import { BoardAggregate } from 'src/board/domain/board.entity';
-import { BoardRepositoryInterface } from 'src/board/domain/ports/board.interface';
-import { BoardMapper } from 'src/board/infrastructure/persistence/mappers/board.mapper';
-import { CardEntity } from 'src/card/domain/card.entity';
-import { ColumnEntity } from 'src/column/domain/column.entity';
-import { type DB } from 'src/infrastructure/persistence/db/client';
-import { InjectDb } from 'src/infrastructure/persistence/db/db.provider';
+import { CreateBoardCommand } from '../../application/commands/create-board.command.js';
+import { BoardAggregate } from '../../domain/board.entity.js';
+import { BoardRepositoryInterface } from '../../domain/ports/board.interface.js';
+import { BoardMapper } from './mappers/board.mapper.js';
+import { CardEntity } from '../../../card/domain/card.entity.js';
+import { ColumnEntity } from '../../../column/domain/column.entity.js';
+import { type DB } from '../../../infrastructure/persistence/db/client.js';
+import { InjectDb } from '../../../infrastructure/persistence/db/db.provider.js';
 import {
   boards,
   cards,
@@ -19,9 +19,9 @@ import {
   comments,
   team_members,
   teams,
-} from 'src/infrastructure/persistence/db/schema';
-import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
-import { teamRoles } from 'src/team/domain/types/team.types';
+} from '../../../infrastructure/persistence/db/schema.js';
+import { generateReadableId } from '../../../infrastructure/persistence/generate-readable-id.js';
+import { teamRoles } from '../../../team/domain/types/team.types.js';
 
 @Injectable()
 export class BoardRepository implements BoardRepositoryInterface {

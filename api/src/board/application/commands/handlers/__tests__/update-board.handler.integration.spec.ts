@@ -1,28 +1,31 @@
 import { faker } from '@faker-js/faker';
 import { CqrsModule } from '@nestjs/cqrs';
 import { Test, TestingModule } from '@nestjs/testing';
-import { StartedPostgreSqlContainer } from '@testcontainers/postgresql/build/postgresql-container';
+import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { eq } from 'drizzle-orm';
 import { Pool } from 'pg';
-import { userFixture } from 'src/__tests__/fixtures/user.fixture';
-import { createJWTService } from 'src/__tests__/utils/create-jwt-service';
-import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
-import { TestConfigModule } from 'src/__tests__/utils/get-test-env';
-import { UpdateBoardHandler } from 'src/board/application/commands/handlers/update-board.handler';
-import { UpdateBoardCommand } from 'src/board/application/commands/update-board.command';
-import { BoardRepository } from 'src/board/infrastructure/persistence/board.repository';
-import { type DB } from 'src/infrastructure/persistence/db/client';
-import { DB_PROVIDER } from 'src/infrastructure/persistence/db/db.provider';
+import { userFixture } from '../../../../../__tests__/fixtures/user.fixture.js';
+import { createJWTService } from '../../../../../__tests__/utils/create-jwt-service.js';
+import {
+  getTestDb,
+  stopTestDb,
+} from '../../../../../__tests__/utils/get-test-db.js';
+import { TestConfigModule } from '../../../../../__tests__/utils/get-test-env.js';
+import { UpdateBoardHandler } from '../update-board.handler.js';
+import { UpdateBoardCommand } from '../../update-board.command.js';
+import { BoardRepository } from '../../../../infrastructure/persistence/board.repository.js';
+import { type DB } from '../../../../../infrastructure/persistence/db/client.js';
+import { DB_PROVIDER } from '../../../../../infrastructure/persistence/db/db.provider.js';
 import {
   boards,
   team_members,
   teams,
-} from 'src/infrastructure/persistence/db/schema';
-import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
-import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
-import { teamRoles } from 'src/team/domain/types/team.types';
-import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+} from '../../../../../infrastructure/persistence/db/schema.js';
+import { generateReadableId } from '../../../../../infrastructure/persistence/generate-readable-id.js';
+import { ProfanityCheckService } from '../../../../../infrastructure/services/profanity-check.service.js';
+import { teamRoles } from '../../../../../team/domain/types/team.types.js';
+import { UserRepositoryInterface } from '../../../../../user/domain/ports/user.interface.js';
+import { UserRepository } from '../../../../../user/infrastructure/persistence/user.repository.js';
 import { v7 } from 'uuid';
 
 describe('update-board-handler integration', () => {

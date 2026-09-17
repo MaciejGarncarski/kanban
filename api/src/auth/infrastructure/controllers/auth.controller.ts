@@ -23,31 +23,36 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { type Request, type Response } from 'express';
-import { RefreshAccessTokenReturn } from 'src/auth/application/commands/handlers/refresh-access-token.handler';
-import { RegisterHandlerReturn } from 'src/auth/application/commands/handlers/register.handler';
-import { SignInUserCommandReturn } from 'src/auth/application/commands/handlers/sign-in-user.handler';
-import { LogoutCommand } from 'src/auth/application/commands/logout.command';
-import { RefreshAccessTokenCommand } from 'src/auth/application/commands/refresh-access-token.command';
-import { RegisterCommand } from 'src/auth/application/commands/register.command';
-import { SignInUserCommand } from 'src/auth/application/commands/sign-in-user.command';
-import { LogoutResponseDto } from 'src/auth/application/dtos/logout.response.dto';
-import { RefreshTokenResponseDto } from 'src/auth/application/dtos/refresh-token-response.dto';
-import { RegisterBodyDto } from 'src/auth/application/dtos/register-body.dto';
-import { RegisterResponseDto } from 'src/auth/application/dtos/register-response.dto';
-import { SignInBodyDto } from 'src/auth/application/dtos/sign-in-body.dto';
-import { SignInResponseDto } from 'src/auth/application/dtos/sign-in-response.dto';
-import { GetMeQuery } from 'src/auth/application/queries/get-me.query';
-import { Auth } from 'src/auth/common/decorators/auth.decorator';
-import { JWTPayload } from 'src/auth/domain/token.types';
+import { RefreshAccessTokenReturn } from '../../application/commands/handlers/refresh-access-token.handler.js';
+import { RegisterHandlerReturn } from '../../application/commands/handlers/register.handler.js';
+import { SignInUserCommandReturn } from '../../application/commands/handlers/sign-in-user.handler.js';
+import { LogoutCommand } from '../../application/commands/logout.command.js';
+import { RefreshAccessTokenCommand } from '../../application/commands/refresh-access-token.command.js';
+import { RegisterCommand } from '../../application/commands/register.command.js';
+import { SignInUserCommand } from '../../application/commands/sign-in-user.command.js';
+import { LogoutResponseDto } from '../../application/dtos/logout.response.dto.js';
+import { RefreshTokenResponseDto } from '../../application/dtos/refresh-token-response.dto.js';
 import {
-  clearTokenCookie,
-  setTokenCookie,
-} from 'src/auth/infrastructure/utils/set-token-cookie';
-import { ApiErrorResponse } from 'src/core/application/dtos/api-error.response.dto';
-import accessTokenCookieConfig from 'src/infrastructure/configs/access-token-cookie.config';
-import { routesV1 } from 'src/infrastructure/configs/app.routes.config';
-import refreshTokenCookieConfig from 'src/infrastructure/configs/refresh-token-cookie.config';
-import { UserResponseDto } from 'src/user/application/dtos/user.response.dto';
+  RegisterBodyDto,
+  registerBodySchema,
+  type RegisterBody,
+} from '../../application/dtos/register-body.dto.js';
+import { RegisterResponseDto } from '../../application/dtos/register-response.dto.js';
+import {
+  SignInBodyDto,
+  signInBodySchema,
+  type SignInBody,
+} from '../../application/dtos/sign-in-body.dto.js';
+import { SignInResponseDto } from '../../application/dtos/sign-in-response.dto.js';
+import { GetMeQuery } from '../../application/queries/get-me.query.js';
+import { Auth } from '../../common/decorators/auth.decorator.js';
+import { JWTPayload } from '../../domain/token.types.js';
+import { clearTokenCookie, setTokenCookie } from '../utils/set-token-cookie.js';
+import { ApiErrorResponse } from '../../../core/application/dtos/api-error.response.dto.js';
+import accessTokenCookieConfig from '../../../infrastructure/configs/access-token-cookie.config.js';
+import { routesV1 } from '../../../infrastructure/configs/app.routes.config.js';
+import refreshTokenCookieConfig from '../../../infrastructure/configs/refresh-token-cookie.config.js';
+import { UserResponseDto } from '../../../user/application/dtos/user.response.dto.js';
 
 @Controller()
 export class AuthController {
@@ -78,7 +83,7 @@ export class AuthController {
     type: ApiErrorResponse,
   })
   async signInUser(
-    @Body() body: SignInBodyDto,
+    @Body({ schema: signInBodySchema }) body: SignInBody,
     @Res({ passthrough: true }) response: Response,
   ): Promise<SignInResponseDto> {
     const { accessToken, refreshToken } = await this.commandBus.execute<
@@ -102,11 +107,12 @@ export class AuthController {
     type: RegisterResponseDto,
     description: 'Registered user',
   })
+  @ApiBody({ type: RegisterBodyDto })
   @ApiBadRequestResponse({
     type: ApiErrorResponse,
   })
   async registerUser(
-    @Body() body: RegisterBodyDto,
+    @Body({ schema: registerBodySchema }) body: RegisterBody,
     @Res({ passthrough: true }) response: Response,
   ) {
     const { user, accessToken, refreshToken } = await this.commandBus.execute<

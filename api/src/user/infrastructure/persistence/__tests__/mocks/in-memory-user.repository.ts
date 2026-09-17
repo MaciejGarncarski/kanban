@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { TeamRole } from 'src/team/domain/types/team.types';
-import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
-import { UserEntity } from 'src/user/domain/user.entity';
-import { NewUserRecord } from 'src/user/infrastructure/persistence/mappers/user.mapper';
+import { TeamRole } from '../../../../../team/domain/types/team.types.js';
+import { UserRepositoryInterface } from '../../../../domain/ports/user.interface.js';
+import { UserEntity } from '../../../../domain/user.entity.js';
+import { NewUserRecord } from '../../mappers/user.mapper.js';
 import { v7 } from 'uuid';
 
 @Injectable()

@@ -1,13 +1,14 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { instanceToPlain, plainToInstance } from 'class-transformer';
-import { GetBoardsByTeamQuery } from 'src/board/application/queries/get-boards-by-team.query';
-import { BoardRepository } from 'src/board/infrastructure/persistence/board.repository';
-import { GetBoardsByTeamResponseDto } from 'src/board/application/dtos/get-boards-by-team.response.dto';
+import { GetBoardsByTeamQuery } from '../get-boards-by-team.query.js';
+import { BoardRepository } from '../../../infrastructure/persistence/board.repository.js';
+import {
+  GetBoardsByTeamResponseDto,
+  getBoardsByTeamResponseSchema,
+} from '../../dtos/get-boards-by-team.response.dto.js';
+import { parseResponse } from '../../../../infrastructure/validation/parse-response.js';
 
 @QueryHandler(GetBoardsByTeamQuery)
-export class GetBoardsByTeamHandler
-  implements IQueryHandler<GetBoardsByTeamQuery>
-{
+export class GetBoardsByTeamHandler implements IQueryHandler<GetBoardsByTeamQuery> {
   constructor(private readonly boardRepo: BoardRepository) {}
 
   async execute(query: GetBoardsByTeamQuery) {
@@ -16,14 +17,9 @@ export class GetBoardsByTeamHandler
       query.readableTeamId,
     );
 
-    const plainBoards = instanceToPlain(boards);
-
-    return plainToInstance(
-      GetBoardsByTeamResponseDto,
-      { boards: plainBoards },
-      {
-        excludeExtraneousValues: true,
-      },
+    return parseResponse<GetBoardsByTeamResponseDto>(
+      getBoardsByTeamResponseSchema,
+      { boards },
     );
   }
 }

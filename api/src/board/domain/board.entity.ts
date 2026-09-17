@@ -1,4 +1,4 @@
-import { ColumnEntity } from 'src/column/domain/column.entity';
+import { ColumnEntity } from '../../column/domain/column.entity.js';
 
 type BoardProps = {
   id: string;

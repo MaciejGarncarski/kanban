@@ -1,9 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UnauthorizedException } from '@nestjs/common';
-import { RefreshAccessTokenCommand } from 'src/auth/application/commands/refresh-access-token.command';
+import { RefreshAccessTokenCommand } from '../refresh-access-token.command.js';
 import { JwtService } from '@nestjs/jwt';
-import { RefreshTokenRepository } from 'src/auth/infrastructure/persistence/refresh-token.repository';
-import { JWTPayload } from 'src/auth/domain/token.types';
+import { RefreshTokenRepository } from '../../../infrastructure/persistence/refresh-token.repository.js';
+import { JWTPayload } from '../../../domain/token.types.js';
 
 export type RefreshAccessTokenReturn = {
   accessToken: string;
@@ -12,9 +12,7 @@ export type RefreshAccessTokenReturn = {
 };
 
 @CommandHandler(RefreshAccessTokenCommand)
-export class RefreshAccessTokenHandler
-  implements ICommandHandler<RefreshAccessTokenCommand>
-{
+export class RefreshAccessTokenHandler implements ICommandHandler<RefreshAccessTokenCommand> {
   constructor(
     private readonly jwtService: JwtService,
     private readonly refreshTokenRepo: RefreshTokenRepository,

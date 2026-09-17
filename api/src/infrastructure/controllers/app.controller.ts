@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
-import { routesV1 } from 'src/infrastructure/configs/app.routes.config';
+import { routesV1 } from '../configs/app.routes.config.js';
 
 @Controller()
 export class AppController {

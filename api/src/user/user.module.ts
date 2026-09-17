@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
-import { UserController } from 'src/user/infrastructure/controllers/user.controller';
-import { GetRoleByTeamIdHandler } from 'src/user/application/queries/handlers/get-role-by-team-id.handler';
-import { GetAllUsersHandler } from 'src/user/application/queries/handlers/get-all-users.handler';
-import { GetUsersByTeamIdHandler } from 'src/user/application/queries/handlers/get-users-by-team-id.handler';
+import { UserRepository } from './infrastructure/persistence/user.repository.js';
+import { UserController } from './infrastructure/controllers/user.controller.js';
+import { GetRoleByTeamIdHandler } from './application/queries/handlers/get-role-by-team-id.handler.js';
+import { GetAllUsersHandler } from './application/queries/handlers/get-all-users.handler.js';
+import { GetUsersByTeamIdHandler } from './application/queries/handlers/get-users-by-team-id.handler.js';
 
 const QueryHandlers = [
   GetUsersByTeamIdHandler,

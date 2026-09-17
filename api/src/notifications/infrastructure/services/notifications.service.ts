@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Subject } from 'rxjs';
-import { TeamRepository } from 'src/team/infrastructure/persistence/team.repository';
+import { TeamRepository } from '../../../team/infrastructure/persistence/team.repository.js';
 
 @Injectable()
 export class NotificationsService {

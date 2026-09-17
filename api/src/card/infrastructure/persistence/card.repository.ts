@@ -1,16 +1,16 @@
 import { BadRequestException } from '@nestjs/common';
 import { and, desc, eq } from 'drizzle-orm';
-import { CardEntity } from 'src/card/domain/card.entity';
-import { CardRepositoryInterface } from 'src/card/domain/ports/card.interface';
-import { type DB } from 'src/infrastructure/persistence/db/client';
-import { InjectDb } from 'src/infrastructure/persistence/db/db.provider';
+import { CardEntity } from '../../domain/card.entity.js';
+import { CardRepositoryInterface } from '../../domain/ports/card.interface.js';
+import { type DB } from '../../../infrastructure/persistence/db/client.js';
+import { InjectDb } from '../../../infrastructure/persistence/db/db.provider.js';
 import {
   boards,
   cards,
   columns,
   comments,
   teams,
-} from 'src/infrastructure/persistence/db/schema';
+} from '../../../infrastructure/persistence/db/schema.js';
 
 type NewCardRecord = {
   title: string;

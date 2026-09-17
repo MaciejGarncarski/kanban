@@ -3,19 +3,22 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { hash } from '@node-rs/argon2';
 import { StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { Pool } from 'pg';
-import { createJWTService } from 'src/__tests__/utils/create-jwt-service';
-import { getTestDb, stopTestDb } from 'src/__tests__/utils/get-test-db';
-import { TestConfigModule } from 'src/__tests__/utils/get-test-env';
-import { DB } from 'src/infrastructure/persistence/db/client';
-import { DB_PROVIDER } from 'src/infrastructure/persistence/db/db.provider';
-import { team_members } from 'src/infrastructure/persistence/db/schema';
-import { generateReadableId } from 'src/infrastructure/persistence/generate-readable-id';
-import { DeleteTeamCommand } from 'src/team/application/commands/delete-team.command';
-import { DeleteTeamHandler } from 'src/team/application/commands/handlers/delete-team.handler';
-import { teamRoles } from 'src/team/domain/types/team.types';
-import { TeamRepository } from 'src/team/infrastructure/persistence/team.repository';
-import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+import { createJWTService } from '../../../../../__tests__/utils/create-jwt-service.js';
+import {
+  getTestDb,
+  stopTestDb,
+} from '../../../../../__tests__/utils/get-test-db.js';
+import { TestConfigModule } from '../../../../../__tests__/utils/get-test-env.js';
+import { DB } from '../../../../../infrastructure/persistence/db/client.js';
+import { DB_PROVIDER } from '../../../../../infrastructure/persistence/db/db.provider.js';
+import { team_members } from '../../../../../infrastructure/persistence/db/schema.js';
+import { generateReadableId } from '../../../../../infrastructure/persistence/generate-readable-id.js';
+import { DeleteTeamCommand } from '../../delete-team.command.js';
+import { DeleteTeamHandler } from '../delete-team.handler.js';
+import { teamRoles } from '../../../../domain/types/team.types.js';
+import { TeamRepository } from '../../../../infrastructure/persistence/team.repository.js';
+import { UserRepositoryInterface } from '../../../../../user/domain/ports/user.interface.js';
+import { UserRepository } from '../../../../../user/infrastructure/persistence/user.repository.js';
 import { v7 } from 'uuid';
 
 describe('DeleteTeamHandler Integration Tests', () => {

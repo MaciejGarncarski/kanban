@@ -1,9 +1,9 @@
 import { Controller, Sse, MessageEvent, Req } from '@nestjs/common';
 import { type Request } from 'express';
 import { Observable, Subject } from 'rxjs';
-import { Auth } from 'src/auth/common/decorators/auth.decorator';
-import { routesV1 } from 'src/infrastructure/configs/app.routes.config';
-import { NotificationsService } from 'src/notifications/infrastructure/services/notifications.service';
+import { Auth } from '../../../auth/common/decorators/auth.decorator.js';
+import { routesV1 } from '../../../infrastructure/configs/app.routes.config.js';
+import { NotificationsService } from '../services/notifications.service.js';
 
 @Controller()
 export class NotificationsController {

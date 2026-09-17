@@ -1,9 +1,9 @@
 import { BadRequestException } from '@nestjs/common';
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
-import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
-import { SendToTeamMembersEvent } from 'src/notifications/application/events/send-to-team-members.event';
-import { UpdateTeamCommand } from 'src/team/application/commands/update-team.command';
-import { TeamRepository } from 'src/team/infrastructure/persistence/team.repository';
+import { ProfanityCheckService } from '../../../../infrastructure/services/profanity-check.service.js';
+import { SendToTeamMembersEvent } from '../../../../notifications/application/events/send-to-team-members.event.js';
+import { UpdateTeamCommand } from '../update-team.command.js';
+import { TeamRepository } from '../../../infrastructure/persistence/team.repository.js';
 
 @CommandHandler(UpdateTeamCommand)
 export class UpdateTeamHandler implements ICommandHandler<UpdateTeamCommand> {

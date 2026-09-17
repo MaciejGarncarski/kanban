@@ -1,4 +1,4 @@
-import { CorrelationContext } from 'src/core/application/context/correlation.context';
+import { CorrelationContext } from '../correlation.context.js';
 
 describe('CorrelationContext', () => {
   it('should return undefined if no context is set', () => {
@@ -12,7 +12,7 @@ describe('CorrelationContext', () => {
     });
   });
 
-  it('should isolate correlationIds between contexts', (done) => {
+  it('should isolate correlationIds between contexts', () => {
     CorrelationContext.run('id-1', () => {
       expect(CorrelationContext.getCorrelationId()).toBe('id-1');
       CorrelationContext.run('id-2', () => {
@@ -20,7 +20,6 @@ describe('CorrelationContext', () => {
       });
 
       expect(CorrelationContext.getCorrelationId()).toBe('id-1');
-      done();
     });
   });
 });

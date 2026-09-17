@@ -1,4 +1,4 @@
-import { fetchServer } from '@/api-client/api-client'
+import { fetchServerNoMiddleware } from '@/api-client/api-client'
 import { QueryClient } from '@tanstack/react-query'
 
 export function prefetchTeamUsers(
@@ -8,11 +8,12 @@ export function prefetchTeamUsers(
 ) {
   const paramsTeamId = { params: { path: { readableTeamId: readableTeamId } } }
 
-  return queryClient.fetchQuery({
+  return queryClient.query({
+    staleTime: 'static',
     queryKey: ['get', `/v1/teams/{readableTeamId}/users`, paramsTeamId],
     queryFn: async () => {
       try {
-        const res = await fetchServer.GET('/v1/teams/{readableTeamId}/users', {
+        const res = await fetchServerNoMiddleware.GET('/v1/teams/{readableTeamId}/users', {
           ...paramsTeamId,
           headers: {
             'x-skip-jwt-middleware': 'true',

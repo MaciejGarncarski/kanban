@@ -7,12 +7,12 @@ import {
   Logger,
 } from '@nestjs/common';
 import { type Response, type Request } from 'express';
-import { CorrelationContext } from 'src/core/application/context/correlation.context';
+import { CorrelationContext } from '../../core/application/context/correlation.context.js';
 import { v7 } from 'uuid';
 import {
   ApiErrorResponse,
   ValidationError,
-} from 'src/core/application/dtos/api-error.response.dto';
+} from '../../core/application/dtos/api-error.response.dto.js';
 import { DrizzleQueryError } from 'drizzle-orm';
 
 @Catch()

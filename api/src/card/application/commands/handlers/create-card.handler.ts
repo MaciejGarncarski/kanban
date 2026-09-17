@@ -1,10 +1,10 @@
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
-import { CreateCardCommand } from 'src/card/application/commands/create-card.command';
-import { CardRepository } from 'src/card/infrastructure/persistence/card.repository';
-import { ProfanityCheckService } from 'src/infrastructure/services/profanity-check.service';
-import { SendToTeamMembersEvent } from 'src/notifications/application/events/send-to-team-members.event';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+import { CreateCardCommand } from '../create-card.command.js';
+import { CardRepository } from '../../../infrastructure/persistence/card.repository.js';
+import { ProfanityCheckService } from '../../../../infrastructure/services/profanity-check.service.js';
+import { SendToTeamMembersEvent } from '../../../../notifications/application/events/send-to-team-members.event.js';
+import { UserRepository } from '../../../../user/infrastructure/persistence/user.repository.js';
 
 @CommandHandler(CreateCardCommand)
 export class CreateCardHandler implements ICommandHandler<CreateCardCommand> {

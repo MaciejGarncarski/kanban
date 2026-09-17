@@ -5,9 +5,7 @@ export function getCookieFromResponse(
   cookieName: string,
 ): string | undefined {
   const setCookie = response.headers['set-cookie'] as
-    | string
-    | string[]
-    | undefined;
+    string | string[] | undefined;
 
   const cookies = Array.isArray(setCookie)
     ? setCookie

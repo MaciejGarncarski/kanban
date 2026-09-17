@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
-import { type DB } from 'src/infrastructure/persistence/db/client';
-import { InjectDb } from 'src/infrastructure/persistence/db/db.provider';
+import { type DB } from '../../../infrastructure/persistence/db/client.js';
+import { InjectDb } from '../../../infrastructure/persistence/db/db.provider.js';
 import {
   boards,
   columns,
@@ -9,10 +9,10 @@ import {
   team_members,
   teams,
   users,
-} from 'src/infrastructure/persistence/db/schema';
-import { TeamRole } from 'src/team/domain/types/team.types';
-import { UserRepositoryInterface } from 'src/user/domain/ports/user.interface';
-import { UserMapper } from 'src/user/infrastructure/persistence/mappers/user.mapper';
+} from '../../../infrastructure/persistence/db/schema.js';
+import { TeamRole } from '../../../team/domain/types/team.types.js';
+import { UserRepositoryInterface } from '../../domain/ports/user.interface.js';
+import { UserMapper } from './mappers/user.mapper.js';
 
 @Injectable()
 export class UserRepository implements UserRepositoryInterface {

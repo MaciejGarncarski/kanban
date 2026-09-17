@@ -1,7 +1,7 @@
 import { InferInsertModel } from 'drizzle-orm';
-import { teams } from 'src/infrastructure/persistence/db/schema';
-import { GetTeamsResponseDto } from 'src/team/application/dtos/get-teams.response.dto';
-import { TeamAggregate } from 'src/team/domain/team.entity';
+import { teams } from '../../../infrastructure/persistence/db/schema.js';
+import { GetTeamsResponseDto } from '../../application/dtos/get-teams.response.dto.js';
+import { TeamAggregate } from '../team.entity.js';
 
 export type InsertTeamDto = InferInsertModel<typeof teams>;
 export type UpdateTeamDto = Partial<InsertTeamDto>;

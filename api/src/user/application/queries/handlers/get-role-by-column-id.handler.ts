@@ -1,7 +1,7 @@
 import { QueryHandler } from '@nestjs/cqrs';
-import { TeamRole } from 'src/team/domain/types/team.types';
-import { GetRoleByColumnIdQuery } from 'src/user/application/queries/get-role-by-column-id.query';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+import { TeamRole } from '../../../../team/domain/types/team.types.js';
+import { GetRoleByColumnIdQuery } from '../get-role-by-column-id.query.js';
+import { UserRepository } from '../../../infrastructure/persistence/user.repository.js';
 
 @QueryHandler(GetRoleByColumnIdQuery)
 export class GetRoleByColumnIdHandler {

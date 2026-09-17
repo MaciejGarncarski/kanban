@@ -1,9 +1,9 @@
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { DeleteTeamCommand } from 'src/team/application/commands/delete-team.command';
-import { teamRoles } from 'src/team/domain/types/team.types';
-import { TeamRepository } from 'src/team/infrastructure/persistence/team.repository';
-import { UserRepository } from 'src/user/infrastructure/persistence/user.repository';
+import { DeleteTeamCommand } from '../delete-team.command.js';
+import { teamRoles } from '../../../domain/types/team.types.js';
+import { TeamRepository } from '../../../infrastructure/persistence/team.repository.js';
+import { UserRepository } from '../../../../user/infrastructure/persistence/user.repository.js';
 
 @CommandHandler(DeleteTeamCommand)
 export class DeleteTeamHandler implements ICommandHandler<DeleteTeamCommand> {
