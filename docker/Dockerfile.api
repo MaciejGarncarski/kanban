@@ -2,7 +2,7 @@
 # Stage 1 — Base setup
 # ------------------------------------------------------
 ARG NODE_VERSION=24.13.0
-ARG PNPM_VERSION=10.18.2
+ARG PNPM_VERSION=12.4.2
 
 FROM node:${NODE_VERSION}-alpine AS base
 RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
