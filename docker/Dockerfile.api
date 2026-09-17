@@ -5,7 +5,11 @@ ARG NODE_VERSION=26.9.0
 ARG PNPM_VERSION=12.4.2
 
 FROM node:${NODE_VERSION}-alpine AS base
-RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+ENV CI=true
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN npm install -g --allow-scripts=pnpm pnpm@${PNPM_VERSION}
+RUN pnpm config set store-dir /pnpm/store
 WORKDIR /app
 
 # ------------------------------------------------------
